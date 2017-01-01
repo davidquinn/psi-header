@@ -1,0 +1,176 @@
+{
+  "name": "psi-header",
+  "displayName": "psioniq File Header Generator",
+  "description": "Inserts a file header into the currently active file.",
+  "icon": "img/psi-logo.png",
+  "version": "0.2.1",
+  "publisher": "psioniq",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.5.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "header",
+    "file header",
+    "license",
+    "file info"
+  ],
+  "activationEvents": [
+    "onCommand:psi-header.insertFileHeader"
+  ],
+  "main": "./out/src/extension",
+  "contributes": {
+    "commands": [
+      {
+        "command": "psi-header.insertFileHeader",
+        "title": "Header Insert"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "psi-header.insertFileHeader",
+        "key": "ctrl+alt+H ctrl+alt+H"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Header Insert",
+      "properties": {
+        "psi-header.config": {
+          "type": "object",
+          "description": "An optional set of global configuration options.",
+          "properties": {
+            "forceToTop": {
+              "type": "boolean",
+              "description": "If true, the header is inserted at the top of the page, otherwise it is inserted at the cursor.",
+              "default": false
+            },
+            "blankLinesAfter": {
+              "type": "integer",
+              "description": "The number of blank lines to insert after the header comment.",
+              "default": 0
+            },
+            "license": {
+              "type": "string",
+              "description": "Identifies which license to use.  this should be either a SPDX license I (refer to https://spdx.org/licenses/) or \"Custom\".",
+              "default": "MIT"
+            }
+          }
+        },
+        "psi-header.license-text": {
+          "type": "array",
+          "description": "Custom license text used where psi-header.config.license = Custom",
+          "default": [],
+          "items": {
+            "type": "string"
+          }
+        },
+        "psi-header.variables": {
+          "type": "array",
+          "description": "An array of key value pairs that define the template variables.",
+          "default": [],
+          "items": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2
+          }
+        },
+        "psi-header.lang-config": {
+          "type": "array",
+          "description": "An optional set of language-specific syntax settings.",
+          "default": [],
+          "items": {
+            "type": "object",
+            "required": [
+              "language"
+            ],
+            "properties": {
+              "language": {
+                "type": "string",
+                "description": "The language that this entry applies to, or '*' for the default."
+              },
+              "mapTo": {
+                "type": "string",
+                "description": "The name of the language to copy settings from.  All other settings are ignored if this one is provided."
+              },
+              "begin": {
+                "type": "string",
+                "default": "/*",
+                "description": "The string that defines the beginning of the header comment block."
+              },
+              "prefix": {
+                "type": "string",
+                "default": " * ",
+                "description": "The string that defines the beginning of each line of the header comment block."
+              },
+              "end": {
+                "type": "string",
+                "default": " */",
+                "description": "The string that defines the end of the header comment block."
+              },
+              "forceToTop": {
+                "type": "boolean",
+                "default": false,
+                "description": "Overrides the global setting for this language."
+              },
+              "blankLinesAfter": {
+                "type": "integer",
+                "description": "Overrides the global setting for this language.",
+                "default": 0
+              }
+            }
+          }
+        },
+        "psi-header.templates": {
+          "type": "array",
+          "description": "An optional set of language-specific templates",
+          "default": [],
+          "items": {
+            "type": "object",
+            "required": [
+              "language"
+            ],
+            "properties": {
+              "language": {
+                "type": "string",
+                "description": "The language that this entry applies to, or '*' for the default."
+              },
+              "mapTo": {
+                "type": "string",
+                "description": "The name of the language to copy the template from.  All other settings are ignored if this one is provided."
+              },
+              "template": {
+                "type": "array",
+                "default": [],
+                "description": "The template text provides as an array of strings.",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "tsc -p ./",
+    "compile": "tsc -watch -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "test": "node ./node_modules/vscode/bin/test"
+  },
+  "devDependencies": {
+    "typescript": "^2.0.3",
+    "vscode": "^1.0.0",
+    "mocha": "^2.3.3",
+    "@types/node": "^6.0.40",
+    "@types/mocha": "^2.2.32"
+  },
+  "dependencies": {
+    "spdx-license-list": "^2.1.0",
+    "wordwrap": "^1.0.0"
+  }
+}
