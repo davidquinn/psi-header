@@ -3,9 +3,14 @@
   "displayName": "psioniq File Header Generator",
   "description": "Inserts a file header into the currently active file.",
   "icon": "img/psi-logo.png",
-  "version": "0.2.1",
+  "version": "0.2.9",
   "publisher": "psioniq",
   "license": "MIT",
+  "bugs": {
+	  "url": "http://www.psioniq.uk/index.html",
+	  "email": "info@psioniq.uk"
+  },
+  "homepage": "http://www.psioniq.uk/index.html",
   "engines": {
     "vscode": "^1.5.0"
   },

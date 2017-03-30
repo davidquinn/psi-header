@@ -47,7 +47,9 @@ export const VAR_DATE: string = 'date';
 export const VAR_TIME: string = 'time';
 export const VAR_YEAR: string = 'year';
 export const VAR_FILE_PATH: string = 'filepath';
+export const VAR_FILE_NAME: string = 'filename';
 export const VAR_PROJECT_PATH: string = 'projectpath';
+export const VAR_PROJECT_NAME: string = 'projectname';
 export const VAR_COMPANY: string = 'company';
 export const VAR_AUTHOR: string = 'author';
 export const VAR_AUTHOR_EMAIL: string = 'authoremail';
@@ -61,12 +63,12 @@ export const VAR_SPDX_ID: string = 'spdxid';
  * The default template where none is provided in the user settings.
  */
 export const DEFAULT_TEMPLATE: Array<string> = [
-    `Filename: $[${VAR_FILE_PATH}]`,
-    `Path: $[${VAR_PROJECT_PATH}]`,
-    `Created Date: $[${VAR_DATE}]`,
-    `Author: $[${VAR_AUTHOR}]`,
+    `Filename: <<${VAR_FILE_PATH}>>`,
+    `Path: <<${VAR_PROJECT_PATH}>>`,
+    `Created Date: <<${VAR_DATE}>>`,
+    `Author: <<${VAR_AUTHOR}>>`,
     "",
-    `Copyright (c) $[${VAR_YEAR}] $[${VAR_COPYRIGHT_HOLDER}]`
+    `Copyright (c) <<${VAR_YEAR}>> <<${VAR_COPYRIGHT_HOLDER}>>`
 ];
 
 

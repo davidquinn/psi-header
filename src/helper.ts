@@ -33,6 +33,8 @@
 import {workspace, TextEditor, WorkspaceConfiguration} from 'vscode';
 import * as k_ from './constants';
 import {ITemplate, ITemplateList, IConfig, ILangConfig, ILangConfigList, IVariable, IVariableList} from './interfaces';
+import * as fs from 'fs';
+import * as path from 'path';
 
 /**
  * Retrieve the current configuration for this extension from the workspace settings.
@@ -224,6 +226,8 @@ export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEdito
 	variables.push([k_.VAR_COMPANY, 'Your Company']);
 	variables.push([k_.VAR_AUTHOR, 'You']);
 	variables.push([k_.VAR_AUTHOR_EMAIL, 'you@you.you']);
+	variables.push([k_.VAR_PROJECT_NAME, getProjectName()]);
+	variables.push([k_.VAR_FILE_NAME, extractFileName(editor.document.fileName)]);
 
 	// custom variables
 	let vl: IVariableList = wsConfig && wsConfig.has(k_.VARIABLE_SETTINGS) ? wsConfig.get<IVariableList>(k_.VARIABLE_SETTINGS) : null;
@@ -255,6 +259,29 @@ export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEdito
 	return variables;
 }
 
+function getProjectName(): string {
+	try {
+		const fname: string = path.join(workspace.rootPath, 'package.json');
+		if (fs.existsSync(fname)) {
+			const prj = JSON.parse(fs.readFileSync(fname).toString());
+			if (prj) {
+				return prj.displayName ? prj.displayName : prj.name;
+			}
+		}
+		return null;
+	} catch (error) {
+		return null;
+	}
+}
+
+function extractFileName(fullpath: string): string {
+	try {
+		return path.basename(fullpath);
+	} catch (error) {
+		return null;
+	}
+}
+
 /**
  * Add the license and related variables from the SPDX data.
  * 
@@ -265,27 +292,27 @@ export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEdito
  */
 function addLicenseVariables(wsConfig: WorkspaceConfiguration, variables: IVariableList, config: IConfig, langConfig: ILangConfig): void {
 	const spdxList = require('spdx-license-list/spdx-full');
-	let text: Array<string> = [];
+	let txt: Array<string> = [];
 	let spdx;
 	if (config && config.license) {
 		if (config.license === 'Custom') {
-			text = wsConfig.has(k_.LICENSE_SETTINGS) ? wsConfig.get<Array<string>>(k_.LICENSE_SETTINGS) : [];
+			txt = wsConfig.has(k_.LICENSE_SETTINGS) ? wsConfig.get<Array<string>>(k_.LICENSE_SETTINGS).slice() : [];
 		} else if (config.license.length > 0) {
 			spdx = spdxList[config.license];
 			if (spdx) {
-				text = cleanSpdxLicenseText(spdx.license).split('\n');
+				txt = cleanSpdxLicenseText(spdx.license).split('\n');
 			}
 		}
 	}
-	if (text.length > 0) {
+	if (txt.length > 0) {
 		const prefix: string = langConfig && langConfig.prefix ? langConfig.prefix : null;
 		if (prefix) {
-			for (let i = 1; i < text.length; i++) {
-				text[i] = prefix + text[i];
+			for (let i = 1; i < txt.length; i++) {
+				txt[i] = prefix + txt[i];
 			}
 		}
 	}
-	variables.push([k_.VAR_LICENSE_TEXT, replacePlaceholders(text.join('\n'), variables)]);
+	variables.push([k_.VAR_LICENSE_TEXT, replacePlaceholders(txt.join('\n'), variables)]);
 	if (spdx) {
 		variables.push([k_.VAR_LICENSE_NAME, spdx.name]);
 		variables.push([k_.VAR_LICENSE_URL, spdx.url]);

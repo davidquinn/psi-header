@@ -5,6 +5,8 @@ or at the current cursor position. The header can be configured globally and/or 
 However, the configuration separates the comment syntax from the template body so it is likely that
 a single template will be able to cover most languages.
 
+To report bugs, issues, suggestions: email info@psioniq.uk
+
 Here is a sample output:
 
 ```javascript
@@ -41,7 +43,9 @@ Refer to [Extension Settings](#extension-settings) for configuration details.
   * `time`: inserts the current time using the current locale.
   * `year`: inserts the current year.
   * `filepath`: inserts the fully-qualified name of the file.
+  * `filename`: just the file name without the path details.
   * `projectpath`: inserts the fully-qualified path to the root directory of the project.
+  * `projectname`: Attempts to read package.json for either a displayName or name property.
   * `company`: the name of your company.  In this release it defaults to "Your Company".
   * `author`: the name of the file author.  In this release it defaults to "You".
   * `authoremail`: the email address of the file author.  In this release it defaults to "you@you.you".
@@ -154,23 +158,23 @@ In the following example:
 		{
 			"language": "*",
 			"template": [
-				"File: $[filepath]",
-				"Project: $[projectpath]",
-				"Created Date: $[date]",
-				"Author: $[author]",
+				"File: <<filepath>>",
+				"Project: <<projectpath>>",
+				"Created Date: <<date>>",
+				"Author: <<author>>",
 				"",
-				"Copyright (c) $[year] $[company]"
+				"Copyright (c) <<year>> <<company>>"
 			]
 		},
 		{
 			"language": "javascript",
 			"template": [
-				"File: $[filepath]",
-				"Project: $[projectpath]",
-				"Created Date: $[date]",
-				"Author: $[author]",
+				"File: <<filepath>>",
+				"Project: <<projectpath>>",
+				"Created Date: <<date>>",
+				"Author: <<author>>",
 				"",
-				"Copyright (c) $[year] $[company]",
+				"Copyright (c) <<year>> <<company>>",
 				"------------------------------------",
 				"Javascript will save your soul!"
 			]
@@ -188,18 +192,18 @@ In the following example:
 
 This should be mostly obvious.  The configuration of this extension separates out the syntactical language elements (comment Begin, comment End, etc) from the body of the template so that hopefully you will only need to create a single template.
 
-For the variable placeholders, the variable names should be surrounded with `$[` and `]`. Do not add the prefix and suffix to your custom variable declarations!
-So in the template, the system variable `filepath` is written `$[filepath]`. Easy, huh!
+For the variable placeholders, the variable names should be surrounded with `<<` and `>>`. Do not add the prefix and suffix to your custom variable declarations!
+So in the template, the system variable `filepath` is written `<<filepath>>`. Easy, huh!
 
 The default (built in) template is:
 ```javascript
 [
-    "Filename: $[filepath]",
-    "Path: $[projectpath]",
-    "Created Date: $[date]",
-    "Author: $[author]",
+    "Filename: <<filepath>>",
+    "Path: <<projectpath>>",
+    "Created Date: <<date>>",
+    "Author: <<author>>",
     "",
-    "Copyright (c) $[year] $[company]"
+    "Copyright (c) <<year>> <<company>>"
 ]
 ```
 ...which, when rendered would produce the following (assuming JS):
@@ -219,6 +223,9 @@ The default (built in) template is:
 
 * The extension does some clean up of the SPDX license text (mapping to variables, etc) but not everything is cleaned.  In particular, a number of licenses use a placeholder logic based on `<<var;...>>` that this extension does not try to convert at this stage - and some licenses have placeholder text like `<insert your slartibartfast here.  We wore an onion on our belt because that was the fashion of the day>`.  If you find hokey little anomolies that can be fixed, let me know.  Otherwise, I suggest you copy the license text into your custom license settings and fix it there.
 
+To report bugs, issues, suggestions: email info@psioniq.uk
+
+
 ## Credits
 
 This extension uses the following npm packages:
@@ -226,10 +233,31 @@ This extension uses the following npm packages:
 * [`wordwrap`](https://github.com/substack/node-wordwrap) to word wrap the licenses.
 
 ## Release Notes
+To report bugs, issues, suggestions: email info@psioniq.uk
 
-### 0.1.0 (30/12/2016)
+### 0.2.9 (30/03/2017)
 
-* Initial release.
+* FIX: Issue with insertion of multiple comment line prefixes when using the Custom license text (thanks to Otto Meijer for reporting this).
+
+### 0.2.8 (28/03/2017)
+
+* INFO: Added contact email for reporting bugs.  Otto Meijer reported a bug with custom licences in his review on 13/3 and I have not been able to reproduce it.  Otto if you are listening, could you use the bugs link to send me more details - and maybe a sample settings file.
+
+### 0.2.5 (03/01/2017)
+
+* FIX: Just documentation fixes.  Sorry!
+
+### 0.2.4 (03/01/2017)
+
+* FIX: Wrong placeholder when using built in template.
+
+### 0.2.3 (01/01/2017)
+
+* Added system variables for `filename` and `projectname`.
+
+### 0.2.1 (01/01/2017)
+
+* Just a wee category change.
 
 ### 0.2.0 (01/01/2017)
 
@@ -237,6 +265,7 @@ This extension uses the following npm packages:
 * Added system variables for `copyrightholder`, `licensetext`, `licensename`, `licenseurl`, `spdxid` and `authoremail`.
 * Various code tweaks
 
-### 0.2.1 (01/01/2017)
+### 0.1.0 (30/12/2016)
 
-* Just a wee category change.
+* Initial release.
+

@@ -8,6 +8,11 @@
     },
     "typescript.tsdk": "./node_modules/typescript/lib",
     "psi-header.config": {
-        "license": "MIT"
-    }
+        "license": "Custom"
+    },
+	"psi-header.license-text": [
+		"Some text",
+		"Some more text",
+		"And yet more text"
+	]
 }
