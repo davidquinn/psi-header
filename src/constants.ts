@@ -60,16 +60,9 @@ export const VAR_LICENSE_URL: string = 'licenseurl';
 export const VAR_SPDX_ID: string = 'spdxid';
 
 /**
- * The default template where none is provided in the user settings.
+ * System functions
  */
-export const DEFAULT_TEMPLATE: Array<string> = [
-    `Filename: <<${VAR_FILE_PATH}>>`,
-    `Path: <<${VAR_PROJECT_PATH}>>`,
-    `Created Date: <<${VAR_DATE}>>`,
-    `Author: <<${VAR_AUTHOR}>>`,
-    "",
-    `Copyright (c) <<${VAR_YEAR}>> <<${VAR_COPYRIGHT_HOLDER}>>`
-];
+export const FUNC_DATE_FMT: string = 'dateformat';
 
 
 /**
@@ -87,36 +80,15 @@ export const VAR_SUFFIX: string = '>>';
  */
 export const DEFAULT: string = '*';
 
-// const MIT_TEXT: string = `Copyright (c) $[year] $[company]
 
-// Permission is hereby granted, free of charge, to any person obtaining a copy 
-// of this software and associated documentation files (the "Software"), to deal 
-// in the Software without restriction, including without limitation the rights 
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell 
-// copies of the Software, and to permit persons to whom the Software is furnished 
-// to do so, subject to the following conditions:
-
-// The above copyright notice and this permission notice shall be included in all 
-// copies or substantial portions of the Software.
-
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS 
-// FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR 
-// COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER 
-// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION 
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.`;
-
-// const ISC_TEXT: string = `ISC License
-
-// Copyright (c) $[year], $[company]
-
-// Permission to use, copy, modify, and/or distribute this software for any purpose 
-// with or without fee is hereby granted, provided that the above copyright notice 
-// and this permission notice appear in all copies.
-
-// THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH 
-// REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND 
-// FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, 
-// OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, 
-// DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS 
-// ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.`;
+/**
+ * The default template where none is provided in the user settings.
+ */
+export const DEFAULT_TEMPLATE: Array<string> = [
+    `Filename: ${VAR_PREFIX}${VAR_FILE_PATH}${VAR_SUFFIX}`,
+    `Path: ${VAR_PREFIX}${VAR_PROJECT_PATH}${VAR_SUFFIX}`,
+    `Created Date: ${VAR_PREFIX}${VAR_DATE}${VAR_SUFFIX}`,
+    `Author: ${VAR_PREFIX}${VAR_AUTHOR}${VAR_SUFFIX}`,
+    "",
+    `Copyright (c) ${VAR_PREFIX}${VAR_YEAR}${VAR_SUFFIX} ${VAR_PREFIX}${VAR_COPYRIGHT_HOLDER}${VAR_SUFFIX}`
+];

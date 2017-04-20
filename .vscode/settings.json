@@ -6,13 +6,5 @@
     "search.exclude": {
         "out": true
     },
-    "typescript.tsdk": "./node_modules/typescript/lib",
-    "psi-header.config": {
-        "license": "Custom"
-    },
-	"psi-header.license-text": [
-		"Some text",
-		"Some more text",
-		"And yet more text"
-	]
+    "typescript.tsdk": "./node_modules/typescript/lib"
 }

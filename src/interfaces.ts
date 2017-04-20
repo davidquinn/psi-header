@@ -91,3 +91,13 @@ export type IVariable = [string, string];
  * Type that defines an array of [[IVariable]]
  */
 export type IVariableList = Array<IVariable>;
+
+/**
+ * Delegate for function that returns a placeholder value
+ * 
+ * @export
+ * @interface IPlaceholderFunction
+ */
+export interface IPlaceholderFunction {
+	(arg: string): string;
+}

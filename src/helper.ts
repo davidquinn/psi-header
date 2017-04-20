@@ -32,9 +32,10 @@
 
 import {workspace, TextEditor, WorkspaceConfiguration} from 'vscode';
 import * as k_ from './constants';
-import {ITemplate, ITemplateList, IConfig, ILangConfig, ILangConfigList, IVariable, IVariableList} from './interfaces';
+import {ITemplate, ITemplateList, IConfig, ILangConfig, ILangConfigList, IVariable, IVariableList, IPlaceholderFunction} from './interfaces';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as moment from 'moment';
 
 /**
  * Retrieve the current configuration for this extension from the workspace settings.
@@ -244,7 +245,7 @@ export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEdito
 		}
 	}
 
-	// map copyright holder to company in not already provided via custom variable.
+	// map copyright holder to company if not already provided via custom variable.
 	if (variables.findIndex( (value: IVariable, index: number, obj: IVariableList) => {
 		return value[0] === k_.VAR_COPYRIGHT_HOLDER;
 	}) === -1) {
@@ -356,11 +357,58 @@ function replacePlaceholders(source: string, variables: IVariableList): string {
 		if (v[1]) {
 			let regex = new RegExp(k_.VAR_PREFIX + v[0] + k_.VAR_SUFFIX, 'gi');
 			replaced = replaced.replace(regex, v[1]);
-			// let regex = k_.VAR_PREFIX + v[0] + k_.VAR_SUFFIX;
-			// replaced = replaced.replace(regex, v[1]);
 		}
 	}
+	replaced = replaceFunctions(replaced);
 	return replaced;
+}
+
+/**
+ * Process template function placeholders
+ * 
+ * @param source the templae text
+ */
+function replaceFunctions(source: string): string {
+	let replaced: string = source;	
+	let replacements: IVariableList = [];
+	// get date part placeholders
+	replacements = constructFunctionReferences(source, k_.FUNC_DATE_FMT, (args: string): string => {
+		// remove the surrounding quotes
+		args = args.substring(1, args.length - 1);
+		return moment().format(args);
+	})
+
+	// perform placeholder substitution
+	for (let v of replacements) {
+		let regex = new RegExp(escapeRegExp(v[0]), 'g');
+		replaced = replaced.replace(regex, v[1]);
+	}
+	return replaced;
+}
+
+/**
+ * Construct a placeholder variable list for a specified function based on the template text content.
+ * 
+ * @param {string} source the template text
+ * @param {string} functionName the name of the template function
+ * @param {IPlaceholderFunction} cb the method to run to retrieve the value based on the function arguments
+ * @returns {IVariableList} 
+ */
+function constructFunctionReferences(source: string, functionName: string, cb: IPlaceholderFunction): IVariableList {
+	let references: IVariableList = [];
+	const funcNeedle: string = `${k_.VAR_PREFIX}${functionName}(`;
+	let indices: Array<number> = getIndicesOf(funcNeedle, source, false);
+	for (let i = 0; i < indices.length; i++) {
+		let start = indices[i];
+		let end: number = source.indexOf(`)`, start);
+		if (end > -1) {
+			let args: string = source.substring(start + funcNeedle.length, end);
+			let key: string = `${funcNeedle}${args})${k_.VAR_SUFFIX}`;
+			let value: string = cb ? cb(args) : '';
+			references.push([key, value]);
+		}
+	}
+	return references;
 }
 
 /**
@@ -413,6 +461,42 @@ function wordWrap(str: string, width: number): Array<string> {
  */
 function placeholder(str: string): string {
 	return  `${k_.VAR_PREFIX}${str}${k_.VAR_SUFFIX}`;
+}
+
+/**
+ * Search the haystack for instances of needle and return an array of index positions.
+ * 
+ * @param needle the value to search for
+ * @param haystack the string to search
+ * @param caseSensitive is the match case sensitive?
+ */
+function getIndicesOf(needle: string, haystack: string, caseSensitive: boolean): Array<number> {
+    var searchStrLen: number = needle.length;
+    if (searchStrLen == 0) {
+        return [];
+    }
+    var startIndex: number = 0, 
+		index: number, 
+		indices: Array<number> = [];
+
+    if (!caseSensitive) {
+        haystack = haystack.toLowerCase();
+        needle = needle.toLowerCase();
+    }
+    while ((index = haystack.indexOf(needle, startIndex)) > -1) {
+        indices.push(index);
+        startIndex = index + searchStrLen;
+    }
+    return indices;
+}
+
+/**
+ * Escapes regular expression special characters
+ * 
+ * @param value the string to escape
+ */
+function escapeRegExp(value: string) : string {
+	return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 export {BASE_SETTINGS} from './constants';

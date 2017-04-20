@@ -1,14 +1,14 @@
 {
   "name": "psi-header",
-  "displayName": "psioniq File Header Generator",
+  "displayName": "psioniq File Header",
   "description": "Inserts a file header into the currently active file.",
   "icon": "img/psi-logo.png",
-  "version": "0.2.9",
+  "version": "0.3.2",
   "publisher": "psioniq",
   "license": "MIT",
   "bugs": {
-	  "url": "http://www.psioniq.uk/index.html",
-	  "email": "info@psioniq.uk"
+    "url": "http://www.psioniq.uk/index.html",
+    "email": "info@psioniq.uk"
   },
   "homepage": "http://www.psioniq.uk/index.html",
   "engines": {
@@ -175,6 +175,7 @@
     "@types/mocha": "^2.2.32"
   },
   "dependencies": {
+    "moment": "^2.18.1",
     "spdx-license-list": "^2.1.0",
     "wordwrap": "^1.0.0"
   }
