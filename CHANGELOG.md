@@ -3,6 +3,10 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 0.3.3 (21/04/2017)
+* __INFO__: Updated to the latest version of spdx-license-list@3.0.1.
+* __FIX__: Fixed a catastrophic spelling mistake in a message string :)
+
 ## 0.3.2 (20/04/2017)
 * __DOC__: Just a name change and a few fixed typos in the documentation - no code changes.
 

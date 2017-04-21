@@ -292,7 +292,7 @@ function extractFileName(fullpath: string): string {
  * @param {ILangConfig} langConfig
  */
 function addLicenseVariables(wsConfig: WorkspaceConfiguration, variables: IVariableList, config: IConfig, langConfig: ILangConfig): void {
-	const spdxList = require('spdx-license-list/spdx-full');
+	const spdxList = require('spdx-license-list/full');
 	let txt: Array<string> = [];
 	let spdx;
 	if (config && config.license) {
@@ -301,7 +301,7 @@ function addLicenseVariables(wsConfig: WorkspaceConfiguration, variables: IVaria
 		} else if (config.license.length > 0) {
 			spdx = spdxList[config.license];
 			if (spdx) {
-				txt = cleanSpdxLicenseText(spdx.license).split('\n');
+				txt = cleanSpdxLicenseText(spdx.licenseText).split('\n');
 			}
 		}
 	}

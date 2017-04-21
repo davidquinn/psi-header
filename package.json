@@ -1,9 +1,9 @@
 {
   "name": "psi-header",
   "displayName": "psioniq File Header",
-  "description": "Inserts a file header into the currently active file.",
+  "description": "Inserts a file header comment block into the currently active file.",
   "icon": "img/psi-logo.png",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "publisher": "psioniq",
   "license": "MIT",
   "bugs": {
@@ -60,7 +60,7 @@
             },
             "license": {
               "type": "string",
-              "description": "Identifies which license to use.  this should be either a SPDX license I (refer to https://spdx.org/licenses/) or \"Custom\".",
+              "description": "Identifies which license to use.  this should be either a SPDX license (refer to https://spdx.org/licenses/) or \"Custom\".",
               "default": "MIT"
             }
           }
@@ -150,7 +150,7 @@
               "template": {
                 "type": "array",
                 "default": [],
-                "description": "The template text provides as an array of strings.",
+                "description": "The template text provided as an array of strings.",
                 "items": {
                   "type": "string"
                 }
@@ -176,7 +176,7 @@
   },
   "dependencies": {
     "moment": "^2.18.1",
-    "spdx-license-list": "^2.1.0",
+    "spdx-license-list": "^3.0.1",
     "wordwrap": "^1.0.0"
   }
 }

@@ -42,7 +42,7 @@ import {BASE_SETTINGS, ILangConfig, IConfig, IVariableList, getLanguageConfig, g
 export function insertFileHeader() {
 	const editor: TextEditor = window.activeTextEditor;
 	if (!editor) {
-    	window.showErrorMessage('psi-heder requires an active document.');
+    	window.showErrorMessage('psi-header requires an active document.');
 		return;
 	}
 	const wsConfig: WorkspaceConfiguration = workspace.getConfiguration(BASE_SETTINGS);
