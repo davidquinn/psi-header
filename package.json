@@ -1,9 +1,9 @@
 {
   "name": "psi-header",
   "displayName": "psioniq File Header",
-  "description": "Inserts a file header comment block into the currently active file.",
+  "description": "Inserts a file header comment block into the currently active file and can track last modified date/user on file save.",
   "icon": "img/psi-logo.png",
-  "version": "0.3.3",
+  "version": "0.9.0",
   "publisher": "psioniq",
   "license": "MIT",
   "bugs": {
@@ -12,7 +12,7 @@
   },
   "homepage": "http://www.psioniq.uk/index.html",
   "engines": {
-    "vscode": "^1.5.0"
+    "vscode": "^1.6.0"
   },
   "categories": [
     "Other"
@@ -24,7 +24,8 @@
     "file info"
   ],
   "activationEvents": [
-    "onCommand:psi-header.insertFileHeader"
+    "onCommand:psi-header.insertFileHeader",
+	"*"
   ],
   "main": "./out/src/extension",
   "contributes": {
@@ -65,6 +66,48 @@
             }
           }
         },
+		"psi-header.changes-tracking": {
+			"type": "object",
+			"description": "An optional set of changes tracking options",
+			"properties": {
+				"isActive": {
+					"type": "boolean",
+					"description": "If true, will activate changes tracking when documents are saved.  Otherwise changes tracking is not performed.",
+					"default": false
+				},
+				"modAuthor": {
+					"type": "string",
+					"description": "The label used to identify the template line that contains the name of the user who modified the file.",
+					"default": "Modified By: "
+				},
+				"modDate": {
+					"type": "string",
+					"description": "The label used to identify the template line that contains the date that the file was last modified.",
+					"default": "Date Modified: "
+				},
+				"modDateFormat": {
+					"type": "string",
+					"description": "The date fomat string for the modified date.  Either 'date' for the standard system date (same as the 'date' placeholder) or a MomentJS format string.",
+					"default": "date"
+				},
+				"include": {
+					"type": "array",
+					"description": "An array of VSC language IDs to define which file types should be tracked.",
+					"default": [],
+					"items": {
+						"type": "string"
+					}
+				},
+				"exclude": {
+					"type": "array",
+					"description": "An array of VSC language IDs to define which file types should not be tracked.",
+					"default": [],
+					"items": {
+						"type": "string"
+					}
+				}
+			}
+		},
         "psi-header.license-text": {
           "type": "array",
           "description": "Custom license text used where psi-header.config.license = Custom",

@@ -39,6 +39,7 @@ export const CONFIG_SETTINGS: string = 'config';
 export const LANG_CONFIG_SETTINGS: string = 'lang-config';
 export const TEMPLATE_SETTINGS: string = 'templates';
 export const LICENSE_SETTINGS: string = 'license-text';
+export const TRACKING_SETTINGS: string = 'changes-tracking';
 
 /**
  * System Variable names

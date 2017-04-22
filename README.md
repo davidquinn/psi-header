@@ -5,6 +5,8 @@ or at the current cursor position. The header can be configured globally and/or 
 However, the configuration separates the comment syntax from the template body so it is likely that
 a single template will be able to cover most languages.
 
+It can also log the last modified (user and date) via the change tracking feature which will update the header whenever the file is saved.
+
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
 Here is a sample output:
@@ -15,7 +17,10 @@ Here is a sample output:
  * Project: \Users\me\Development\psioniq\myProject
  * Created Date: Saturday December 31 2016
  * Author: Arthur Bodkin, esq
- *
+ * -----
+ * Last Modified: Sunday January 01 2017
+ * Modified By: Tammy Bodkin
+ * -----
  * Copyright (c) 2016 psioniq Global Enterprises, Inc
  */
 ```
@@ -60,6 +65,7 @@ Refer to [Extension Settings](#extension-settings) for configuration details.
 * Create an unlimited number of custom static variables for use throughout your custom templates.
 * Can be run via a the key shortcut `ctrl+alt+H` then `ctrl+alt+H`.
 * Can automatically insert license text based on SPDX license IDs.
+* Can optionally record changes in the header each time the file is saved (see [Changes Tracking](#changes-tracking)).
 
 ## Dependencies
 
@@ -78,6 +84,13 @@ Settings can be added as User and/or Workspace settings - VSCode handles the maj
 	Can be overridden for specific languages (via *_psi-header.lang-config_*).
   * `blankLinesAfter`: Specify how many blank lines to insert after the header comment block.  Default is 0 (zero).
   * `license`: The SPDX License ID of the license to insert into the header (or "Custom" if providing your own license text).  Refer to [License Information](#license-information) for details.
+* `psi-header.changes-tracking`: configuration for changes tracking:
+  * `isActive`: If true, will activate changes tracking which will analyse every file during save.  Default value is false.
+  * `modAuthor`: Identifies the label used on the comment line where the _modified by_ value is shown.  Default value is "Modified By: ".
+  * `modDate`: Identifies the label used on the comment line where the _date modified_ value is shown.  Default value is "Last Modified: ".
+  * `modDateFormat`: The format string for the modified date value.  Valid values are either "date" (system date - same as the `date` system variable) or a [Moment.js format string](http://momentjs.com/docs/#/displaying/format/).  The default value is "date".
+  * `include`: Defines an array of VSC language IDs for the file types to include in changes tracking.  The default is an empty array which indicates any file type.
+  * `exclude`: Defines an array of VSC language IDs for the file types to exclude from changes tracking.  The default is an empty array which indicates no exclusions.
 * `psi-header.variables`: An array of name/value pairs that provide value substitution within templates.  This can be used to override the system variables as well as add new items for your own custom templates.
 * `psi-header.lang-config`: An array of objects that allow language-specific adjustments to be made to the configuration.  You can provide a subset of values if you only want to override some of the settings. Each object can include:
   * `language`: Mandatory. Either the VSCode language ID or '*' for global settings.
@@ -132,12 +145,52 @@ The dateformat function uses Moment.js and passes the function argument as a str
 The `psi-header.config.license` setting expects either a valid [SPDX license ID](https://spdx.org/licenses/) or `"Custom"` if you are providing your own license text.
 When set to Custom, you need to provide the license text via the `psi-header.license-text` setting.
 
+## Changes Tracking
+
+This extension can optionally track changes to files during save by writing the last modified date and/or user to the header comment block.  It does this by looking for specific text at the start of individual lines within the header, and replacing the whole line.  It will only search the first multi-line comment block within each file.
+
+It works when saving either single or multiple files (e.g. during a *_Save All_*).  It will only update the details if VSC reports the document as "dirty".
+
+It will look for lines within the header that start with `languageCommentPrefix + label` (e.g. "` * Date Modified: `" or "` * Modified By: `") and will replace the _whole_ line with `languageCommentPrefix + label + newValue`.  Where:
+* `languageCommentPrefix` is the comment line prefix for the document's language (`psi-header.lang-config[language].prefix`);
+* `label` is either:
+  * the configured `psi-header.changes-tracking.modAuthor` (defaults to "Modified By: "); or
+  * the configured `psi-header.changes-tracking.modDate` (defaults to "Date Modified: ").
+* and `newValue` is either:
+  * the author's name (same logic as the `author` system variable); or
+  * the current date formatted via the configured `psi-header.changes-tracking.modDateFormat` (refer to the configuration settings for details).
+
+Note that it will replace the whole line so is not suitable for lines with additional text after the value (or between the label and value).
+
+Also, because the whole line is replaced, you need to make sure your label configuration includes all characters before the new value (e.g. the ": " in the above defaults).
+
+So, taking the example from the beginning of the README, let's say Uncle Jack Bodkin modified the file two days after Tammy, then (assuming default values) the header would look like the following after save:
+
+```javascript
+/**
+ * File: \Users\me\Development\psioniq\myProject\src\myPrecious.js
+ * Project: \Users\me\Development\psioniq\myProject
+ * Created Date: Saturday December 31 2016
+ * Author: Arthur Bodkin, esq
+ * -----
+ * Last Modified: Tuesday January 03 2017
+ * Modified By: Uncle Jack Bodkin
+ * -----
+ * Copyright (c) 2016 psioniq Global Enterprises, Inc
+ */
+```
+
+When enabled, change tracking processes every file on save.  You can restrict which files are processed via the `psi-header.changes-tracking` properties `include` and `exclude`.  The first defines a whitelist of language file types to include, whilst the second is a blacklist of language file types to exclude.
+
+By default this functionality is disabled - you can activate it via the `psi-header.changes-tracking.isActive` boolean configuration property.
+
 ## An Example Custom Configuration
 
 In the following example:
 * Javascript and Typescript files will both use the custom template and configuration where `language = "javascript"`. 
 * Lua will use it's own custom configuration (`language="lua"`), but will use the global custom template (`language = "*"`).
-* All other languages will use the global custom template (`language = "*"`) and the built in configuration settings because there is no custom global `psi-header.lang-config` defined. 
+* All other languages will use the global custom template (`language = "*"`) and the built in configuration settings because there is no custom global `psi-header.lang-config` defined.
+* changes tracking is turned on, but will skip Markdown and JSON files.
  
 
 ```json
@@ -147,13 +200,25 @@ In the following example:
 		"blankLinesAfter": 6,
 		"license": "Custom"
 	},
+	"psi-header.changes-tracking": {
+		"isActive": true,
+		"modAuthor": "Modified By: ",
+		"modDate": "Last Modified: ",
+		"modDateFormat": "date",
+		"include": [],
+		"exclude": [
+			"markdown",
+			"json"
+		]
+	},
 	"psi-header.license-text": [
 		"All shall be well and all shall be well and all manner of things shall be well.",
 		"We're doomed!"
 	],
 	"psi-header.variables": [
 		["company", "psioniq"],
-		["author", "Arthur Bodkin"]
+		["author", "Arthur Bodkin"],
+		["authoremail", "art@psioniq.uk"]
 	],
 	"psi-header.lang-config": [
 		{
@@ -184,8 +249,13 @@ In the following example:
 				"Project: <<projectpath>>",
 				"Created Date: <<date>>",
 				"Author: <<author>>",
-				"",
+				"-----",
+				"Last Modified: ",
+				"Modified By: ",
+				"-----",
 				"Copyright (c) <<year>> <<company>>"
+				"",
+				"<<licensetext>>"
 			]
 		},
 		{
@@ -195,7 +265,10 @@ In the following example:
 				"Project: <<projectpath>>",
 				"Created Date: <<date>>",
 				"Author: <<author>>",
-				"",
+				"-----",
+				"Last Modified: ",
+				"Modified By: ",
+				"-----",
 				"Copyright (c) <<year>> <<company>>",
 				"------------------------------------",
 				"Javascript will save your soul!"

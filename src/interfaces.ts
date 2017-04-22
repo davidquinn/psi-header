@@ -30,6 +30,8 @@
  * SOFTWARE.
  */
 
+import {Range} from 'vscode';
+
 /**
  * Interface for a template entry in the settings file.
  * Each entry will have either a template or mapTo property.
@@ -78,6 +80,18 @@ export interface ILangConfig {
 }
 
 /**
+ * Interface for the modifications tracker configuration.
+ */
+export interface ITrackingConfig {
+	isActive?: boolean;
+	modDate?: string;
+	modDateFormat?: string;
+	modAuthor?: string;
+	include?: string[];
+	exclude?: string[];
+}
+
+/**
  * Interface for an array of [[ILangConfig]]
  */
 export type ILangConfigList = Array<ILangConfig>;
@@ -101,3 +115,19 @@ export type IVariableList = Array<IVariable>;
 export interface IPlaceholderFunction {
 	(arg: string): string;
 }
+
+/**
+ * Interface for a single range replacement
+ * 
+ * @export
+ * @interface IRangeReplacer
+ */
+export interface IRangeReplacer {
+	range: Range;
+	newString: string;
+}
+
+/**
+ * Type that defines an array of [[IRangeReplacer]].
+ */
+export type IRangeReplacerList = Array<IRangeReplacer>;

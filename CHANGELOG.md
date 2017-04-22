@@ -3,6 +3,10 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 0.9.0 (22/04/2017)
+* __IMPORTANT__: This extension now requires Visual Studio Code v1.6.0 as a minumum.
+* __NEW__: Change Tracking: The extension can now record __modified date__ and __modified by__ values within the header whenever the file is saved.
+
 ## 0.3.3 (21/04/2017)
 * __INFO__: Updated to the latest version of spdx-license-list@3.0.1.
 * __FIX__: Fixed a catastrophic spelling mistake in a message string :)

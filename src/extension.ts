@@ -32,14 +32,22 @@
 
 'use strict';
 
-import * as vscode from 'vscode';
+import {ExtensionContext, commands, WorkspaceConfiguration, workspace} from 'vscode';
 import * as command from './insertFileHeaderCommand';
+import * as k_ from './constants';
+import {ChangesTrackingController} from './changesTrackingController';
 
-export function activate(context: vscode.ExtensionContext) {
-    let disposable = vscode.commands.registerCommand('psi-header.insertFileHeader', () => {
+export function activate(context: ExtensionContext) {
+    // the header generator command
+	let disposable = commands.registerCommand('psi-header.insertFileHeader', () => {
         command.insertFileHeader();
     });
     context.subscriptions.push(disposable);
+
+	// the changes tracking subscription
+	const wsConfig: WorkspaceConfiguration = workspace.getConfiguration(k_.BASE_SETTINGS);
+	const controller: ChangesTrackingController = new ChangesTrackingController(wsConfig);
+	context.subscriptions.push(controller);
 }
 
 export function deactivate() {
