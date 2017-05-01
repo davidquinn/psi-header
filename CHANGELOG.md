@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 0.9.1 (NOT YET RELEASED)
+* __FIX__: Removed erroneous character from default Python and HTML line prefix setting.
+
 ## 0.9.0 (22/04/2017)
 * __IMPORTANT__: This extension now requires Visual Studio Code v1.6.0 as a minumum.
 * __NEW__: Change Tracking: The extension can now record __modified date__ and __modified by__ values within the header whenever the file is saved.
