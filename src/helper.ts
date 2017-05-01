@@ -164,11 +164,11 @@ function baseLanguageConfig(langId: string) {
 			mapLanguageConfig({ begin: ';;', prefix: ';', end: ';;'}, config);
 			break;
 		case 'python':
-			mapLanguageConfig({ begin: "'''", prefix: '\b', end: "'''"}, config);
+			mapLanguageConfig({ begin: "'''", prefix: '', end: "'''"}, config);
 			break;
 		case "xml":
 		case "html":
-			mapLanguageConfig({ begin: '<!--', prefix: '\b', end: '-->'}, config);
+			mapLanguageConfig({ begin: '<!--', prefix: '', end: '-->'}, config);
 			break;
 	}
 	return config;

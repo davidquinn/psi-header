@@ -34,6 +34,7 @@ To run the extension, either:
 Refer to [Extension Settings](#extension-settings) for configuration details.
 
 * Adds a genric or language-specific header at the current cursor location.
+* Can optionally record changes in the header each time the file is saved (see [Changes Tracking](#changes-tracking)).
 * Separates language specific elements (e.g. comment block begin and end) from the template body to minimise the number of templates you might need to manage.
 * Configuration option to force the header to the top of the document - overridable per language.
 * Configuration option to add additional blank lines after the header - overridable per language.
@@ -65,7 +66,6 @@ Refer to [Extension Settings](#extension-settings) for configuration details.
 * Create an unlimited number of custom static variables for use throughout your custom templates.
 * Can be run via a the key shortcut `ctrl+alt+H` then `ctrl+alt+H`.
 * Can automatically insert license text based on SPDX license IDs.
-* Can optionally record changes in the header each time the file is saved (see [Changes Tracking](#changes-tracking)).
 
 ## Dependencies
 
