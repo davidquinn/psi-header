@@ -5,6 +5,8 @@ To report bugs, issues, suggestions: email `info@psioniq.uk`
 
 ## 0.9.1 (NOT YET RELEASED)
 * __FIX__: Removed erroneous character from default Python and HTML line prefix setting.
+* __NEW__: Optional config property `psi-header.lang-config.beforeHeader` setting allows you to insert multiple lines of text before the beginning of the header comment block.
+* __NEW__: Optional config property `psi-header.lang-config.afterHeader` setting allows you to insert multiple lines of text after the end of the header comment block (and after any configured blankLinesAfter).
 
 ## 0.9.0 (22/04/2017)
 * __IMPORTANT__: This extension now requires Visual Studio Code v1.6.0 as a minumum.

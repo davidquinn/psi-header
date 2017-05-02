@@ -190,6 +190,8 @@ function mapLanguageConfig(source: Object, target: ILangConfig): void {
 		mapProperty(source, target, 'mapTo');
 		mapProperty(source, target, 'forceToTop');
 		mapProperty(source, target, 'blankLinesAfter');
+		mapProperty(source, target, 'beforeHeader');
+		mapProperty(source, target, 'afterHeader');
 	}
 }
 
@@ -337,11 +339,25 @@ export function merge(template: Array<string>, langConfig: ILangConfig, variable
 	}
 	let merged: string = body.join('\n');
 	merged = replacePlaceholders(merged, variables);
-	let endSpace: string = '\n';
+	
+	let beforeText: string = arrayToString(langConfig.hasOwnProperty('beforeHeader') ? langConfig.beforeHeader : null);
+	let afterText: string = arrayToString(langConfig.hasOwnProperty('afterHeader') ? langConfig.afterHeader : null);
+
+	let endSpace: string = '';
 	for (let i = 0; i < (config.blankLinesAfter); i++) {
 		endSpace += '\n';
 	}
-	return `${langConfig.begin}\n${merged}\n${langConfig.end}${endSpace}`;
+	return `${beforeText}${langConfig.begin}\n${merged}\n${langConfig.end}\n${endSpace}${afterText}`;
+}
+
+function arrayToString(source: Array<string>): string {
+	let txt: string = '';
+	if (source && source.length > 0) {
+		for (let i = 0; i < source.length; i++) {
+			txt += source[i] + '\n';
+		}
+	}
+	return txt;
 }
 
 /**

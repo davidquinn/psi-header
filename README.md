@@ -38,6 +38,7 @@ Refer to [Extension Settings](#extension-settings) for configuration details.
 * Separates language specific elements (e.g. comment block begin and end) from the template body to minimise the number of templates you might need to manage.
 * Configuration option to force the header to the top of the document - overridable per language.
 * Configuration option to add additional blank lines after the header - overridable per language.
+* Configurable options to add text before or after the header (e.g. pre-processor commands).
 * Provides a default template body for all languages out of the box.
 * Provides language-specific syntax settings (e.g. comment block syntax) out of the box.
 * Configure your own custom language syntax globally and/or per language.
@@ -100,6 +101,8 @@ Settings can be added as User and/or Workspace settings - VSCode handles the maj
   * `end`:  Optional. Determines the comment block closing text (e.g. " */").  This will be inserted after the last line of the template.
   * `forceToTop`: Optional. Same as *_psi-header.config.forceToTop_* but just for this language.  If set, this overrides the global setting.
   * `blankLinesAfter`: Optional. Same as *_psi-header.config.blankLinesAfter_* but just for this language.  If set, this overrides the global setting.
+  * `beforeHeader`: Optional.  Allows multiple lines of text to be inserted before the beginning of the header comment block (e.g. pre-processor commands).  NOTE: The extenion will not add comment prefixes to this text, so you will need to include them in your text if necessary.
+  * `afterHeader`: Optional.  Allows multiple lines of text to be inserted after the end of the header comment block (e.g. pre-processor commands).  This will appear after any configured `blankLinesAfter`.  NOTE: The extenion will not add comment prefixes to this text, so you will need to include them in your text if necessary.
 * `psi-header.templates`: An array of template definitions.  Each definition must include either *_mapTo_* or *_template_*.  Includes:
   * `language`: Mandatory. Either the VSCode language ID or '*' for the global template.
   * `mapTo`: Optional.  If provided, this language will use the specified language's template (and will ignore the following *_template_* value).  The value is a VSCode language ID.  Ignored if *_language = "*"_*.
@@ -227,6 +230,17 @@ In the following example:
 			"prefix": "--",
 			"end": "--]]",
 			"blankLinesAfter": 0
+		},
+		{
+			"language": "python",
+			"begin": "###",
+			"prefix": "# ",
+			"end": "###",
+			"blankLinesAfter": 0,
+			"beforeHeader": [
+				"#!/usr/bin/env python3",
+				"# -*- coding:utf-8 -*-"
+			]
 		},
 		{
 			"language": "javascript",

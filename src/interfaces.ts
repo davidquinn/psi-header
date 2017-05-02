@@ -77,6 +77,8 @@ export interface ILangConfig {
     end?: string;
     forceToTop?: boolean;
     blankLinesAfter?: number;
+	beforeHeader?: Array<string>;
+	afterHeader?: Array<string>;
 }
 
 /**
