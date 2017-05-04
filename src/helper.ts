@@ -351,13 +351,7 @@ export function merge(template: Array<string>, langConfig: ILangConfig, variable
 }
 
 function arrayToString(source: Array<string>): string {
-	let txt: string = '';
-	if (source && source.length > 0) {
-		for (let i = 0; i < source.length; i++) {
-			txt += source[i] + '\n';
-		}
-	}
-	return txt;
+	return source && source.length > 0 ? source.join('\n') + '\n' : '';
 }
 
 /**
