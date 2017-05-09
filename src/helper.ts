@@ -225,6 +225,7 @@ export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEdito
 	variables.push([k_.VAR_TIME, now.toLocaleTimeString()]);
 	variables.push([k_.VAR_YEAR, now.getFullYear().toString()]);
 	variables.push([k_.VAR_FILE_PATH, editor.document.fileName]);
+	variables.push([k_.VAR_FILE_RELATIVE_PATH, getRelativeFilePath(editor.document.fileName)]);
 	variables.push([k_.VAR_PROJECT_PATH, workspace.rootPath]);
 	variables.push([k_.VAR_COMPANY, 'Your Company']);
 	variables.push([k_.VAR_AUTHOR, 'You']);
@@ -264,22 +265,43 @@ export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEdito
 
 function getProjectName(): string {
 	try {
-		const fname: string = path.join(workspace.rootPath, 'package.json');
+		const rootPath: string = workspace.rootPath;
+		const fname: string = path.join(rootPath, 'package.json');
 		if (fs.existsSync(fname)) {
 			const prj = JSON.parse(fs.readFileSync(fname).toString());
 			if (prj) {
 				return prj.displayName ? prj.displayName : prj.name;
 			}
 		}
-		return null;
+		return path.basename(rootPath);
 	} catch (error) {
 		return null;
 	}
 }
 
+/**
+ * Get the filename from the file full path
+ * 
+ * @param {string} fullpath 
+ * @returns {string} 
+ */
 function extractFileName(fullpath: string): string {
 	try {
 		return path.basename(fullpath);
+	} catch (error) {
+		return null;
+	}
+}
+
+/**
+ * Gets the relative file path by removing the workspace root path.
+ * 
+ * @param {string} fullpath 
+ * @returns {string} 
+ */
+function getRelativeFilePath(fullpath: string): string {
+	try {
+		return fullpath.substring(workspace.rootPath.length);
 	} catch (error) {
 		return null;
 	}

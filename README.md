@@ -50,9 +50,10 @@ Refer to [Extension Settings](#extension-settings) for configuration details.
   * `time`: inserts the current time using the current locale.
   * `year`: inserts the current year.
   * `filepath`: inserts the fully-qualified name of the file.
+  * `filerelativepath`: inserts the file name including the relative path within the project.
   * `filename`: just the file name without the path details.
   * `projectpath`: inserts the fully-qualified path to the root directory of the project.
-  * `projectname`: Attempts to read package.json for either a displayName or name property.
+  * `projectname`: Attempts to read package.json for either a displayName or name property.  If there is no package.json file _and_ the file has been saved to disk, it will return the project path's base name.
   * `company`: the name of your company.  In this release it defaults to "Your Company".
   * `author`: the name of the file author.  In this release it defaults to "You".
   * `authoremail`: the email address of the file author.  In this release it defaults to "you@you.you".

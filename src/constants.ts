@@ -48,6 +48,7 @@ export const VAR_DATE: string = 'date';
 export const VAR_TIME: string = 'time';
 export const VAR_YEAR: string = 'year';
 export const VAR_FILE_PATH: string = 'filepath';
+export const VAR_FILE_RELATIVE_PATH: string = 'filerelativepath';
 export const VAR_FILE_NAME: string = 'filename';
 export const VAR_PROJECT_PATH: string = 'projectpath';
 export const VAR_PROJECT_NAME: string = 'projectname';

@@ -3,6 +3,10 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 0.9.2 (09 May 2017)
+* __CHANGE__: The `projectname` system variable will now return the base name for the project folder (rather than null) if the project doesn't have a package.json file.  Note that this only works if the file has been saved to disk before generating the header.
+* __NEW__: Added a new system variable `filerelativepath` which returns the path and file name relative to the base project.
+
 ## 0.9.1 (02 May 2017)
 * __FIX__: Removed erroneous character from default Python and HTML line prefix setting.
 * __NEW__: Optional config property `psi-header.lang-config.beforeHeader` setting allows you to insert multiple lines of text before the beginning of the header comment block.
