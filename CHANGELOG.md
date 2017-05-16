@@ -3,6 +3,10 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 0.9.3 (16 May 2017)
+* __CHANGE__: The `author` system variable will try to determine the username of the logged in user.  If not found, it will fall back to the current behaviour of 'You'.  Either way, this can still be overridden by providing your own value via psi-header.variables which takes precedence.
+* __INFO__: Added username npm package to support author name.
+
 ## 0.9.2 (09 May 2017)
 * __CHANGE__: The `projectname` system variable will now return the base name for the project folder (rather than null) if the project doesn't have a package.json file.  Note that this only works if the file has been saved to disk before generating the header.
 * __NEW__: Added a new system variable `filerelativepath` which returns the path and file name relative to the base project.

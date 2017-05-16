@@ -55,7 +55,7 @@ Refer to [Extension Settings](#extension-settings) for configuration details.
   * `projectpath`: inserts the fully-qualified path to the root directory of the project.
   * `projectname`: Attempts to read package.json for either a displayName or name property.  If there is no package.json file _and_ the file has been saved to disk, it will return the project path's base name.
   * `company`: the name of your company.  In this release it defaults to "Your Company".
-  * `author`: the name of the file author.  In this release it defaults to "You".
+  * `author`: the name of the file author.  Will attempt to get the user name of the current user, otherwise it defaults to "You".
   * `authoremail`: the email address of the file author.  In this release it defaults to "you@you.you".
   * `licensetext`: the full text of the license. This is determined automatically.
   * `copyrightholder`: used in some licenses. If not provided it defaults to the same value as `company`.
@@ -338,7 +338,8 @@ To report bugs, issues, suggestions: email `info@psioniq.uk`
 
 ## Credits
 
-This extension uses the following npm packages:
+This extension uses the following npm packages...thank you :):
 * [`spdx-license-list`](https://github.com/sindresorhus/spdx-license-list) to host the licenses.
 * [`wordwrap`](https://github.com/substack/node-wordwrap) to word wrap the licenses.
 * [`momentJs`](http://momentjs.com) for date parameter values.
+* [`username`](https://github.com/sindresorhus/username) to get the default author name.

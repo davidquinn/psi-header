@@ -36,6 +36,7 @@ import {ITemplate, ITemplateList, IConfig, ILangConfig, ILangConfigList, IVariab
 import * as fs from 'fs';
 import * as path from 'path';
 import * as moment from 'moment';
+import * as username from 'username';
 
 /**
  * Retrieve the current configuration for this extension from the workspace settings.
@@ -228,7 +229,7 @@ export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEdito
 	variables.push([k_.VAR_FILE_RELATIVE_PATH, getRelativeFilePath(editor.document.fileName)]);
 	variables.push([k_.VAR_PROJECT_PATH, workspace.rootPath]);
 	variables.push([k_.VAR_COMPANY, 'Your Company']);
-	variables.push([k_.VAR_AUTHOR, 'You']);
+	variables.push([k_.VAR_AUTHOR, getAuthorName()]);
 	variables.push([k_.VAR_AUTHOR_EMAIL, 'you@you.you']);
 	variables.push([k_.VAR_PROJECT_NAME, getProjectName()]);
 	variables.push([k_.VAR_FILE_NAME, extractFileName(editor.document.fileName)]);
@@ -263,6 +264,11 @@ export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEdito
 	return variables;
 }
 
+/**
+ * Get the name of the project - either from a package.json or the last part of the root project path.
+ * 
+ * @returns {string} 
+ */
 function getProjectName(): string {
 	try {
 		const rootPath: string = workspace.rootPath;
@@ -277,6 +283,21 @@ function getProjectName(): string {
 	} catch (error) {
 		return null;
 	}
+}
+
+/**
+ * Tries to determine the name of the current user, or if not available returns 'You'.
+ * 
+ * @returns {string} 
+ */
+function getAuthorName(): string {
+	let name: string;
+	try {
+		name = username.sync();
+	} catch (error) {
+		
+	}
+	return name ? name : 'You';
 }
 
 /**
@@ -346,7 +367,7 @@ function addLicenseVariables(wsConfig: WorkspaceConfiguration, variables: IVaria
 }
 
 /**
- * Performs the merge of the template, language configuration and variables and outputs the processed string.
+ *  Outputs the processed string by merging the template, language configuration, beforeText, afterText and variables.
  * 
  * @param {Array<string>} template
  * @param {ILangConfig} langConfig
@@ -372,6 +393,12 @@ export function merge(template: Array<string>, langConfig: ILangConfig, variable
 	return `${beforeText}${langConfig.begin}\n${merged}\n${langConfig.end}\n${endSpace}${afterText}`;
 }
 
+/**
+ * Turns a string array into an EOL delimited string.
+ * 
+ * @param {Array<string>} source 
+ * @returns {string} 
+ */
 function arrayToString(source: Array<string>): string {
 	return source && source.length > 0 ? source.join('\n') + '\n' : '';
 }
