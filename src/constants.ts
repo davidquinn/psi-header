@@ -65,6 +65,7 @@ export const VAR_SPDX_ID: string = 'spdxid';
  * System functions
  */
 export const FUNC_DATE_FMT: string = 'dateformat';
+export const FUNC_FILE_CREATED: string = 'filecreated';
 
 
 /**
@@ -89,7 +90,7 @@ export const DEFAULT: string = '*';
 export const DEFAULT_TEMPLATE: Array<string> = [
     `Filename: ${VAR_PREFIX}${VAR_FILE_PATH}${VAR_SUFFIX}`,
     `Path: ${VAR_PREFIX}${VAR_PROJECT_PATH}${VAR_SUFFIX}`,
-    `Created Date: ${VAR_PREFIX}${VAR_DATE}${VAR_SUFFIX}`,
+    `Created Date: ${VAR_PREFIX}${FUNC_FILE_CREATED}('dddd, MMMM Do YYYY, h:mm:ss a')${VAR_SUFFIX}`,
     `Author: ${VAR_PREFIX}${VAR_AUTHOR}${VAR_SUFFIX}`,
     "",
     `Copyright (c) ${VAR_PREFIX}${VAR_YEAR}${VAR_SUFFIX} ${VAR_PREFIX}${VAR_COPYRIGHT_HOLDER}${VAR_SUFFIX}`

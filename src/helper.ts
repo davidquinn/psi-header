@@ -30,7 +30,7 @@
  * SOFTWARE.
  */
 
-import {workspace, TextEditor, WorkspaceConfiguration} from 'vscode';
+import {workspace, window, TextEditor, WorkspaceConfiguration} from 'vscode';
 import * as k_ from './constants';
 import {ITemplate, ITemplateList, IConfig, ILangConfig, ILangConfigList, IVariable, IVariableList, IPlaceholderFunction} from './interfaces';
 import * as fs from 'fs';
@@ -221,6 +221,7 @@ function mapProperty(source: Object, target: Object, key: string): void {
 export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEditor, config: IConfig, langConfig: ILangConfig): IVariableList {
 	let variables: IVariableList = [];
 	const now: Date = new Date();
+
 	// system variables
 	variables.push([k_.VAR_DATE, now.toDateString()]);
 	variables.push([k_.VAR_TIME, now.toLocaleTimeString()]);
@@ -329,6 +330,28 @@ function getRelativeFilePath(fullpath: string): string {
 }
 
 /**
+ * Return the file creation date (birthtime)
+ * 
+ * @param filename The fully-qualified filename
+ */
+function getFileCreationDate(): Date {
+	try {
+		const editor: TextEditor = window.activeTextEditor;
+		const filename: string = editor.document.fileName;
+
+		if (fs.existsSync(filename)) {
+			const stat: fs.Stats = fs.statSync(filename);
+			if (stat && stat.birthtime) {
+				return stat.birthtime;
+			}
+		}
+		return null;
+	} catch (error) {
+		return null;
+	}
+}
+
+/**
  * Add the license and related variables from the SPDX data.
  * 
  * @param {WorkspaceConfiguration} wsConfig
@@ -431,11 +454,24 @@ function replaceFunctions(source: string): string {
 	let replaced: string = source;	
 	let replacements: IVariableList = [];
 	// get date part placeholders
-	replacements = constructFunctionReferences(source, k_.FUNC_DATE_FMT, (args: string): string => {
+	constructFunctionReferences(replacements, source, k_.FUNC_DATE_FMT, (args: string): string => {
 		// remove the surrounding quotes
 		args = args.substring(1, args.length - 1);
 		return moment().format(args);
 	})
+
+	// get file creation date placeholders
+	constructFunctionReferences(replacements, source, k_.FUNC_FILE_CREATED, (args: string): string => {
+		// remove the surrounding quotes
+		args = args.substring(1, args.length - 1);
+		const fcreated: Date = getFileCreationDate() || new Date();
+//		const fcreatedStr: string = fcreated.toDateString();
+		return moment(fcreated).format(args);
+	})
+	
+
+
+
 
 	// perform placeholder substitution
 	for (let v of replacements) {
@@ -453,8 +489,7 @@ function replaceFunctions(source: string): string {
  * @param {IPlaceholderFunction} cb the method to run to retrieve the value based on the function arguments
  * @returns {IVariableList} 
  */
-function constructFunctionReferences(source: string, functionName: string, cb: IPlaceholderFunction): IVariableList {
-	let references: IVariableList = [];
+function constructFunctionReferences(references: IVariableList, source: string, functionName: string, cb: IPlaceholderFunction) {
 	const funcNeedle: string = `${k_.VAR_PREFIX}${functionName}(`;
 	let indices: Array<number> = getIndicesOf(funcNeedle, source, false);
 	for (let i = 0; i < indices.length; i++) {
@@ -467,7 +502,6 @@ function constructFunctionReferences(source: string, functionName: string, cb: I
 			references.push([key, value]);
 		}
 	}
-	return references;
 }
 
 /**

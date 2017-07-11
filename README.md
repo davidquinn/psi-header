@@ -33,7 +33,7 @@ To run the extension, either:
 
 Refer to [Extension Settings](#extension-settings) for configuration details.
 
-* Adds a genric or language-specific header at the current cursor location.
+* Adds a generic or language-specific header at the current cursor location.
 * Can optionally record changes in the header each time the file is saved (see [Changes Tracking](#changes-tracking)).
 * Separates language specific elements (e.g. comment block begin and end) from the template body to minimise the number of templates you might need to manage.
 * Configuration option to force the header to the top of the document - overridable per language.
@@ -63,7 +63,8 @@ Refer to [Extension Settings](#extension-settings) for configuration details.
   * `licenseurl`: The url for the license. If using not using a license, this is determined automatically.
   * `spdxid`: The SPDX License ID for the license. If not using a custom license, this is determined automatically.
 * Provides the following _case-sensitive_ `system functions` for configurable placeholder value substitution:
-  * `dateformat(args)`: inserts a date or date part using format strings (see [dateformat System Function](#dateformat-system-function) for more details).
+  * `dateformat(args)`: inserts a date or date part using format strings.
+  * `filecreated(args)`: inserts the file created date and time using format strings.
 * Allows the overriding of system variable values with static global values within the configuration.
 * Create an unlimited number of custom static variables for use throughout your custom templates.
 * Can be run via a the key shortcut `ctrl+alt+H` then `ctrl+alt+H`.
@@ -124,19 +125,25 @@ It assumes that you are pointing it to a language that has a valid configuration
 
 Also, `mapTo` is ignored if the language value is set to "*".
 
-## dateformat System Function
+## dateformat and filecreated System Functions
 
-This function requires an argument that defines the format string.  In other respects it works like the other system variables.
+These functions require an argument that defines the format string.  In other respects they work like the other system variables.
 
 The following example would output a date like `2017-04-14`
 ```javascript
     <<dateformat('YYYY-MM-DD')>>
+or
+    <<filecreated('YYYY-MM-DD')>>
 ```
 
 And the following would generate something like `Friday, April 14th 2017, 8:50:19 am`
 ```javascript
 	<<dateformat('dddd, MMMM Do YYYY, h:mm:ss a')>>
+or
+	<<filecreated('dddd, MMMM Do YYYY, h:mm:ss a')>>
 ```
+
+Note that `filecreated` will return the current date and time if it cannot determine the actual file date or time.  This could be either because the file has not yet been saved to disk, or the operating system failed to return the creation date and time.
 
 __Important Notes:__
 * System functions are case-sensitive because the format string arguments require this;
@@ -262,7 +269,7 @@ In the following example:
 			"template": [
 				"File: <<filepath>>",
 				"Project: <<projectpath>>",
-				"Created Date: <<date>>",
+				"Created Date: <<filecreated('dddd, MMMM Do YYYY, h:mm:ss a')>>",
 				"Author: <<author>>",
 				"-----",
 				"Last Modified: ",
@@ -278,7 +285,7 @@ In the following example:
 			"template": [
 				"File: <<filepath>>",
 				"Project: <<projectpath>>",
-				"Created Date: <<date>>",
+				"Created Date: <<filecreated('dddd, MMMM Do YYYY, h:mm:ss a')>>",
 				"Author: <<author>>",
 				"-----",
 				"Last Modified: ",
@@ -310,7 +317,7 @@ The default (built in) template is:
 [
     "Filename: <<filepath>>",
     "Path: <<projectpath>>",
-    "Created Date: <<date>>",
+	"Created Date: <<filecreated('dddd, MMMM Do YYYY, h:mm:ss a')>>",
     "Author: <<author>>",
     "",
     "Copyright (c) <<year>> <<company>>"
@@ -322,7 +329,7 @@ The default (built in) template is:
 /**
  * Filename: \Users\me\Development\psioniq\myProject\src\myPrecious.js
  * Path: \Users\me\Development\psioniq\myProject
- * Created Date: Saturday December 31 2016
+ * Created Date: Saturday, December 31st 2016, 10:27:35 am
  * Author: David Quinn
  *
  * Copyright (c) 2016 psioniq Global Enterprises, Inc

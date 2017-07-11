@@ -3,6 +3,10 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 0.9.4 (11 July 2017)
+* __NEW__: Implemented `filecreated(formatString)` system function which returns the file creation date formatted via the passed in formatString.  Refer to the __dateformat and filecreated System Functions__ section in the README file for details.
+* __CHANGE__: Modified the default (inbuilt) template to use the new `filecreated` system function.
+
 ## 0.9.3 (16 May 2017)
 * __CHANGE__: The `author` system variable will try to determine the username of the logged in user.  If not found, it will fall back to the current behaviour of 'You'.  Either way, this can still be overridden by providing your own value via psi-header.variables which takes precedence.
 * __INFO__: Added username npm package to support author name.
