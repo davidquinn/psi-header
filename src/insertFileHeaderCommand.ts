@@ -1,9 +1,13 @@
 /**
- * File: /Users/David/Development/psioniq/vscode-extensions/psi-header/src/insertFileHeaderCommand.ts
- * Project: /Users/David/Development/psioniq/vscode-extensions/psi-header
- * Created Date: Sun Jan 01 2017
- * Author: David Quinn (david@eternia.net)
- * 
+ * File: insertFileHeaderCommand.ts
+ * Relative Path: /src/insertFileHeaderCommand.ts
+ * Project: psioniq File Header
+ * File Created: Friday, 30th December 2016 5:33:30 pm
+ * Author: David Quinn (info@psioniq.uk)
+ * -----
+ * Last Modified: Wednesday, July 12th 2017, 7:53:29 am
+ * Modified By: David Quinn
+ * -----
  * License: MIT License (SPDX = 'MIT')
  * License URL: http://www.opensource.org/licenses/MIT
  * 
@@ -29,6 +33,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
+
 
 import {workspace, window, TextEditor, WorkspaceConfiguration, Selection, Position} from 'vscode';
 import {BASE_SETTINGS, ILangConfig, IConfig, IVariableList, getLanguageConfig, getTemplate, getConfig, getVariables, merge} from './helper';

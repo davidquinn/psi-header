@@ -1,9 +1,13 @@
 /**
- * File: /Users/David/Development/psioniq/vscode-extensions/psi-header/src/constants.ts
- * Project: /Users/David/Development/psioniq/vscode-extensions/psi-header
- * Created Date: Sun Jan 01 2017
- * Author: David Quinn (david@eternia.net)
- * 
+ * File: constants.ts
+ * Relative Path: /src/constants.ts
+ * Project: psioniq File Header
+ * File Created: Wednesday, 12th April 2017 9:13:30 pm
+ * Author: David Quinn (info@psioniq.uk)
+ * -----
+ * Last Modified: Wednesday, July 12th 2017, 7:51:56 am
+ * Modified By: David Quinn
+ * -----
  * License: MIT License (SPDX = 'MIT')
  * License URL: http://www.opensource.org/licenses/MIT
  * 
@@ -29,6 +33,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
+
 
 /**
  * Settings Section names

@@ -1,9 +1,13 @@
 /**
- * File: /Users/David/Development/psioniq/vscode-extensions/psi-header/src/interfaces.ts
- * Project: /Users/David/Development/psioniq/vscode-extensions/psi-header
- * Created Date: Sun Jan 01 2017
- * Author: David Quinn (david@eternia.net)
- * 
+ * File: interfaces.ts
+ * Relative Path: /src/interfaces.ts
+ * Project: psioniq File Header
+ * File Created: Sunday, 1st January 2017 10:16:39 am
+ * Author: David Quinn (info@psioniq.uk)
+ * -----
+ * Last Modified: Wednesday, July 12th 2017, 7:53:49 am
+ * Modified By: David Quinn
+ * -----
  * License: MIT License (SPDX = 'MIT')
  * License URL: http://www.opensource.org/licenses/MIT
  * 
@@ -29,6 +33,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
+
 
 import {Range} from 'vscode';
 

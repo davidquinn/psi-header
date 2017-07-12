@@ -1,11 +1,12 @@
 /**
- * File: lastModifiedController.ts
+ * File: changesTrackingController.ts
+ * Relative Path: /src/changesTrackingController.ts
  * Project: psioniq File Header
- * Created Date: Fri Apr 21 2017
- * Author: David Quinn (david@eternia.net)
+ * File Created: Friday, 21st April 2017 9:14:32 pm
+ * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: 
- * Modified By: 
+ * Last Modified: Wednesday, July 12th 2017, 7:52:41 am
+ * Modified By: David Quinn
  * -----
  * License: MIT License (SPDX = 'MIT')
  * License URL: http://www.opensource.org/licenses/MIT
@@ -32,6 +33,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
+
 
 import {
 	Disposable, 

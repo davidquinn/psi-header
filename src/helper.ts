@@ -1,9 +1,13 @@
 /**
- * File: /Users/David/Development/psioniq/vscode-extensions/psi-header/src/helper.ts
- * Project: /Users/David/Development/psioniq/vscode-extensions/psi-header
- * Created Date: Sun Jan 01 2017
- * Author: David Quinn (david@eternia.net)
- * 
+ * File: helper.ts
+ * Relative Path: /src/helper.ts
+ * Project: psioniq File Header
+ * File Created: Sunday, 1st January 2017 9:32:01 am
+ * Author: David Quinn (info@psioniq.uk)
+ * -----
+ * Last Modified: Wednesday, July 12th 2017, 8:07:14 am
+ * Modified By: David Quinn
+ * -----
  * License: MIT License (SPDX = 'MIT')
  * License URL: http://www.opensource.org/licenses/MIT
  * 
@@ -29,6 +33,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
+
 
 import {workspace, window, TextEditor, WorkspaceConfiguration} from 'vscode';
 import * as k_ from './constants';
@@ -221,6 +227,7 @@ function mapProperty(source: Object, target: Object, key: string): void {
 export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEditor, config: IConfig, langConfig: ILangConfig): IVariableList {
 	let variables: IVariableList = [];
 	const now: Date = new Date();
+	const fcreated: Date = getFileCreationDate() || new Date();
 
 	// system variables
 	variables.push([k_.VAR_DATE, now.toDateString()]);
@@ -234,6 +241,8 @@ export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEdito
 	variables.push([k_.VAR_AUTHOR_EMAIL, 'you@you.you']);
 	variables.push([k_.VAR_PROJECT_NAME, getProjectName()]);
 	variables.push([k_.VAR_FILE_NAME, extractFileName(editor.document.fileName)]);
+	// using filecreated function without arguments treats it like a variable.
+	variables.push([k_.FUNC_FILE_CREATED, fcreated.toDateString()]);
 
 	// custom variables
 	let vl: IVariableList = wsConfig && wsConfig.has(k_.VARIABLE_SETTINGS) ? wsConfig.get<IVariableList>(k_.VARIABLE_SETTINGS) : null;
@@ -330,9 +339,8 @@ function getRelativeFilePath(fullpath: string): string {
 }
 
 /**
- * Return the file creation date (birthtime)
+ * Return the current editor file's creation date (birthtime)
  * 
- * @param filename The fully-qualified filename
  */
 function getFileCreationDate(): Date {
 	try {
@@ -465,14 +473,13 @@ function replaceFunctions(source: string): string {
 		// remove the surrounding quotes
 		args = args.substring(1, args.length - 1);
 		const fcreated: Date = getFileCreationDate() || new Date();
-//		const fcreatedStr: string = fcreated.toDateString();
-		return moment(fcreated).format(args);
+		if (args) {
+			return moment(fcreated).format(args);
+		} else {
+			return fcreated.toDateString();
+		}
 	})
 	
-
-
-
-
 	// perform placeholder substitution
 	for (let v of replacements) {
 		let regex = new RegExp(escapeRegExp(v[0]), 'g');
