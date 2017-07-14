@@ -3,10 +3,14 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 0.9.6 (14 July 2017)
+* __MAINT__: Bump dependency for username package.
+* __MAINT__: Some comments cleanup and tagline change for marketplace.
+
 ## 0.9.5 (12 July 2017)
 * __NEW__: You can pass an empty argument list to `filecreated()` in order to use the current locale date string.
 * __NEW__: `filecreated` can be used like a system variable (without arguments or brackets).  In this case, it will return the date using the current locale date format.
-* __CLEAN__: A few bits of cleanup: comments, regenerated all file headers using the amazing psioniq File Header extension.
+* __MAINT__: A few bits of cleanup: comments, regenerated all file headers using the amazing psioniq File Header extension.
 * Thanks to Luís Teixeira for requesting the `filecreated` option.
 
 ## 0.9.4 (11 July 2017)
