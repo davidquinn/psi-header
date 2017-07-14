@@ -1,9 +1,6 @@
 # psioniq File Header
 
-This VSCode Extension will insert a header into the current document - either at the start of the document
-or at the current cursor position. The header can be configured globally and/or per language.
-However, the configuration separates the comment syntax from the template body so it is likely that
-a single template will be able to cover most languages.
+This VSCode Extension will insert a header into the current document - either at the start of the document or at the current cursor position. The header can be configured globally and/or per language.  However, the configuration separates the comment syntax from the template body so it is likely that a single template will be able to cover most languages.
 
 It can also log the last modified (user and date) via the change tracking feature which will update the header whenever the file is saved.
 
@@ -76,8 +73,7 @@ No requirements or dependencies.
 
 ## Extension Settings
 
-It is quite possible to use this extension without making any changes to your VSCode's settings (although you probably want to set up a couple of variable values like author and company at least). 
-Extensive configuration options are available should you wish to get your hands dirty.
+It is quite possible to use this extension without making any changes to your VSCode's setting (although you probably want to set up a couple of variable values like author and company at least).  Extensive configuration options are available should you wish to get your hands dirty.
 
 Settings can be added as User and/or Workspace settings - VSCode handles the majik of merging them together.  Workspace settings take precedence over User settings.
 
@@ -120,8 +116,7 @@ When generating a header, the extension will do the following for the language-s
 
 ### A Note About 'mapTo'
 
-The `mapTo` option provided under `psi-header.lang-config` and `psi-header.templates` will not endlessly iterate through a chain of mappings to find the ultimate target.
-It assumes that you are pointing it to a language that has a valid configuration.
+The `mapTo` option provided under `psi-header.lang-config` and `psi-header.templates` will not endlessly iterate through a chain of mappings to find the ultimate target.  It assumes that you are pointing it to a language that has a valid configuration.
 
 Also, `mapTo` is ignored if the language value is set to "*".
 
@@ -169,8 +164,7 @@ These functions use Moment.js and pass the function argument as a format string 
 
 ## License Information
 
-The `psi-header.config.license` setting expects either a valid [SPDX license ID](https://spdx.org/licenses/) or `"Custom"` if you are providing your own license text.
-When set to Custom, you need to provide the license text via the `psi-header.license-text` setting.
+The `psi-header.config.license` setting expects either a valid [SPDX license ID](https://spdx.org/licenses/) or `"Custom"` if you are providing your own license text.  When set to Custom, you need to provide the license text via the `psi-header.license-text` setting.
 
 ## Changes Tracking
 
@@ -325,8 +319,7 @@ In the following example:
 
 This should be mostly obvious.  The configuration of this extension separates out the syntactical language elements (comment Begin, comment End, etc) from the body of the template so that hopefully you will only need to create a single template.
 
-For the variable placeholders, the variable names should be surrounded with `<<` and `>>`. Do not add the prefix and suffix to your custom variable declarations!
-So in the template, the system variable `filepath` is written `<<filepath>>`. Easy, huh!
+For the variable placeholders, the variable names should be surrounded with `<<` and `>>`. Do not add the prefix and suffix to your custom variable declarations!  So in the template, the system variable `filepath` is written `<<filepath>>`. Easy, huh!
 
 The default (built in) template is:
 ```javascript

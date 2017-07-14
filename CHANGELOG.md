@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 0.9.7 (14 July 2017)
+* __FIX__: The changes tracking now correctly recognises when workspace or user settings were modified in-session.  Thanks (again) to Luís Teixeira for raising this.  You no longer need to restart VSCode after making changes to the changes tracking settings.
+
 ## 0.9.6 (14 July 2017)
 * __MAINT__: Bump dependency for username package.
 * __MAINT__: Some comments cleanup and tagline change for marketplace.

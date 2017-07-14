@@ -5,7 +5,7 @@
  * File Created: Friday, 21st April 2017 9:14:32 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Wednesday, July 12th 2017, 7:52:41 am
+ * Last Modified: Friday, July 14th 2017, 7:03:11 pm
  * Modified By: David Quinn
  * -----
  * License: MIT License (SPDX = 'MIT')
@@ -59,8 +59,7 @@ export class ChangesTrackingController {
 	private _author: string = 'You';
 	private _selections: Selection[];
 
-	constructor(config: WorkspaceConfiguration) {
-		this._wsConfig = config;
+	constructor() {
 		this._getConfig();
 		const subscriptions: Disposable[] = [];
 		workspace.onWillSaveTextDocument(this._onWillSave, this, subscriptions);
@@ -134,6 +133,8 @@ export class ChangesTrackingController {
 	}
 
 	private _getConfig(): void {
+		this._wsConfig = workspace.getConfiguration(k_.BASE_SETTINGS);
+		
 		// get tracking config
 		let def: ITrackingConfig = {
 			isActive: false, 

@@ -5,7 +5,7 @@
  * File Created: Friday, 30th December 2016 5:20:27 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Wednesday, July 12th 2017, 7:53:10 am
+ * Last Modified: Friday, July 14th 2017, 7:02:11 pm
  * Modified By: David Quinn
  * -----
  * License: MIT License (SPDX = 'MIT')
@@ -51,8 +51,7 @@ export function activate(context: ExtensionContext) {
     context.subscriptions.push(disposable);
 
 	// the changes tracking subscription
-	const wsConfig: WorkspaceConfiguration = workspace.getConfiguration(k_.BASE_SETTINGS);
-	const controller: ChangesTrackingController = new ChangesTrackingController(wsConfig);
+	const controller: ChangesTrackingController = new ChangesTrackingController();
 	context.subscriptions.push(controller);
 }
 
