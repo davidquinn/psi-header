@@ -5,7 +5,7 @@
  * File Created: Wednesday, 12th April 2017 9:13:30 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Wednesday, July 12th 2017, 7:51:56 am
+ * Last Modified: Sunday, July 16th 2017, 1:10:41 pm
  * Modified By: David Quinn
  * -----
  * License: MIT License (SPDX = 'MIT')
@@ -46,6 +46,8 @@ export const LANG_CONFIG_SETTINGS: string = 'lang-config';
 export const TEMPLATE_SETTINGS: string = 'templates';
 export const LICENSE_SETTINGS: string = 'license-text';
 export const TRACKING_SETTINGS: string = 'changes-tracking';
+
+export const FILE_HEADER_COMMAND = BASE_SETTINGS + '.insertFileHeader';
 
 /**
  * System Variable names
@@ -101,3 +103,10 @@ export const DEFAULT_TEMPLATE: Array<string> = [
     "",
     `Copyright (c) ${VAR_PREFIX}${VAR_YEAR}${VAR_SUFFIX} ${VAR_PREFIX}${VAR_COPYRIGHT_HOLDER}${VAR_SUFFIX}`
 ];
+
+/**
+ * Valid auto header values
+ */
+export const AUTO_HEADER_OFF = 'off';
+export const AUTO_HEADER_MANUAL_SAVE = 'manualSave';
+export const AUTO_HEADER_AUTO_SAVE = 'autoSave';

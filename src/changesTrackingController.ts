@@ -5,7 +5,7 @@
  * File Created: Friday, 21st April 2017 9:14:32 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Friday, July 14th 2017, 7:03:11 pm
+ * Last Modified: Sunday, July 16th 2017, 6:28:41 pm
  * Modified By: David Quinn
  * -----
  * License: MIT License (SPDX = 'MIT')
@@ -45,13 +45,22 @@ import {
 	window, 
 	TextDocument,
 	TextEdit,
-	Range
+	TextEditor,
+	TextLine,
+	Range,
+	commands
 } from 'vscode';
 import {ITrackingConfig, IVariableList, IVariable, ILangConfig, IRangeReplacer, IRangeReplacerList} from './interfaces';
 import * as k_ from './constants';
 import * as moment from 'moment';
-import {getLanguageConfig} from './helper';
+import {getLanguageConfig, getFileCreationDate} from './helper';
 
+/**
+ * Configuration and setup for changes tracking.
+ * 
+ * @export
+ * @class ChangesTrackingController
+ */
 export class ChangesTrackingController {
 	private _disposable: Disposable;
 	private _wsConfig: WorkspaceConfiguration;
@@ -59,19 +68,37 @@ export class ChangesTrackingController {
 	private _author: string = 'You';
 	private _selections: Selection[];
 
+	/**
+	 * Creates an instance of ChangesTrackingController.
+	 * @memberof ChangesTrackingController
+	 */
 	constructor() {
 		this._getConfig();
 		const subscriptions: Disposable[] = [];
 		workspace.onWillSaveTextDocument(this._onWillSave, this, subscriptions);
 		workspace.onDidSaveTextDocument(this._onDidSave, this, subscriptions);
 		workspace.onDidChangeConfiguration(this._onConfigChanged, this, subscriptions);
+		window.onDidChangeActiveTextEditor(this._onDidChangeActiveTextEditor, this, subscriptions);
 		this._disposable = Disposable.from(...subscriptions);
 	}
 
+	/**
+	 * Dispose of the ChangesTrackingController.
+	 * 
+	 * @memberof ChangesTrackingController
+	 */
 	dispose(): void {
 		this._disposable.dispose();
 	}
 
+	/**
+	 * Delegate method triggered whenever a document will be saved.
+	 * Used to update modified date/user in header.
+	 * 
+	 * @private
+	 * @param {TextDocumentWillSaveEvent} e 
+	 * @memberof ChangesTrackingController
+	 */
 	private _onWillSave(e: TextDocumentWillSaveEvent): void {
 		if (this._config.isActive) {
 			if (window.activeTextEditor) {
@@ -120,6 +147,13 @@ export class ChangesTrackingController {
 		}
 	}
 
+	/**
+	 * Delegate method called after document is saved.  
+	 * Cleans up the selections and ensures the active editor is reinstated.
+	 * 
+	 * @private
+	 * @memberof ChangesTrackingController
+	 */
 	private _onDidSave(): void {
 		if (this._selections) {
 			// reinstate the selection from before the save
@@ -128,10 +162,44 @@ export class ChangesTrackingController {
 		}
 	}
 
+	/**
+	 * Re-reads the configuration settings.
+	 * 
+	 * @private
+	 * @memberof ChangesTrackingController
+	 */
 	private _onConfigChanged() {
 		this._getConfig();
 	}
 
+	/**
+	 * Called whenever the active editor is changed.
+	 * This controls automatic adding of headers.
+	 * 
+	 * @private
+	 * @param {TextEditor} editor 
+	 * @memberof ChangesTrackingController
+	 */
+	private _onDidChangeActiveTextEditor(editor: TextEditor) {
+		if (editor && editor.document) {
+			const doc = editor.document;
+			if (this._wantAutoHeader() && doc.uri.scheme === 'file' && this._wantLanguage(doc.languageId) && this._docNeedsHeader(doc) && this._fileIsNew(doc.fileName)) {
+				const $this = this;
+				commands.executeCommand(k_.FILE_HEADER_COMMAND).then(() => {
+					if ($this._config.autoHeader === k_.AUTO_HEADER_AUTO_SAVE) {
+						doc.save();
+					}
+				})
+			}
+		}
+	}
+
+	/**
+	 * Reads the configuration and caches it in this object.
+	 * 
+	 * @private
+	 * @memberof ChangesTrackingController
+	 */
 	private _getConfig(): void {
 		this._wsConfig = workspace.getConfiguration(k_.BASE_SETTINGS);
 		
@@ -142,7 +210,8 @@ export class ChangesTrackingController {
 			modAuthor: 'Modified By: ', 
 			modDateFormat: 'date',
 			include: [],
-			exclude: []
+			exclude: [],
+			autoHeader: k_.AUTO_HEADER_OFF
 		};
 		let cfg: ITrackingConfig = this._wsConfig && this._wsConfig.has(k_.TRACKING_SETTINGS) ? this._wsConfig.get<ITrackingConfig>(k_.TRACKING_SETTINGS) : null;
 		if (cfg) {
@@ -152,6 +221,7 @@ export class ChangesTrackingController {
 			def.modDateFormat = cfg.modDateFormat ? cfg.modDateFormat : def.modDateFormat;
 			def.include = cfg.include ? cfg.include : def.include;
 			def.exclude = cfg.exclude ? cfg.exclude : def.exclude;
+			def.autoHeader = cfg.autoHeader ? cfg.autoHeader : k_.AUTO_HEADER_OFF;
 		}
 		this._config = def;
 		// get author name
@@ -162,7 +232,79 @@ export class ChangesTrackingController {
 		}
 	}
 
+	/**
+	 * Returns true if change tracking is active for the specified language.
+	 * 
+	 * @private
+	 * @param {string} langId 
+	 * @returns {boolean} 
+	 * @memberof ChangesTrackingController
+	 */
 	private _wantLanguage(langId: string): boolean {
 		return this._config && this._config.exclude.indexOf(langId) < 0 && (this._config.include.length === 0 || this._config.include.indexOf(langId) >= 0);
+	}
+
+	/**
+	 * Returns true if the file is new (created within the past 3 seconds).
+	 * 
+	 * @private
+	 * @param {any} filename 
+	 * @returns 
+	 * @memberof ChangesTrackingController
+	 */
+	private _fileIsNew(filename) {
+		const fcreated: Date = getFileCreationDate(filename);
+		return (fcreated && !moment(fcreated).isBefore(moment().subtract(3, 's')));
+	}
+
+	/**
+	 * Returns true if auto header creation is active.
+	 * 
+	 * @private
+	 * @returns 
+	 * @memberof ChangesTrackingController
+	 */
+	private _wantAutoHeader() {
+		return this._config && (this._config.autoHeader === k_.AUTO_HEADER_MANUAL_SAVE || this._config.autoHeader === k_.AUTO_HEADER_AUTO_SAVE);
+	}
+
+	/**
+	 * Returns the first line of the header template for the specified language.
+	 * 
+	 * @private
+	 * @param {any} langId 
+	 * @returns 
+	 * @memberof ChangesTrackingController
+	 */
+	private _langBegin(langId) {
+		let result: string = null;
+		const cfg: ILangConfig = getLanguageConfig(this._wsConfig, langId);
+		if (cfg) {
+			result = cfg.begin;
+		}
+		return result;
+	}
+
+	/**
+	 * Returns true if the file appears to need a header.
+	 * 
+	 * @private
+	 * @param {TextDocument} doc 
+	 * @returns 
+	 * @memberof ChangesTrackingController
+	 */
+	private _docNeedsHeader(doc: TextDocument) {
+		let result: boolean = doc.lineCount <= 1;
+		if (!result) {
+			const langBegin: string = this._langBegin(doc.languageId);
+			for (let i: number = 0; i < doc.lineCount; i++) {
+				const txt: string = doc.lineAt(i).text;
+				if (txt && txt.length > 0 && txt !== langBegin) {
+					result = true;
+					break;
+				}
+			}
+		}
+		return result;
 	}
 }

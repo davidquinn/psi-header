@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 0.9.8 (17 July 2017)
+* __NEW__: Headers can now be added automatically on file creation.  Refer to the *Auto Header* section of the readme file for details.
+
 ## 0.9.7 (14 July 2017)
 * __FIX__: The changes tracking now correctly recognises when workspace or user settings were modified in-session.  Thanks (again) to Luís Teixeira for raising this.  You no longer need to restart VSCode after making changes to the changes tracking settings.
 

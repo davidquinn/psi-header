@@ -1,6 +1,4 @@
-# psioniq File Header
-
-This VSCode Extension will insert a header into the current document - either at the start of the document or at the current cursor position. The header can be configured globally and/or per language.  However, the configuration separates the comment syntax from the template body so it is likely that a single template will be able to cover most languages.
+The `psioniq File Header` VSCode Extension will insert a header into the current document - either at the start of the document or at the current cursor position. The header can be configured globally and/or per language.  However, the configuration separates the comment syntax from the template body so it is likely that a single template will be able to cover most languages.
 
 It can also log the last modified (user and date) via the change tracking feature which will update the header whenever the file is saved.
 
@@ -26,12 +24,12 @@ To run the extension, either:
 * thump `F1` and type `Header Insert`; or
 * type the keyboard shortcut `ctrl-alt-H` then `ctrl-alt-H`.
 
-## Features
-
+# Features
 Refer to [Extension Settings](#extension-settings) for configuration details.
 
 * Adds a generic or language-specific header at the current cursor location.
 * Can optionally record changes in the header each time the file is saved (see [Changes Tracking](#changes-tracking)).
+* Can automatically add a header to new files.
 * Separates language specific elements (e.g. comment block begin and end) from the template body to minimise the number of templates you might need to manage.
 * Configuration option to force the header to the top of the document - overridable per language.
 * Configuration option to add additional blank lines after the header - overridable per language.
@@ -67,12 +65,10 @@ Refer to [Extension Settings](#extension-settings) for configuration details.
 * Can be run via a the key shortcut `ctrl+alt+H` then `ctrl+alt+H`.
 * Can automatically insert license text based on SPDX license IDs.
 
-## Dependencies
-
+# Dependencies
 No requirements or dependencies.
 
-## Extension Settings
-
+# Extension Settings
 It is quite possible to use this extension without making any changes to your VSCode's setting (although you probably want to set up a couple of variable values like author and company at least).  Extensive configuration options are available should you wish to get your hands dirty.
 
 Settings can be added as User and/or Workspace settings - VSCode handles the majik of merging them together.  Workspace settings take precedence over User settings.
@@ -90,6 +86,7 @@ Settings can be added as User and/or Workspace settings - VSCode handles the maj
   * `modDateFormat`: The format string for the modified date value.  Valid values are either "date" (system date - same as the `date` system variable) or a [Moment.js format string](http://momentjs.com/docs/#/displaying/format/).  The default value is "date".
   * `include`: Defines an array of VSC language IDs for the file types to include in changes tracking.  The default is an empty array which indicates any file type.
   * `exclude`: Defines an array of VSC language IDs for the file types to exclude from changes tracking.  The default is an empty array which indicates no exclusions.
+  * `autoHeader`: Determines whether the header should be added automatically to new files.  Refer to the [Auto Header](#auto-header) section for details.
 * `psi-header.variables`: An array of name/value pairs that provide value substitution within templates.  This can be used to override the system variables as well as add new items for your own custom templates.
 * `psi-header.lang-config`: An array of objects that allow language-specific adjustments to be made to the configuration.  You can provide a subset of values if you only want to override some of the settings. Each object can include:
   * `language`: Mandatory. Either the VSCode language ID or '*' for global settings.
@@ -114,14 +111,12 @@ When generating a header, the extension will do the following for the language-s
 2. If there is a global configuration (`language = "*"`) that will be used; else
 3. Use the built in defaults. 
 
-### A Note About 'mapTo'
-
+## A Note About 'mapTo'
 The `mapTo` option provided under `psi-header.lang-config` and `psi-header.templates` will not endlessly iterate through a chain of mappings to find the ultimate target.  It assumes that you are pointing it to a language that has a valid configuration.
 
 Also, `mapTo` is ignored if the language value is set to "*".
 
 ## dateformat and filecreated System Functions
-
 These functions require an argument that defines the date/time format string.  In other respects they work like the other system variables.
 
 `dateformat` always returns the current date/time.
@@ -155,7 +150,6 @@ or
 	<<filecreated('dddd, MMMM Do YYYY, h:mm:ss a')>>
 ```
 
-
 __Important Notes:__
 * System functions are case-sensitive because the format string arguments require this;
 * The format string argument must be surrounded by quotes (single or double).
@@ -163,11 +157,9 @@ __Important Notes:__
 These functions use Moment.js and pass the function argument as a format string to moment().function(String).  The format string can use all [Moment.js format string options](http://momentjs.com/docs/#/displaying/format/).
 
 ## License Information
-
 The `psi-header.config.license` setting expects either a valid [SPDX license ID](https://spdx.org/licenses/) or `"Custom"` if you are providing your own license text.  When set to Custom, you need to provide the license text via the `psi-header.license-text` setting.
 
 ## Changes Tracking
-
 This extension can optionally track changes to files during save by writing the last modified date and/or user to the header comment block.  It does this by looking for specific text at the start of individual lines within the header, and replacing the whole line.  It will only search the first multi-line comment block within each file.
 
 It works when saving either single or multiple files (e.g. during a *_Save All_*).  It will only update the details if VSC reports the document as "dirty".
@@ -201,18 +193,29 @@ So, taking the example from the beginning of the README, let's say Uncle Jack Bo
  */
 ```
 
-When enabled, change tracking processes every file on save.  You can restrict which files are processed via the `psi-header.changes-tracking` properties `include` and `exclude`.  The first defines a whitelist of language file types to include, whilst the second is a blacklist of language file types to exclude.
+When enabled, change tracking processes every file on save.  You can restrict which files are processed via the `psi-header.changes-tracking` properties `include` and `exclude`.  The first defines a whitelist of language file types to include, whilst the second is a blacklist of language file types to exclude.  `exclude` is ignored if `include` is not empty.
 
 By default this functionality is disabled - you can activate it via the `psi-header.changes-tracking.isActive` boolean configuration property.
 
-## An Example Custom Configuration
+## Auto Header
+This extension can be configured to automatically add a file header on creating a new file via the `psi-header.changes-tracking.autoHeader` setting.  The valid values for this setting are:
+* `off`: (default) headers will not be added to new files automatically;
+* `manualSave`: a header will be added but the file will not be automatically saved; or
+* `autoSave`: the header will be added and the file immediately saved.
 
+It will only create headers for files added directly via VSCode.
+
+If the file is added via the `New File` icon in the `Explorer` the header will be created immediately.  However, if the file is created via the `File->New File` menu item or via `Ctrl/Cmd-N` the header will not be added _until you perform a physical save_.  Why?  Mainly because we do not know what language the file will use until it is saved.  The extension will not add a header to a new file that already contains a multi-line comment block.
+
+The auto header configuration will honour the `include` and `exclude` language settings under `psi-header.changes-tracking`.
+
+# An Example Custom Configuration
 In the following example:
 * Javascript and Typescript files will both use the custom template and configuration where `language = "javascript"`. 
 * Lua will use it's own custom configuration (`language="lua"`), but will use the global custom template (`language = "*"`).
 * All other languages will use the global custom template (`language = "*"`) and the built in configuration settings because there is no custom global `psi-header.lang-config` defined.
 * changes tracking is turned on, but will skip Markdown and JSON files.
- 
+* auto header creation is active, but will not save the file after inserting the heading.
 
 ```json
 {
@@ -230,7 +233,8 @@ In the following example:
 		"exclude": [
 			"markdown",
 			"json"
-		]
+		],
+		"autoHeader": "manualSave"
 	},
 	"psi-header.license-text": [
 		"All shall be well and all shall be well and all manner of things shall be well.",
@@ -314,9 +318,7 @@ In the following example:
 }
 ```
 
-
-## Creating a Custom Template
-
+# Creating a Custom Template
 This should be mostly obvious.  The configuration of this extension separates out the syntactical language elements (comment Begin, comment End, etc) from the body of the template so that hopefully you will only need to create a single template.
 
 For the variable placeholders, the variable names should be surrounded with `<<` and `>>`. Do not add the prefix and suffix to your custom variable declarations!  So in the template, the system variable `filepath` is written `<<filepath>>`. Easy, huh!
@@ -345,15 +347,13 @@ The default (built in) template is:
  */
 ```
 
-## Known Issues
-
+# Known Issues
 * The extension does some clean up of the SPDX license text (mapping to variables, etc) but not everything is cleaned.  In particular, a number of licenses use a placeholder logic based on `<<var;...>>` that this extension does not try to convert at this stage - and some licenses have placeholder text like `<insert your slartibartfast here.  We wore an onion on our belt because that was the fashion of the day>`.  If you find hokey little anomolies that can be fixed, let me know.  Otherwise, I suggest you copy the license text into your custom license settings and fix it there.
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
 
-## Credits
-
+# Credits
 This extension uses the following npm packages...thank you :):
 * [`spdx-license-list`](https://github.com/sindresorhus/spdx-license-list) to host the licenses.
 * [`wordwrap`](https://github.com/substack/node-wordwrap) to word wrap the licenses.

@@ -5,7 +5,7 @@
  * File Created: Friday, 30th December 2016 5:33:30 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Wednesday, July 12th 2017, 7:53:29 am
+ * Last Modified: Sunday, July 16th 2017, 8:56:39 am
  * Modified By: David Quinn
  * -----
  * License: MIT License (SPDX = 'MIT')
@@ -57,6 +57,8 @@ export function insertFileHeader() {
 	const template: Array<string> = getTemplate(wsConfig, langId);
 	const config: IConfig = getConfig(wsConfig, langConfig);
 	const variables: IVariableList = getVariables(wsConfig, editor, config, langConfig);
+
+	console.log(`insertFileHeader into ${editor.document.fileName}`);
 
 	if (config.forceToTop) {
 		const position = new Position(0, 0);

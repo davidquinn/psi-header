@@ -3,7 +3,7 @@
   "displayName": "psioniq File Header",
   "description": "Configurable file header comment block and track last modified date/user on save.",
   "icon": "img/psi-logo.png",
-  "version": "0.9.7",
+  "version": "0.9.8",
   "publisher": "psioniq",
   "license": "MIT",
   "bugs": {
@@ -105,7 +105,17 @@
               "items": {
                 "type": "string"
               }
-            }
+			},
+			"autoHeader": {
+				"type": "string",
+				"enum": [
+					"off",
+					"manualSave",
+					"autoSave"
+				],
+				"description": "Setting for automatic header creation. Valid values are 'off': (default) no auto header; 'manualSave': header is added but not saved; 'autoSave': header is added and immediately saved to file.",
+				"default": "off"
+			}
           }
         },
         "psi-header.license-text": {

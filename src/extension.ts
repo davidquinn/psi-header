@@ -5,7 +5,7 @@
  * File Created: Friday, 30th December 2016 5:20:27 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Friday, July 14th 2017, 7:02:11 pm
+ * Last Modified: Saturday, July 15th 2017, 9:36:35 pm
  * Modified By: David Quinn
  * -----
  * License: MIT License (SPDX = 'MIT')
@@ -38,14 +38,14 @@
 
 'use strict';
 
-import {ExtensionContext, commands, WorkspaceConfiguration, workspace} from 'vscode';
+import {ExtensionContext, commands} from 'vscode';
 import * as command from './insertFileHeaderCommand';
 import * as k_ from './constants';
 import {ChangesTrackingController} from './changesTrackingController';
 
 export function activate(context: ExtensionContext) {
     // the header generator command
-	let disposable = commands.registerCommand('psi-header.insertFileHeader', () => {
+	let disposable = commands.registerCommand(k_.FILE_HEADER_COMMAND, () => {
         command.insertFileHeader();
     });
     context.subscriptions.push(disposable);

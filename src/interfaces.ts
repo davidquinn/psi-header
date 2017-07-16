@@ -5,7 +5,7 @@
  * File Created: Sunday, 1st January 2017 10:16:39 am
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Wednesday, July 12th 2017, 7:53:49 am
+ * Last Modified: Sunday, July 16th 2017, 1:06:29 pm
  * Modified By: David Quinn
  * -----
  * License: MIT License (SPDX = 'MIT')
@@ -97,6 +97,7 @@ export interface ITrackingConfig {
 	modAuthor?: string;
 	include?: string[];
 	exclude?: string[];
+	autoHeader?: string;
 }
 
 /**

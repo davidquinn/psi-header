@@ -5,7 +5,7 @@
  * File Created: Sunday, 1st January 2017 9:32:01 am
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Wednesday, July 12th 2017, 8:07:14 am
+ * Last Modified: Sunday, July 16th 2017, 2:19:50 pm
  * Modified By: David Quinn
  * -----
  * License: MIT License (SPDX = 'MIT')
@@ -227,7 +227,7 @@ function mapProperty(source: Object, target: Object, key: string): void {
 export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEditor, config: IConfig, langConfig: ILangConfig): IVariableList {
 	let variables: IVariableList = [];
 	const now: Date = new Date();
-	const fcreated: Date = getFileCreationDate() || new Date();
+	const fcreated: Date = getActiveFileCreationDate() || new Date();
 
 	// system variables
 	variables.push([k_.VAR_DATE, now.toDateString()]);
@@ -342,21 +342,33 @@ function getRelativeFilePath(fullpath: string): string {
  * Return the current editor file's creation date (birthtime)
  * 
  */
-function getFileCreationDate(): Date {
-	try {
-		const editor: TextEditor = window.activeTextEditor;
-		const filename: string = editor.document.fileName;
+function getActiveFileCreationDate(): Date {
+	let result: Date = null;
+	const editor: TextEditor = window.activeTextEditor;
+	if (editor && editor.document) {
+		result = getFileCreationDate(editor.document.fileName);
+	}
+	return result;
+}
 
+/**
+ * Return the file creation date of the passed in file.
+ * 
+ * @param filename The name of the file to check.
+ */
+export function getFileCreationDate(filename): Date {
+	let result: Date = null;
+	try {
 		if (fs.existsSync(filename)) {
 			const stat: fs.Stats = fs.statSync(filename);
 			if (stat && stat.birthtime) {
-				return stat.birthtime;
+				result = stat.birthtime;
 			}
 		}
-		return null;
 	} catch (error) {
-		return null;
+		result = null;
 	}
+	return result;
 }
 
 /**
@@ -472,7 +484,7 @@ function replaceFunctions(source: string): string {
 	constructFunctionReferences(replacements, source, k_.FUNC_FILE_CREATED, (args: string): string => {
 		// remove the surrounding quotes
 		args = args.substring(1, args.length - 1);
-		const fcreated: Date = getFileCreationDate() || new Date();
+		const fcreated: Date = getActiveFileCreationDate() || new Date();
 		if (args) {
 			return moment(fcreated).format(args);
 		} else {
