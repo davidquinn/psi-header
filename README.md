@@ -30,6 +30,7 @@ Refer to [Extension Settings](#extension-settings) for configuration details.
 * Adds a generic or language-specific header at the current cursor location.
 * Can optionally record changes in the header each time the file is saved (see [Changes Tracking](#changes-tracking)).
 * Can automatically add a header to new files.
+* Compatible with VSCode Multi Root Workspaces.
 * Separates language specific elements (e.g. comment block begin and end) from the template body to minimise the number of templates you might need to manage.
 * Configuration option to force the header to the top of the document - overridable per language.
 * Configuration option to add additional blank lines after the header - overridable per language.
@@ -48,7 +49,7 @@ Refer to [Extension Settings](#extension-settings) for configuration details.
   * `filerelativepath`: inserts the file name including the relative path within the project.
   * `filename`: just the file name without the path details.
   * `projectpath`: inserts the fully-qualified path to the root directory of the project.
-  * `projectname`: Attempts to read package.json for either a displayName or name property.  If there is no package.json file _and_ the file has been saved to disk, it will return the project path's base name.
+  * `projectname`: Attempts to read package.json (in the current or any parent directory) for either a displayName or name property.  If there is no package.json file _and_ the file has been saved to disk, it will return the project path's base name.
   * `company`: the name of your company.  In this release it defaults to "Your Company".
   * `author`: the name of the file author.  Will attempt to get the user name of the current user, otherwise it defaults to "You".
   * `authoremail`: the email address of the file author.  In this release it defaults to "you@you.you".
@@ -155,6 +156,11 @@ __Important Notes:__
 * The format string argument must be surrounded by quotes (single or double).
 
 These functions use Moment.js and pass the function argument as a format string to moment().function(String).  The format string can use all [Moment.js format string options](http://momentjs.com/docs/#/displaying/format/).
+
+## A Note about Project Paths
+When this extension was originally written VSCode only supported opening a single directory in a workspace.  So, working out the root directory was reasonably simple.  However, now with Multi Root Workspaces we can no longer assume the root directory (infact Microoft has deprecated the method that returned the root directory).
+
+Therefore, placeholders that need to know the project root directory (`filerelativepath`, `projectpath` and `projectname`) now try to work it out by iterating up the directory structure (starting at the current editor file location) until they come to a package.json file.  If one is found then that is assumed to be the root - otherwise it just assumes the same directory as the edited file.
 
 ## License Information
 The `psi-header.config.license` setting expects either a valid [SPDX license ID](https://spdx.org/licenses/) or `"Custom"` if you are providing your own license text.  When set to Custom, you need to provide the license text via the `psi-header.license-text` setting.

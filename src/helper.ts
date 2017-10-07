@@ -5,7 +5,7 @@
  * File Created: Sunday, 1st January 2017 9:32:01 am
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Sunday, July 16th 2017, 2:19:50 pm
+ * Last Modified: Saturday, October 7th 2017, 10:28:31 am
  * Modified By: David Quinn
  * -----
  * License: MIT License (SPDX = 'MIT')
@@ -228,19 +228,20 @@ export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEdito
 	let variables: IVariableList = [];
 	const now: Date = new Date();
 	const fcreated: Date = getActiveFileCreationDate() || new Date();
+	const currentFile: string = editor.document.fileName;
 
 	// system variables
 	variables.push([k_.VAR_DATE, now.toDateString()]);
 	variables.push([k_.VAR_TIME, now.toLocaleTimeString()]);
 	variables.push([k_.VAR_YEAR, now.getFullYear().toString()]);
-	variables.push([k_.VAR_FILE_PATH, editor.document.fileName]);
-	variables.push([k_.VAR_FILE_RELATIVE_PATH, getRelativeFilePath(editor.document.fileName)]);
-	variables.push([k_.VAR_PROJECT_PATH, workspace.rootPath]);
+	variables.push([k_.VAR_FILE_PATH, currentFile]);
+	variables.push([k_.VAR_FILE_RELATIVE_PATH, getRelativeFilePath(currentFile)]);
+	variables.push([k_.VAR_PROJECT_PATH, getProjectRootPath(currentFile)]);
 	variables.push([k_.VAR_COMPANY, 'Your Company']);
 	variables.push([k_.VAR_AUTHOR, getAuthorName()]);
 	variables.push([k_.VAR_AUTHOR_EMAIL, 'you@you.you']);
-	variables.push([k_.VAR_PROJECT_NAME, getProjectName()]);
-	variables.push([k_.VAR_FILE_NAME, extractFileName(editor.document.fileName)]);
+	variables.push([k_.VAR_PROJECT_NAME, getProjectName(currentFile)]);
+	variables.push([k_.VAR_FILE_NAME, extractFileName(currentFile)]);
 	// using filecreated function without arguments treats it like a variable.
 	variables.push([k_.FUNC_FILE_CREATED, fcreated.toDateString()]);
 
@@ -275,13 +276,39 @@ export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEdito
 }
 
 /**
+ * Pass in a fully qualified file path and return the part of the path where an associated package.json file is located.
+ * Iterates up through the directory structure until it finds a package.json file and if not found returns the original directory.
+ * 
+ * @param {string} filename The file to use as the basis for searching.
+ * @returns {string} The directory within the path that contains a package.json, else a blank string.
+ */
+function getProjectRootPath(filename: string): string {
+	const parsed = path.parse(filename);
+	const dir: string = parsed ? parsed.dir : '';
+	let result: string = dir;
+	while(result.includes(path.sep)) {
+		if (fs.existsSync(path.join(result, 'package.json'))) {
+			break;
+		} else {
+			result = result.substring(0, result.lastIndexOf(path.sep));
+		}
+	}
+	if (result.length === 0) {
+		result = dir;
+	}
+	console.log(`getProjectRootPath(${filename}) => ${result}`);
+	return result;
+}
+
+/**
  * Get the name of the project - either from a package.json or the last part of the root project path.
  * 
+ * @param {string} filename  The file to determine the project from.
  * @returns {string} 
  */
-function getProjectName(): string {
+function getProjectName(filename: string): string {
 	try {
-		const rootPath: string = workspace.rootPath;
+		const rootPath: string = getProjectRootPath(filename);
 		const fname: string = path.join(rootPath, 'package.json');
 		if (fs.existsSync(fname)) {
 			const prj = JSON.parse(fs.readFileSync(fname).toString());
@@ -332,7 +359,8 @@ function extractFileName(fullpath: string): string {
  */
 function getRelativeFilePath(fullpath: string): string {
 	try {
-		return fullpath.substring(workspace.rootPath.length);
+		const rootPath: string = getProjectRootPath(fullpath);
+		return fullpath.substring(rootPath.length);
 	} catch (error) {
 		return null;
 	}

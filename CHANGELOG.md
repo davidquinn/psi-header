@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 1.0.0 (07 Oct 2017)
+* __CHANGE__: This extension should now be compatible with Multi Root Workspaces in VSCode (Refer to *A Note about Project Paths* in the readme file for an explanation of how this now works.
+
 ## 0.9.8 (17 July 2017)
 * __NEW__: Headers can now be added automatically on file creation.  Refer to the *Auto Header* section of the readme file for details.
 
