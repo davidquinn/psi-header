@@ -5,7 +5,7 @@
  * File Created: Sunday, 1st January 2017 9:32:01 am
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Saturday, October 7th 2017, 10:28:31 am
+ * Last Modified: Wednesday, October 25th 2017, 8:07:06 am
  * Modified By: David Quinn
  * -----
  * License: MIT License (SPDX = 'MIT')
@@ -222,9 +222,12 @@ function mapProperty(source: Object, target: Object, key: string): void {
  * 
  * @param {WorkspaceConfiguration} wsConfig
  * @param {TextEditor} editor
+ * @param {IConfig} config
+ * @param {ILangConfig} langConfig
+ * @param {boolean} ignoreLicence
  * @returns {IVariableList}
  */
-export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEditor, config: IConfig, langConfig: ILangConfig): IVariableList {
+export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEditor, config: IConfig, langConfig: ILangConfig, ignoreLicence: boolean = false): IVariableList {
 	let variables: IVariableList = [];
 	const now: Date = new Date();
 	const fcreated: Date = getActiveFileCreationDate() || new Date();
@@ -271,7 +274,9 @@ export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEdito
 	}
 
 	// license variables
-	addLicenseVariables(wsConfig, variables, config, langConfig);
+	if (!ignoreLicence) {
+		addLicenseVariables(wsConfig, variables, config, langConfig);
+	}
 	return variables;
 }
 
@@ -296,7 +301,6 @@ function getProjectRootPath(filename: string): string {
 	if (result.length === 0) {
 		result = dir;
 	}
-	console.log(`getProjectRootPath(${filename}) => ${result}`);
 	return result;
 }
 
@@ -481,7 +485,7 @@ function arrayToString(source: Array<string>): string {
  * @param {IVariableList} variables
  * @returns {string}
  */
-function replacePlaceholders(source: string, variables: IVariableList): string {
+export function replacePlaceholders(source: string, variables: IVariableList): string {
 	let replaced: string = source;
 	for (let v of variables) {
 		if (v[1]) {

@@ -82,9 +82,9 @@ Settings can be added as User and/or Workspace settings - VSCode handles the maj
   * `license`: The SPDX License ID of the license to insert into the header (or "Custom" if providing your own license text).  Refer to [License Information](#license-information) for details.
 * `psi-header.changes-tracking`: configuration for changes tracking:
   * `isActive`: If true, will activate changes tracking which will analyse every file during save.  Default value is false.
-  * `modAuthor`: Identifies the label used on the comment line where the _modified by_ value is shown.  Default value is "Modified By: ".
-  * `modDate`: Identifies the label used on the comment line where the _date modified_ value is shown.  Default value is "Last Modified: ".
-  * `modDateFormat`: The format string for the modified date value.  Valid values are either "date" (system date - same as the `date` system variable) or a [Moment.js format string](http://momentjs.com/docs/#/displaying/format/).  The default value is "date".
+  * `modAuthor`: Identifies the label used on the comment line where the _modified by_ value is shown.  Default value is "Modified By:".
+  * `modDate`: Identifies the label used on the comment line where the _date modified_ value is shown.  Default value is "Last Modified:".
+  * `modDateFormat`: The format string for the modified date value.  Valid values are either "date" (system date - same as the `date` system variable) or a [Moment.js format string](http://momentjs.com/docs/#/displaying/format/).  The default value is "date".  Note that this setting is ignored if `modDate` line is based on a custom string.
   * `include`: Defines an array of VSC language IDs for the file types to include in changes tracking.  The default is an empty array which indicates any file type.
   * `exclude`: Defines an array of VSC language IDs for the file types to exclude from changes tracking.  The default is an empty array which indicates no exclusions.
   * `autoHeader`: Determines whether the header should be added automatically to new files.  Refer to the [Auto Header](#auto-header) section for details.
@@ -170,20 +170,46 @@ This extension can optionally track changes to files during save by writing the 
 
 It works when saving either single or multiple files (e.g. during a *_Save All_*).  It will only update the details if VSC reports the document as "dirty".
 
-It will look for lines within the header that start with `languageCommentPrefix + label` (e.g. "` * Date Modified: `" or "` * Modified By: `") and will replace the _whole_ line with `languageCommentPrefix + label + newValue`.  Where:
+When enabled, change tracking processes every dirty file on save.  You can restrict which files are processed via the `psi-header.changes-tracking` properties `include` and `exclude`.  The first defines a whitelist of language file types to include, whilst the second is a blacklist of language file types to exclude.  `exclude` is ignored if `include` is not empty.
+
+By default this functionality is disabled - you can activate it via the `psi-header.changes-tracking.isActive` boolean configuration property.
+
+Early versions of the extension simply replaced everything after the line identifier.  However, from version 1.1.3 you can use the template to customise the whole line. These two options are described below.
+
+### Option 1: Simple Replacement
+It will look for lines within the header that start with `languageCommentPrefix + label` (e.g. "` * Date Modified:`" or "` * Modified By:`") and will replace the _whole_ line with `languageCommentPrefix + label + newValue`.  Where:
 * `languageCommentPrefix` is the comment line prefix for the document's language (`psi-header.lang-config[language].prefix`);
 * `label` is either:
-  * the configured `psi-header.changes-tracking.modAuthor` (defaults to "Modified By: "); or
-  * the configured `psi-header.changes-tracking.modDate` (defaults to "Date Modified: ").
+  * the configured `psi-header.changes-tracking.modAuthor` (defaults to "Modified By:"); or
+  * the configured `psi-header.changes-tracking.modDate` (defaults to "Date Modified:").
 * and `newValue` is either:
   * the author's name (same logic as the `author` system variable); or
   * the current date formatted via the configured `psi-header.changes-tracking.modDateFormat` (refer to the configuration settings for details).
 
-Note that it will replace the whole line so is not suitable for lines with additional text after the value (or between the label and value).
+Note that it will replace the whole line so is not suitable for lines where you want to control the text of the line .
 
-Also, because the whole line is replaced, you need to make sure your label configuration includes all characters before the new value (e.g. the ": " in the above defaults).
+Also, because the whole line is replaced, you need to make sure your label configuration includes all characters before the new value (e.g. the ":" in the above defaults).  Although, the extension will insert a space before the value if necessary.
 
-So, taking the example from the beginning of the README, let's say Uncle Jack Bodkin modified the file two days after Tammy, then (assuming default values) the header would look like the following after save:
+So, taking the example from the beginning of the README, let's say Uncle Jack Bodkin modified the file three days after Tammy, then (assuming default values) the header would look like the following after save:
+
+```json
+"psi-header.templates": [
+	{
+		"language": "*",
+		"template": [
+			"File: <<filepath>>",
+			"Project: <<projectpath>>",
+			"Created Date: <<filecreated('dddd MMMM Do YYYY')>>",
+			"Author: <<author>>",
+			"-----",
+			"Last Modified:",
+			"Modified By:",
+			"-----",
+			"Copyright (c) <<year>> <<company>>"
+		]
+	},
+]
+```
 
 ```javascript
 /**
@@ -199,9 +225,46 @@ So, taking the example from the beginning of the README, let's say Uncle Jack Bo
  */
 ```
 
-When enabled, change tracking processes every file on save.  You can restrict which files are processed via the `psi-header.changes-tracking` properties `include` and `exclude`.  The first defines a whitelist of language file types to include, whilst the second is a blacklist of language file types to exclude.  `exclude` is ignored if `include` is not empty.
+### Option 2: Template Substitution
+If there are any characters in the template on either of the comment lines after the `label` then the extension will use that text during the update.  You can use any of the system variables and functions.
 
-By default this functionality is disabled - you can activate it via the `psi-header.changes-tracking.isActive` boolean configuration property.
+Note that the `psi-header.changes-tracking.modDateFormat` configuration setting is ignored when using this option.
+
+So, modifying the Last Modified and Modified By lines in the template from the earlier example in _Option 1_, 
+
+```json
+"psi-header.templates": [
+	{
+		"language": "*",
+		"template": [
+			"File: <<filepath>>",
+			"Project: <<projectpath>>",
+			"Created Date: <<filecreated('dddd MMMM Do YYYY')>>",
+			"Author: <<author>>",
+			"-----",
+			"Last Modified: <<filecreated('dddd MMMM Do YYYY h:mm:ss a')>>",
+			"Modified By: the developer formerly known as <<author>> at <<<authoremail>>>",
+			"-----",
+			"Copyright (c) <<year>> <<company>>"
+		]
+	},
+]
+```
+
+```javascript
+/**
+ * File: \Users\me\Development\psioniq\myProject\src\myPrecious.js
+ * Project: \Users\me\Development\psioniq\myProject
+ * Created Date: Saturday December 31 2016
+ * Author: Arthur Bodkin, esq
+ * -----
+ * Last Modified: Tuesday January 03 2017 09:37:28 am
+ * Modified By: the developer formerly known as Uncle Jack Bodkin at <uncle.jack@psioniq.net>
+ * -----
+ * Copyright (c) 2016 psioniq Global Enterprises, Inc
+ */
+```
+
 
 ## Auto Header
 This extension can be configured to automatically add a file header on creating a new file via the `psi-header.changes-tracking.autoHeader` setting.  The valid values for this setting are:

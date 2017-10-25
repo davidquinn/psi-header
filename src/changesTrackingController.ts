@@ -5,8 +5,8 @@
  * File Created: Friday, 21st April 2017 9:14:32 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Sunday, July 16th 2017, 6:28:41 pm
- * Modified By: David Quinn
+ * Last Modified:Wednesday, October 25th 2017, 6:56:12 pm
+ * Modified By:David Quinn
  * -----
  * License: MIT License (SPDX = 'MIT')
  * License URL: http://www.opensource.org/licenses/MIT
@@ -50,10 +50,25 @@ import {
 	Range,
 	commands
 } from 'vscode';
-import {ITrackingConfig, IVariableList, IVariable, ILangConfig, IRangeReplacer, IRangeReplacerList} from './interfaces';
+import {
+	ITrackingConfig,
+	IVariableList,
+	IVariable,
+	ILangConfig,
+	IRangeReplacer,
+	IRangeReplacerList,
+	IConfig
+} from './interfaces';
 import * as k_ from './constants';
 import * as moment from 'moment';
-import {getLanguageConfig, getFileCreationDate} from './helper';
+import {
+	getLanguageConfig,
+	getFileCreationDate,
+	getVariables,
+	getConfig,
+	getTemplate,
+	replacePlaceholders
+} from './helper';
 
 /**
  * Configuration and setup for changes tracking.
@@ -100,15 +115,35 @@ export class ChangesTrackingController {
 	 * @memberof ChangesTrackingController
 	 */
 	private _onWillSave(e: TextDocumentWillSaveEvent): void {
+		const activeTextEditor: TextEditor = window.activeTextEditor;
 		if (this._config.isActive) {
-			if (window.activeTextEditor) {
+			if (activeTextEditor) {
 				// keep track of current window's selection
-				this._selections = window.activeTextEditor.selections;
+				this._selections = activeTextEditor.selections;
 			}
 
 			const doc: TextDocument = e.document;
 			if (doc && doc.isDirty && this._wantLanguage(doc.languageId)) {
 				const langConfig: ILangConfig = getLanguageConfig(this._wsConfig, doc.languageId);
+				const mainConfig: IConfig = getConfig(this._wsConfig, langConfig);
+				const variables: IVariableList = getVariables(this._wsConfig, activeTextEditor, mainConfig, langConfig, true);
+				
+				const template: Array<string> = getTemplate(this._wsConfig, doc.languageId);
+				const modDatePrefix: string = langConfig.prefix + this._config.modDate;
+				const modAuthorPrefix: string = langConfig.prefix + this._config.modAuthor;
+				let modDateTemplate: string = template.find((value) => {
+					return value.startsWith(this._config.modDate);
+				});
+				if (modDateTemplate) {
+					modDateTemplate = langConfig.prefix + modDateTemplate;
+				}
+				let modAuthorTemplate: string = template.find((value) => {
+					return value.startsWith(this._config.modAuthor);
+				});
+				if (modAuthorTemplate) {
+					modAuthorTemplate = langConfig.prefix + modAuthorTemplate;
+				}
+				
 				const date: string = this._config.modDateFormat === 'date' ? new Date().toDateString() : moment().format(this._config.modDateFormat);
 				let inComment: boolean = false;
 				let replacers: IRangeReplacerList = [];
@@ -125,11 +160,21 @@ export class ChangesTrackingController {
 								// we have come to the first comment block in the file, so start searching
 								inComment = true;
 							} else if (inComment) {
-								if (txt.startsWith(langConfig.prefix + this._config.modAuthor)) {
-									replacers.push({range: range, newString: langConfig.prefix + this._config.modAuthor + this._author});
+								if (txt.startsWith(modAuthorPrefix)) {
+									replacers.push({
+										range: range, 
+										newString: modAuthorTemplate && modAuthorTemplate !== modAuthorPrefix
+											? replacePlaceholders(modAuthorTemplate, variables)
+											: modAuthorPrefix + (modAuthorPrefix.endsWith(' ') ? '' : ' ') + this._author
+									});
 								}
-								else if (txt.startsWith(langConfig.prefix + this._config.modDate)) {
-									replacers.push({range: range, newString: langConfig.prefix + this._config.modDate + date});
+								else if (txt.startsWith(modDatePrefix)) {
+									replacers.push({
+										range: range, 
+										newString: modDateTemplate && modDateTemplate !== modDatePrefix
+											? replacePlaceholders(modDateTemplate, variables)
+											: modDatePrefix + (modDatePrefix.endsWith(' ') ? '' : ' ') + date
+									});
 								}
 							}
 						}
@@ -206,8 +251,8 @@ export class ChangesTrackingController {
 		// get tracking config
 		let def: ITrackingConfig = {
 			isActive: false, 
-			modDate: 'Last Modified: ', 
-			modAuthor: 'Modified By: ', 
+			modDate: 'Last Modified:', 
+			modAuthor: 'Modified By:', 
 			modDateFormat: 'date',
 			include: [],
 			exclude: [],
