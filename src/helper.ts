@@ -5,7 +5,7 @@
  * File Created: Sunday, 1st January 2017 9:32:01 am
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Wednesday, October 25th 2017, 8:07:06 am
+ * Last Modified: Thursday, October 26th 2017, 7:58:14 am
  * Modified By: David Quinn
  * -----
  * License: MIT License (SPDX = 'MIT')
@@ -85,11 +85,12 @@ export function getTemplate(wsConfig: WorkspaceConfiguration, langId: string): A
 			return item.language === langId;
 		});
 		if (def && def.hasOwnProperty('mapTo')) {
+			const mapTo = def.mapTo;
 			def = templates.find(function(item: ITemplate, index: number, obj: ITemplateList): boolean {
-				return item.language === def.language;
+				return item.language === mapTo;
 			});
 		}
-		if (def == null) {
+		if (def == null || !def.template) {
 			def = templates.find(function(item: ITemplate, index: number, obj: ITemplateList): boolean {
 				return item.language === k_.DEFAULT;
 			});

@@ -3,6 +3,10 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 1.1.4 (26 Oct 2017)
+* __CHANGE__: Closed a loophole in the template selection logic where a template.mapTo points to an existing but invalid language template (for example setting mapTo to a language entry that itself has a mapTo).  In this case, the extension will map back to the default ("*") template if it exists.
+* __FIX__: Fixed a bug in the mapTo template selection which could cause a valid mapping to not be honoured.
+
 ## 1.1.3 (25 Oct 2017)
 * __CHANGE__: In prior versions, changes tracking just looked for lines in the first comment block that started with the configuration prefixes `psi-header.changes-tracking.modAuthor` and `psi-header.changes-tracking.modDate` and replaced the rest of the line with a 'hard-coded' author name or date respectively.  This has now been changed to reference back to the template so that you can control how the rest of the line is updated.  If your template has no characters after the abovementioned prefixes then the update will continue to work as previously.  However, you can now configure the whole line - including using the system variables and functions.  Refer to the *Changes Tracking* section in the readme file for more information.  Note that if you extend the modDate line in the template, the `psi-header.changes-tracking.modDateFormat` setting will be ignored (because you are controllong what shows on the line).
 * __CHANGE__: You no longer need to add a trailing space to `psi-header.changes-tracking.modAuthor` and `psi-header.changes-tracking.modDate` configuration settings.
