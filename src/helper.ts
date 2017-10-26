@@ -5,8 +5,8 @@
  * File Created: Sunday, 1st January 2017 9:32:01 am
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Thursday, October 26th 2017, 7:58:14 am
- * Modified By: David Quinn
+ * Last Modified: Thursday, 26th October 2017 8:10:22 am
+ * Modified By: David Quinn <info@psioniq.uk>
  * -----
  * License: MIT License (SPDX = 'MIT')
  * License URL: http://www.opensource.org/licenses/MIT
@@ -130,9 +130,10 @@ export function getLanguageConfig(wsConfig: WorkspaceConfiguration, langId: stri
 			return item.language === langId;
 		});
 		if (cfg && cfg.hasOwnProperty('mapTo')) {
+			const mapTo = cfg.mapTo;
 			// I'm only doing this once!!  You won't make me run around in circles!!
 			cfg = configs.find(function(item: ILangConfig, index: number, obj: ILangConfigList): boolean {
-				return item.language === cfg.language;
+				return item.language === mapTo;
 			});
 		}
 		if (cfg == null) {
