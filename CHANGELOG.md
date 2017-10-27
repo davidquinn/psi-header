@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 1.2.1 (27 Oct 2017)
+* __NEW__: Added new `psi-header.config` settings for `author`, `authorEmail`, `company` and `copyrightHolder`.  You can still use the `psi-header.variables` (which if present will override the values of these new settings) but the new settings allow you to override individual values between user settings and workspace settings.
+
 ## 1.1.5 (26 Oct 2017)
 * __CHANGE__: Closed a loophole in the template selection logic where a template.mapTo points to an existing but invalid language template (for example setting mapTo to a language entry that itself has a mapTo).  In this case, the extension will map back to the default ("*") template if it exists.
 * __FIX__: Fixed a bug in the mapTo template selection which could cause a valid mapping to not be honoured.

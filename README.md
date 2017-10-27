@@ -79,7 +79,11 @@ Settings can be added as User and/or Workspace settings - VSCode handles the maj
 	If false (the default), the header will be inserted at the current cursor position.
 	Can be overridden for specific languages (via *_psi-header.lang-config_*).
   * `blankLinesAfter`: Specify how many blank lines to insert after the header comment block.  Default is 0 (zero).
-  * `license`: The SPDX License ID of the license to insert into the header (or "Custom" if providing your own license text).  Refer to [License Information](#license-information) for details.
+  * `license`: The SPDX License ID of the license to insert into the header (or "Custom" if providing your own license text). Refer to [License Information](#license-information) for details.
+  * `author`: your name - used by the `author` system variable.  Optional with no default.
+  * `authorEmail`: your email address - used by the `authoremail` system variable.  Optional with no default.
+  * `company`: your Company's name - used by the `company` system variable.  Optional with no default.
+  * `copyrightHolder`: your copyright name - used by the `copyrightholder` system variable.  Optional with no default.
 * `psi-header.changes-tracking`: configuration for changes tracking:
   * `isActive`: If true, will activate changes tracking which will analyse every file during save.  Default value is false.
   * `modAuthor`: Identifies the label used on the comment line where the _modified by_ value is shown.  Default value is "Modified By:".

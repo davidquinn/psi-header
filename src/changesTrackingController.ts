@@ -5,8 +5,8 @@
  * File Created: Friday, 21st April 2017 9:14:32 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified:Wednesday, October 25th 2017, 6:56:12 pm
- * Modified By:David Quinn
+ * Last Modified: Friday, 27th October 2017 8:30:39 am
+ * Modified By: David Quinn <info@psioniq.uk>
  * -----
  * License: MIT License (SPDX = 'MIT')
  * License URL: http://www.opensource.org/licenses/MIT
@@ -67,7 +67,8 @@ import {
 	getVariables,
 	getConfig,
 	getTemplate,
-	replacePlaceholders
+	replacePlaceholders,
+	getAuthorName
 } from './helper';
 
 /**
@@ -270,10 +271,12 @@ export class ChangesTrackingController {
 		}
 		this._config = def;
 		// get author name
+		let config: IConfig = this._wsConfig && this._wsConfig.has(k_.CONFIG_SETTINGS) ? this._wsConfig.get<IConfig>(k_.CONFIG_SETTINGS) : null;
+		this._author = config && config.author ? config.author : getAuthorName();
 		let vl: IVariableList = this._wsConfig && this._wsConfig.has(k_.VARIABLE_SETTINGS) ? this._wsConfig.get<IVariableList>(k_.VARIABLE_SETTINGS) : null;
 		if (vl) {
 			const el: IVariable = vl.find(function(element: [string, string]): boolean { return element[0] === k_.VAR_AUTHOR; });
-			this._author = el && el.length > 1 && el[1] ? el[1] : 'You';
+			this._author = el && el.length > 1 && el[1] ? el[1] : this._author;
 		}
 	}
 

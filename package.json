@@ -3,7 +3,7 @@
   "displayName": "psioniq File Header",
   "description": "Configurable file header comment block and track last modified date/user on save.",
   "icon": "img/psi-logo.png",
-  "version": "1.1.5",
+  "version": "1.2.1",
   "publisher": "psioniq",
   "license": "MIT",
   "bugs": {
@@ -63,8 +63,24 @@
               "type": "string",
               "description": "Identifies which license to use.  this should be either a SPDX license (refer to https://spdx.org/licenses/) or \"Custom\".",
               "default": "MIT"
-            }
-          }
+            },
+            "author": {
+				"type": "string",
+				"description": "Your name"
+			  },
+			  "authorEmail": {
+				"type": "string",
+				"description": "Your email address"
+			  },
+			  "company": {
+				"type": "string",
+				"description": "Your company name"
+			  },
+			  "copyrightHolder": {
+				"type": "string",
+				"description": "Used to identify who owns the copyright.  If not provided it defaults to the value for company if that exists."
+			  }
+			}
         },
         "psi-header.changes-tracking": {
           "type": "object",

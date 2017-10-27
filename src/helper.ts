@@ -5,8 +5,8 @@
  * File Created: Sunday, 1st January 2017 9:32:01 am
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Thursday, 26th October 2017 8:10:22 am
- * Modified By: David Quinn <info@psioniq.uk>
+ * Last Modified: Friday, 27th October 2017 8:16:41 pm
+ * Modified By: David <you@you.you>
  * -----
  * License: MIT License (SPDX = 'MIT')
  * License URL: http://www.opensource.org/licenses/MIT
@@ -62,7 +62,23 @@ export function getConfig(wsConfig: WorkspaceConfiguration, langConfig: ILangCon
 	def.blankLinesAfter = (def.blankLinesAfter === undefined) ? cfgBlankLinesAfter : def.blankLinesAfter;
 
 	def.license = cfg && cfg.license ? cfg.license : null;
+
+	if (cfg.hasOwnProperty('author')) {
+		def.author = cfg.author;
+	}
 	
+	if (cfg.hasOwnProperty('authorEmail')) {
+		def.authorEmail = cfg.authorEmail;
+	}
+
+	if (cfg.hasOwnProperty('company')) {
+		def.company = cfg.company;
+	}
+
+	if (cfg.hasOwnProperty('copyrightHolder')) {
+		def.copyrightHolder = cfg.copyrightHolder;
+	}
+
 	return def;
 }
 
@@ -234,7 +250,7 @@ export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEdito
 	const now: Date = new Date();
 	const fcreated: Date = getActiveFileCreationDate() || new Date();
 	const currentFile: string = editor.document.fileName;
-
+	console.log(config);
 	// system variables
 	variables.push([k_.VAR_DATE, now.toDateString()]);
 	variables.push([k_.VAR_TIME, now.toLocaleTimeString()]);
@@ -242,13 +258,16 @@ export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEdito
 	variables.push([k_.VAR_FILE_PATH, currentFile]);
 	variables.push([k_.VAR_FILE_RELATIVE_PATH, getRelativeFilePath(currentFile)]);
 	variables.push([k_.VAR_PROJECT_PATH, getProjectRootPath(currentFile)]);
-	variables.push([k_.VAR_COMPANY, 'Your Company']);
-	variables.push([k_.VAR_AUTHOR, getAuthorName()]);
-	variables.push([k_.VAR_AUTHOR_EMAIL, 'you@you.you']);
+	variables.push([k_.VAR_COMPANY, config && config.company ? config.company : 'Your Company']);
+	variables.push([k_.VAR_AUTHOR, config && config.author ? config.author : getAuthorName()]);
+	variables.push([k_.VAR_AUTHOR_EMAIL, config && config.authorEmail ? config.authorEmail : 'you@you.you']);
 	variables.push([k_.VAR_PROJECT_NAME, getProjectName(currentFile)]);
 	variables.push([k_.VAR_FILE_NAME, extractFileName(currentFile)]);
 	// using filecreated function without arguments treats it like a variable.
 	variables.push([k_.FUNC_FILE_CREATED, fcreated.toDateString()]);
+	if (config && config.copyrightHolder) {
+		variables.push([k_.VAR_COPYRIGHT_HOLDER, config.copyrightHolder]);
+	}
 
 	// custom variables
 	let vl: IVariableList = wsConfig && wsConfig.has(k_.VARIABLE_SETTINGS) ? wsConfig.get<IVariableList>(k_.VARIABLE_SETTINGS) : null;
@@ -333,7 +352,7 @@ function getProjectName(filename: string): string {
  * 
  * @returns {string} 
  */
-function getAuthorName(): string {
+export function getAuthorName(): string {
 	let name: string;
 	try {
 		name = username.sync();

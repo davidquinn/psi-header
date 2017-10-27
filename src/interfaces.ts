@@ -5,8 +5,8 @@
  * File Created: Sunday, 1st January 2017 10:16:39 am
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Sunday, July 16th 2017, 1:06:29 pm
- * Modified By: David Quinn
+ * Last Modified: Friday, 27th October 2017 8:08:31 am
+ * Modified By: David Quinn <info@psioniq.uk>
  * -----
  * License: MIT License (SPDX = 'MIT')
  * License URL: http://www.opensource.org/licenses/MIT
@@ -65,7 +65,11 @@ export type ITemplateList = Array<ITemplate>;
 export interface IConfig {
     forceToTop?: boolean;
     blankLinesAfter?: number;
-    license?: string;
+	license?: string;
+	author?: string;
+	authorEmail?: string;
+	company?: string;
+	copyrightHolder?: string;
 }
 
 /**
