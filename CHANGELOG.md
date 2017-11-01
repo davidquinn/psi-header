@@ -3,6 +3,11 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 1.3.1 (01/11/2017)
+* __NEW__: Added new `psi-header.changes-tracking.replace` configuration setting.  This is an array of strings that let you define which additional lines from the template should be replaced during file save.  This would be useful for example for updating the file name in the header.  This setting is in addition to the existing modified date and author settings which don't need to be added here (although you could).
+* __CHANGE__: Replaced the default VSC logic for reading array-based configuration settings between user and workspace settings.  The original code would simply replace the user settings array with the workspace settings array.  The new logic merges the two so you can use workspace settings to override individual user setting array values or to add new array settings.  This affects `psi-header.variables`, `psi-header.lang-config` and `psi-header.templates`.
+* __FIX__: Removed a debug console log entry.
+
 ## 1.2.1 (27 Oct 2017)
 * __NEW__: Added new `psi-header.config` settings for `author`, `authorEmail`, `company` and `copyrightHolder`.  You can still use the `psi-header.variables` (which if present will override the values of these new settings) but the new settings allow you to override individual values between user settings and workspace settings.
 

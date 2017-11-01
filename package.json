@@ -1,268 +1,272 @@
 {
-  "name": "psi-header",
-  "displayName": "psioniq File Header",
-  "description": "Configurable file header comment block and track last modified date/user on save.",
-  "icon": "img/psi-logo.png",
-  "version": "1.2.1",
-  "publisher": "psioniq",
-  "license": "MIT",
-  "bugs": {
-    "url": "http://www.psioniq.uk/index.html",
-    "email": "info@psioniq.uk"
-  },
-  "homepage": "http://www.psioniq.uk/index.html",
-  "engines": {
-    "vscode": "^1.6.0"
-  },
-  "categories": [
-    "Other"
-  ],
-  "keywords": [
-    "header",
-    "file header",
-    "license",
-    "file info"
-  ],
-  "activationEvents": [
-    "onCommand:psi-header.insertFileHeader",
-    "*"
-  ],
-  "main": "./out/src/extension",
-  "contributes": {
-    "commands": [
-      {
-        "command": "psi-header.insertFileHeader",
-        "title": "Header Insert"
-      }
-    ],
-    "keybindings": [
-      {
-        "command": "psi-header.insertFileHeader",
-        "key": "ctrl+alt+H ctrl+alt+H"
-      }
-    ],
-    "configuration": {
-      "type": "object",
-      "title": "Header Insert",
-      "properties": {
-        "psi-header.config": {
-          "type": "object",
-          "description": "An optional set of global configuration options.",
-          "properties": {
-            "forceToTop": {
-              "type": "boolean",
-              "description": "If true, the header is inserted at the top of the page, otherwise it is inserted at the cursor.",
-              "default": false
-            },
-            "blankLinesAfter": {
-              "type": "integer",
-              "description": "The number of blank lines to insert after the header comment.",
-              "default": 0
-            },
-            "license": {
-              "type": "string",
-              "description": "Identifies which license to use.  this should be either a SPDX license (refer to https://spdx.org/licenses/) or \"Custom\".",
-              "default": "MIT"
-            },
-            "author": {
-				"type": "string",
-				"description": "Your name"
-			  },
-			  "authorEmail": {
-				"type": "string",
-				"description": "Your email address"
-			  },
-			  "company": {
-				"type": "string",
-				"description": "Your company name"
-			  },
-			  "copyrightHolder": {
-				"type": "string",
-				"description": "Used to identify who owns the copyright.  If not provided it defaults to the value for company if that exists."
-			  }
+	"name": "psi-header",
+	"displayName": "psioniq File Header",
+	"description": "Configurable file header comment block and track last modified date/user on save.",
+	"icon": "img/psi-logo.png",
+	"version": "1.3.1",
+	"publisher": "psioniq",
+	"license": "MIT",
+	"bugs": {
+		"url": "http://www.psioniq.uk/index.html",
+		"email": "info@psioniq.uk"
+	},
+	"homepage": "http://www.psioniq.uk/index.html",
+	"engines": {
+		"vscode": "^1.6.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"keywords": [
+		"header",
+		"file header",
+		"license",
+		"file info"
+	],
+	"activationEvents": [
+		"onCommand:psi-header.insertFileHeader",
+		"*"
+	],
+	"main": "./out/src/extension",
+	"contributes": {
+		"commands": [{
+			"command": "psi-header.insertFileHeader",
+			"title": "Header Insert"
+		}],
+		"keybindings": [{
+			"command": "psi-header.insertFileHeader",
+			"key": "ctrl+alt+H ctrl+alt+H"
+		}],
+		"configuration": {
+			"type": "object",
+			"title": "Header Insert",
+			"properties": {
+				"psi-header.config": {
+					"type": "object",
+					"description": "An optional set of global configuration options.",
+					"properties": {
+						"forceToTop": {
+							"type": "boolean",
+							"description": "If true, the header is inserted at the top of the page, otherwise it is inserted at the cursor.",
+							"default": false
+						},
+						"blankLinesAfter": {
+							"type": "integer",
+							"description": "The number of blank lines to insert after the header comment.",
+							"default": 0
+						},
+						"license": {
+							"type": "string",
+							"description": "Identifies which license to use.  this should be either a SPDX license (refer to https://spdx.org/licenses/) or \"Custom\".",
+							"default": "MIT"
+						},
+						"author": {
+							"type": "string",
+							"description": "Your name"
+						},
+						"authorEmail": {
+							"type": "string",
+							"description": "Your email address"
+						},
+						"company": {
+							"type": "string",
+							"description": "Your company name"
+						},
+						"copyrightHolder": {
+							"type": "string",
+							"description": "Used to identify who owns the copyright.  If not provided it defaults to the value for company if that exists."
+						}
+					}
+				},
+				"psi-header.changes-tracking": {
+					"type": "object",
+					"description": "An optional set of changes tracking options",
+					"properties": {
+						"isActive": {
+							"type": "boolean",
+							"description": "If true, will activate changes tracking when documents are saved.  Otherwise changes tracking is not performed.",
+							"default": false
+						},
+						"modAuthor": {
+							"type": "string",
+							"description": "The label used to identify the template line that contains the name of the user who modified the file.",
+							"default": "Modified By: "
+						},
+						"modDate": {
+							"type": "string",
+							"description": "The label used to identify the template line that contains the date that the file was last modified.",
+							"default": "Date Modified: "
+						},
+						"modDateFormat": {
+							"type": "string",
+							"description": "The date fomat string for the modified date.  Either 'date' for the standard system date (same as the 'date' placeholder) or a MomentJS format string.",
+							"default": "date"
+						},
+						"include": {
+							"type": "array",
+							"description": "An array of VSC language IDs to define which file types should be tracked.",
+							"default": [],
+							"items": {
+								"type": "string"
+							}
+						},
+						"exclude": {
+							"type": "array",
+							"description": "An array of VSC language IDs to define which file types should not be tracked.",
+							"default": [],
+							"items": {
+								"type": "string"
+							}
+						},
+						"autoHeader": {
+							"type": "string",
+							"enum": [
+								"off",
+								"manualSave",
+								"autoSave"
+							],
+							"description": "Setting for automatic header creation. Valid values are 'off': (default) no auto header; 'manualSave': header is added but not saved; 'autoSave': header is added and immediately saved to file.",
+							"default": "off"
+						},
+						"replace": {
+							"type": "array",
+							"description": "An array of template line prefixes that define lines that should be replaced during a save.",
+							"default": [],
+							"items": {
+								"type": "string"
+							}
+						}
+					}
+				},
+				"psi-header.license-text": {
+					"type": "array",
+					"description": "Custom license text used where psi-header.config.license = Custom",
+					"default": [],
+					"items": {
+						"type": "string"
+					}
+				},
+				"psi-header.variables": {
+					"type": "array",
+					"description": "An array of key value pairs that define the template variables.",
+					"default": [],
+					"items": {
+						"type": "array",
+						"minItems": 2,
+						"maxItems": 2
+					}
+				},
+				"psi-header.lang-config": {
+					"type": "array",
+					"description": "An optional set of language-specific syntax settings.",
+					"default": [],
+					"items": {
+						"type": "object",
+						"required": [
+							"language"
+						],
+						"properties": {
+							"language": {
+								"type": "string",
+								"description": "The language that this entry applies to, or '*' for the default."
+							},
+							"mapTo": {
+								"type": "string",
+								"description": "The name of the language to copy settings from.  All other settings are ignored if this one is provided."
+							},
+							"begin": {
+								"type": "string",
+								"default": "/*",
+								"description": "The string that defines the beginning of the header comment block."
+							},
+							"prefix": {
+								"type": "string",
+								"default": " * ",
+								"description": "The string that defines the beginning of each line of the header comment block."
+							},
+							"end": {
+								"type": "string",
+								"default": " */",
+								"description": "The string that defines the end of the header comment block."
+							},
+							"forceToTop": {
+								"type": "boolean",
+								"default": false,
+								"description": "Overrides the global setting for this language."
+							},
+							"blankLinesAfter": {
+								"type": "integer",
+								"description": "Overrides the global setting for this language.",
+								"default": 0
+							},
+							"beforeHeader": {
+								"type": "array",
+								"description": "Optional lines of text to be inserted before the header",
+								"default": [],
+								"items": {
+									"type": "string"
+								}
+							},
+							"afterHeader": {
+								"type": "array",
+								"description": "Optional lines of text to be inserted after the header",
+								"default": [],
+								"items": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"psi-header.templates": {
+					"type": "array",
+					"description": "An optional set of language-specific templates",
+					"default": [],
+					"items": {
+						"type": "object",
+						"required": [
+							"language"
+						],
+						"properties": {
+							"language": {
+								"type": "string",
+								"description": "The language that this entry applies to, or '*' for the default."
+							},
+							"mapTo": {
+								"type": "string",
+								"description": "The name of the language to copy the template from.  All other settings are ignored if this one is provided."
+							},
+							"template": {
+								"type": "array",
+								"default": [],
+								"description": "The template text provided as an array of strings.",
+								"items": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
 			}
-        },
-        "psi-header.changes-tracking": {
-          "type": "object",
-          "description": "An optional set of changes tracking options",
-          "properties": {
-            "isActive": {
-              "type": "boolean",
-              "description": "If true, will activate changes tracking when documents are saved.  Otherwise changes tracking is not performed.",
-              "default": false
-            },
-            "modAuthor": {
-              "type": "string",
-              "description": "The label used to identify the template line that contains the name of the user who modified the file.",
-              "default": "Modified By: "
-            },
-            "modDate": {
-              "type": "string",
-              "description": "The label used to identify the template line that contains the date that the file was last modified.",
-              "default": "Date Modified: "
-            },
-            "modDateFormat": {
-              "type": "string",
-              "description": "The date fomat string for the modified date.  Either 'date' for the standard system date (same as the 'date' placeholder) or a MomentJS format string.",
-              "default": "date"
-            },
-            "include": {
-              "type": "array",
-              "description": "An array of VSC language IDs to define which file types should be tracked.",
-              "default": [],
-              "items": {
-                "type": "string"
-              }
-            },
-            "exclude": {
-              "type": "array",
-              "description": "An array of VSC language IDs to define which file types should not be tracked.",
-              "default": [],
-              "items": {
-                "type": "string"
-              }
-			},
-			"autoHeader": {
-				"type": "string",
-				"enum": [
-					"off",
-					"manualSave",
-					"autoSave"
-				],
-				"description": "Setting for automatic header creation. Valid values are 'off': (default) no auto header; 'manualSave': header is added but not saved; 'autoSave': header is added and immediately saved to file.",
-				"default": "off"
-			}
-          }
-        },
-        "psi-header.license-text": {
-          "type": "array",
-          "description": "Custom license text used where psi-header.config.license = Custom",
-          "default": [],
-          "items": {
-            "type": "string"
-          }
-        },
-        "psi-header.variables": {
-          "type": "array",
-          "description": "An array of key value pairs that define the template variables.",
-          "default": [],
-          "items": {
-            "type": "array",
-            "minItems": 2,
-            "maxItems": 2
-          }
-        },
-        "psi-header.lang-config": {
-          "type": "array",
-          "description": "An optional set of language-specific syntax settings.",
-          "default": [],
-          "items": {
-            "type": "object",
-            "required": [
-              "language"
-            ],
-            "properties": {
-              "language": {
-                "type": "string",
-                "description": "The language that this entry applies to, or '*' for the default."
-              },
-              "mapTo": {
-                "type": "string",
-                "description": "The name of the language to copy settings from.  All other settings are ignored if this one is provided."
-              },
-              "begin": {
-                "type": "string",
-                "default": "/*",
-                "description": "The string that defines the beginning of the header comment block."
-              },
-              "prefix": {
-                "type": "string",
-                "default": " * ",
-                "description": "The string that defines the beginning of each line of the header comment block."
-              },
-              "end": {
-                "type": "string",
-                "default": " */",
-                "description": "The string that defines the end of the header comment block."
-              },
-              "forceToTop": {
-                "type": "boolean",
-                "default": false,
-                "description": "Overrides the global setting for this language."
-              },
-              "blankLinesAfter": {
-                "type": "integer",
-                "description": "Overrides the global setting for this language.",
-                "default": 0
-              },
-              "beforeHeader": {
-                "type": "array",
-                "description": "Optional lines of text to be inserted before the header",
-                "default": [],
-                "items": {
-                  "type": "string"
-                }
-              },
-              "afterHeader": {
-                "type": "array",
-                "description": "Optional lines of text to be inserted after the header",
-                "default": [],
-                "items": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        },
-        "psi-header.templates": {
-          "type": "array",
-          "description": "An optional set of language-specific templates",
-          "default": [],
-          "items": {
-            "type": "object",
-            "required": [
-              "language"
-            ],
-            "properties": {
-              "language": {
-                "type": "string",
-                "description": "The language that this entry applies to, or '*' for the default."
-              },
-              "mapTo": {
-                "type": "string",
-                "description": "The name of the language to copy the template from.  All other settings are ignored if this one is provided."
-              },
-              "template": {
-                "type": "array",
-                "default": [],
-                "description": "The template text provided as an array of strings.",
-                "items": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  },
-  "scripts": {
-    "vscode:prepublish": "tsc -p ./",
-    "compile": "tsc -watch -p ./",
-    "postinstall": "node ./node_modules/vscode/bin/install",
-    "test": "node ./node_modules/vscode/bin/test"
-  },
-  "devDependencies": {
-    "typescript": "^2.0.3",
-    "vscode": "^1.0.0",
-    "mocha": "^2.3.3",
-    "@types/node": "^6.0.40",
-    "@types/mocha": "^2.2.32"
-  },
-  "dependencies": {
-    "moment": "^2.18.1",
-    "spdx-license-list": "^3.0.1",
-    "username": "^3.0.0",
-    "wordwrap": "^1.0.0"
-  }
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "tsc -p ./",
+		"compile": "tsc -watch -p ./",
+		"postinstall": "node ./node_modules/vscode/bin/install",
+		"test": "node ./node_modules/vscode/bin/test"
+	},
+	"devDependencies": {
+		"typescript": "^2.0.3",
+		"vscode": "^1.0.0",
+		"mocha": "^2.3.3",
+		"@types/node": "^6.0.40",
+		"@types/mocha": "^2.2.32"
+	},
+	"dependencies": {
+		"moment": "^2.18.1",
+		"spdx-license-list": "^3.0.1",
+		"username": "^3.0.0",
+		"wordwrap": "^1.0.0"
+	}
 }

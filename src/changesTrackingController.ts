@@ -5,7 +5,7 @@
  * File Created: Friday, 21st April 2017 9:14:32 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Friday, 27th October 2017 8:30:39 am
+ * Last Modified: Wednesday, 1st November 2017 8:56:07 pm
  * Modified By: David Quinn <info@psioniq.uk>
  * -----
  * License: MIT License (SPDX = 'MIT')
@@ -68,7 +68,8 @@ import {
 	getConfig,
 	getTemplate,
 	replacePlaceholders,
-	getAuthorName
+	getAuthorName,
+	getMergedVariables
 } from './helper';
 
 /**
@@ -176,6 +177,22 @@ export class ChangesTrackingController {
 											? replacePlaceholders(modDateTemplate, variables)
 											: modDatePrefix + (modDatePrefix.endsWith(' ') ? '' : ' ') + date
 									});
+								} else if (this._config.replace && this._config.replace.length > 0) {
+									for (let replace of this._config.replace) {
+										const replacePrefix: string = langConfig.prefix + replace;
+										if (txt.startsWith(replacePrefix)) {
+											let modReplaceTemplate: string = template.find((value) => {
+												return value.startsWith(replace);
+											});
+											if (modReplaceTemplate) {
+												modReplaceTemplate = langConfig.prefix + modReplaceTemplate;
+												replacers.push({
+													range: range,
+													newString: replacePlaceholders(modReplaceTemplate, variables)
+												});
+											}
+										}
+									}
 								}
 							}
 						}
@@ -257,7 +274,8 @@ export class ChangesTrackingController {
 			modDateFormat: 'date',
 			include: [],
 			exclude: [],
-			autoHeader: k_.AUTO_HEADER_OFF
+			autoHeader: k_.AUTO_HEADER_OFF,
+			replace: []
 		};
 		let cfg: ITrackingConfig = this._wsConfig && this._wsConfig.has(k_.TRACKING_SETTINGS) ? this._wsConfig.get<ITrackingConfig>(k_.TRACKING_SETTINGS) : null;
 		if (cfg) {
@@ -268,12 +286,13 @@ export class ChangesTrackingController {
 			def.include = cfg.include ? cfg.include : def.include;
 			def.exclude = cfg.exclude ? cfg.exclude : def.exclude;
 			def.autoHeader = cfg.autoHeader ? cfg.autoHeader : k_.AUTO_HEADER_OFF;
+			def.replace = cfg.replace ? cfg.replace : def.replace;
 		}
 		this._config = def;
 		// get author name
 		let config: IConfig = this._wsConfig && this._wsConfig.has(k_.CONFIG_SETTINGS) ? this._wsConfig.get<IConfig>(k_.CONFIG_SETTINGS) : null;
 		this._author = config && config.author ? config.author : getAuthorName();
-		let vl: IVariableList = this._wsConfig && this._wsConfig.has(k_.VARIABLE_SETTINGS) ? this._wsConfig.get<IVariableList>(k_.VARIABLE_SETTINGS) : null;
+		let vl: IVariableList = getMergedVariables(this._wsConfig);
 		if (vl) {
 			const el: IVariable = vl.find(function(element: [string, string]): boolean { return element[0] === k_.VAR_AUTHOR; });
 			this._author = el && el.length > 1 && el[1] ? el[1] : this._author;

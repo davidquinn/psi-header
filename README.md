@@ -92,6 +92,7 @@ Settings can be added as User and/or Workspace settings - VSCode handles the maj
   * `include`: Defines an array of VSC language IDs for the file types to include in changes tracking.  The default is an empty array which indicates any file type.
   * `exclude`: Defines an array of VSC language IDs for the file types to exclude from changes tracking.  The default is an empty array which indicates no exclusions.
   * `autoHeader`: Determines whether the header should be added automatically to new files.  Refer to the [Auto Header](#auto-header) section for details.
+  * `replace`: An array of template line prefixes that define additional header lines to replace during a file save.  By way of example, you could use this to ensure that changes to file name or project name are always updated during save (it happens!).
 * `psi-header.variables`: An array of name/value pairs that provide value substitution within templates.  This can be used to override the system variables as well as add new items for your own custom templates.
 * `psi-header.lang-config`: An array of objects that allow language-specific adjustments to be made to the configuration.  You can provide a subset of values if you only want to override some of the settings. Each object can include:
   * `language`: Mandatory. Either the VSCode language ID or '*' for global settings.

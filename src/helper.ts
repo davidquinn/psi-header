@@ -5,8 +5,8 @@
  * File Created: Sunday, 1st January 2017 9:32:01 am
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Friday, 27th October 2017 8:16:41 pm
- * Modified By: David <you@you.you>
+ * Last Modified: Wednesday, 1st November 2017 8:57:33 pm
+ * Modified By: David Quinn <info@psioniq.uk>
  * -----
  * License: MIT License (SPDX = 'MIT')
  * License URL: http://www.opensource.org/licenses/MIT
@@ -34,11 +34,24 @@
  * SOFTWARE.
  */
 
-
-
-import {workspace, window, TextEditor, WorkspaceConfiguration} from 'vscode';
+import {
+	workspace,
+	window,
+	TextEditor,
+	WorkspaceConfiguration
+} from 'vscode';
 import * as k_ from './constants';
-import {ITemplate, ITemplateList, IConfig, ILangConfig, ILangConfigList, IVariable, IVariableList, IPlaceholderFunction} from './interfaces';
+import {
+	ITemplate,
+	ITemplateList,
+	IConfig,
+	ILangConfig,
+	ILangConfigList,
+	IVariable,
+	IVariableList,
+	IPlaceholderFunction,
+	IInspectableConfig
+} from './interfaces';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as moment from 'moment';
@@ -94,20 +107,20 @@ export function getConfig(wsConfig: WorkspaceConfiguration, langConfig: ILangCon
  */
 export function getTemplate(wsConfig: WorkspaceConfiguration, langId: string): Array<string> {
 	let def: ITemplate;
-	const templates: ITemplateList = wsConfig && wsConfig.has(k_.TEMPLATE_SETTINGS) ? wsConfig.get<ITemplateList>(k_.TEMPLATE_SETTINGS) : null;
-
+	const templates: ITemplateList = getMergedTemplates(wsConfig);
+	
 	if (templates) {
-		def = templates.find(function(item: ITemplate, index: number, obj: ITemplateList): boolean {
+		def = templates.find(function(item: ITemplate): boolean {
 			return item.language === langId;
 		});
 		if (def && def.hasOwnProperty('mapTo')) {
 			const mapTo = def.mapTo;
-			def = templates.find(function(item: ITemplate, index: number, obj: ITemplateList): boolean {
+			def = templates.find(function(item: ITemplate): boolean {
 				return item.language === mapTo;
 			});
 		}
 		if (def == null || !def.template) {
-			def = templates.find(function(item: ITemplate, index: number, obj: ITemplateList): boolean {
+			def = templates.find(function(item: ITemplate): boolean {
 				return item.language === k_.DEFAULT;
 			});
 		}
@@ -139,21 +152,21 @@ export function getTemplate(wsConfig: WorkspaceConfiguration, langId: string): A
 export function getLanguageConfig(wsConfig: WorkspaceConfiguration, langId: string): ILangConfig {
 	let base: ILangConfig = baseLanguageConfig(langId);
 	let cfg: ILangConfig;
-	let configs: ILangConfigList = wsConfig && wsConfig.has(k_.LANG_CONFIG_SETTINGS) ? wsConfig.get<ILangConfigList>(k_.LANG_CONFIG_SETTINGS) : null;
-
+	let configs: ILangConfigList = getMergedLangConfig(wsConfig);
+	
 	if (configs) {
-		cfg = configs.find(function(item: ILangConfig, index: number, obj: ILangConfigList): boolean {
+		cfg = configs.find(function(item: ILangConfig): boolean {
 			return item.language === langId;
 		});
 		if (cfg && cfg.hasOwnProperty('mapTo')) {
 			const mapTo = cfg.mapTo;
 			// I'm only doing this once!!  You won't make me run around in circles!!
-			cfg = configs.find(function(item: ILangConfig, index: number, obj: ILangConfigList): boolean {
+			cfg = configs.find(function(item: ILangConfig): boolean {
 				return item.language === mapTo;
 			});
 		}
 		if (cfg == null) {
-			cfg = configs.find(function(item: ILangConfig, index: number, obj: ILangConfigList): boolean {
+			cfg = configs.find(function(item: ILangConfig): boolean {
 				return item.language === k_.DEFAULT;
 			});
 		}
@@ -250,7 +263,6 @@ export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEdito
 	const now: Date = new Date();
 	const fcreated: Date = getActiveFileCreationDate() || new Date();
 	const currentFile: string = editor.document.fileName;
-	console.log(config);
 	// system variables
 	variables.push([k_.VAR_DATE, now.toDateString()]);
 	variables.push([k_.VAR_TIME, now.toLocaleTimeString()]);
@@ -270,10 +282,10 @@ export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEdito
 	}
 
 	// custom variables
-	let vl: IVariableList = wsConfig && wsConfig.has(k_.VARIABLE_SETTINGS) ? wsConfig.get<IVariableList>(k_.VARIABLE_SETTINGS) : null;
+	let vl: IVariableList = getMergedVariables(wsConfig);
 	if (vl && vl.length > 0) {
 		for (let v of vl) {
-			let item: IVariable = variables.find(function(element, index, array): boolean {
+			let item: IVariable = variables.find(function(element): boolean {
 				return element[0] == v[0]; 
 			});
 			if (item) {
@@ -285,10 +297,10 @@ export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEdito
 	}
 
 	// map copyright holder to company if not already provided via custom variable.
-	if (variables.findIndex( (value: IVariable, index: number, obj: IVariableList) => {
+	if (variables.findIndex( (value: IVariable) => {
 		return value[0] === k_.VAR_COPYRIGHT_HOLDER;
 	}) === -1) {
-		const company: IVariable = variables.find((val: IVariable, idx: number, obj: IVariableList) => {
+		const company: IVariable = variables.find((val: IVariable) => {
 			return val[0] === k_.VAR_COMPANY;
 		});
 		variables.push([k_.VAR_COPYRIGHT_HOLDER, (company ? company[1] : 'Your Company')]);
@@ -662,6 +674,96 @@ function getIndicesOf(needle: string, haystack: string, caseSensitive: boolean):
  */
 function escapeRegExp(value: string) : string {
 	return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+
+export function getMergedStrings(wsConfig: WorkspaceConfiguration, key: string): Array<string> {
+	const cfg: IInspectableConfig<Array<string>> = wsConfig.inspect(key);
+	return cfg ? mergeStringLists(cfg.defaultValue || [], cfg.globalValue || [], cfg.workspaceValue || [], cfg.workspaceFolderValue || []) : [];
+}
+
+/**
+ * 
+ * 
+ * @param {...Array<string>} lists 
+ * @returns {Array<string>} 
+ */
+function mergeStringLists(...lists: Array<Array<string>>): Array<string> {
+	let merged: Array<string> = [];
+	for (let list of lists) {
+		list.forEach((value: string) => {
+			if (merged.indexOf(value) === -1) {
+				merged.push(value);
+			}
+		});
+	}
+	return merged;
+}
+
+export function getMergedTemplates(wsConfig: WorkspaceConfiguration): ITemplateList {
+	const cfg: IInspectableConfig<ITemplateList> = wsConfig.inspect(k_.TEMPLATE_SETTINGS);
+	return cfg ? mergeTemplateLists(cfg.defaultValue || [], cfg.globalValue || [], cfg.workspaceValue || [], cfg.workspaceFolderValue || []) : [];
+}
+
+function mergeTemplateLists(...lists: ITemplateList[]): ITemplateList {
+	let merged: ITemplateList = [];
+	for (let list of lists) {
+		list.forEach((newTemplate: ITemplate) => {
+			const idx: number = merged.findIndex((mergedTemplate: ITemplate) => {
+				return mergedTemplate.language === newTemplate.language;
+			});
+			if (idx === -1) {
+				merged.push(newTemplate);
+			} else {
+				merged.splice(idx, 1, newTemplate);
+			}
+		});
+	}
+	return merged;
+}
+
+export function getMergedLangConfig(wsConfig: WorkspaceConfiguration): ILangConfigList {
+	const cfg: IInspectableConfig<ILangConfigList> = wsConfig.inspect(k_.LANG_CONFIG_SETTINGS);
+	return cfg ? mergeLangConfigLists(cfg.defaultValue || [], cfg.globalValue || [], cfg.workspaceValue || [], cfg.workspaceFolderValue || []) : [];
+}
+
+function mergeLangConfigLists(...lists: ILangConfigList[]): ILangConfigList {
+	let merged: ILangConfigList = [];
+	for (let list of lists) {
+		list.forEach((newLangConfig: ILangConfig) => {
+			const idx: number = merged.findIndex((mergedLangConfig: ILangConfig) => {
+				return mergedLangConfig.language === newLangConfig.language;
+			});
+			if (idx === -1) {
+				merged.push(newLangConfig);
+			} else {
+				merged.splice(idx, 1, newLangConfig);
+			}
+		});
+	}
+	return merged;
+}
+
+export function getMergedVariables(wsConfig: WorkspaceConfiguration): IVariableList {
+	const cfg: IInspectableConfig<IVariableList> = wsConfig.inspect(k_.VARIABLE_SETTINGS);
+	return cfg ? mergeVariableLists(cfg.defaultValue || [], cfg.globalValue || [], cfg.workspaceValue || [], cfg.workspaceFolderValue || []) : [];
+}
+
+function mergeVariableLists(...lists: IVariableList[]): IVariableList {
+	let merged: IVariableList = [];
+	for (let list of lists) {
+		list.forEach((newVariable: IVariable) => {
+			const idx: number = merged.findIndex((mergedVariable: IVariable) => {
+				return mergedVariable[0] == newVariable[0];
+			});
+			if (idx === -1) {
+				merged.push(newVariable);
+			} else {
+				merged.splice(idx, 1, newVariable);
+			}
+		});
+	}
+	return merged;
 }
 
 export {BASE_SETTINGS} from './constants';

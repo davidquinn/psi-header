@@ -5,8 +5,8 @@
  * File Created: Sunday, 1st January 2017 10:16:39 am
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Friday, 27th October 2017 8:08:31 am
- * Modified By: David Quinn <info@psioniq.uk>
+ * Last Modified: Wednesday, 1st November 2017 8:38:33 am
+ * Modified By: Dayfyd Quinn <info@psioniq.uk>
  * -----
  * License: MIT License (SPDX = 'MIT')
  * License URL: http://www.opensource.org/licenses/MIT
@@ -102,6 +102,7 @@ export interface ITrackingConfig {
 	include?: string[];
 	exclude?: string[];
 	autoHeader?: string;
+	replace?: string[];
 }
 
 /**
@@ -144,3 +145,14 @@ export interface IRangeReplacer {
  * Type that defines an array of [[IRangeReplacer]].
  */
 export type IRangeReplacerList = Array<IRangeReplacer>;
+
+/**
+ * Interface for the results returned by a call to WorkspaceConfig.inspect.
+ */
+export interface IInspectableConfig<T extends any> {
+	key: string;
+	defaultValue?: T;
+	globalValue?: T;
+	workspaceValue?: T;
+	workspaceFolderValue?: T;
+}
