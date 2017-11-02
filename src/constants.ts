@@ -1,19 +1,15 @@
 /**
  * File: constants.ts
- * Relative Path: /src/constants.ts
  * Project: psioniq File Header
- * File Created: Wednesday, 12th April 2017 9:13:30 pm
+ * File Created: Friday, 6th October 2017 10:23:19 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Sunday, July 16th 2017, 1:10:41 pm
- * Modified By: David Quinn
+ * Last Modified: Thursday, 2nd November 2017 8:02:26 am
+ * Modified By: David Quinn <info@psioniq.uk>
  * -----
- * License: MIT License (SPDX = 'MIT')
- * License URL: http://www.opensource.org/licenses/MIT
- * 
  * MIT License
  * 
- * Copyright (c) 2017 psioniq
+ * Copyright (c) 2017 David Quinn
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -33,8 +29,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
-
 
 /**
  * Settings Section names

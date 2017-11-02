@@ -1,19 +1,15 @@
 /**
  * File: changesTrackingController.ts
- * Relative Path: /src/changesTrackingController.ts
  * Project: psioniq File Header
- * File Created: Friday, 21st April 2017 9:14:32 pm
+ * File Created: Sunday, 29th October 2017 8:11:24 am
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Wednesday, 1st November 2017 8:56:07 pm
+ * Last Modified: Thursday, 2nd November 2017 8:02:10 am
  * Modified By: David Quinn <info@psioniq.uk>
  * -----
- * License: MIT License (SPDX = 'MIT')
- * License URL: http://www.opensource.org/licenses/MIT
- * 
  * MIT License
  * 
- * Copyright (c) 2017 psioniq
+ * Copyright (c) 2017 David Quinn
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -33,8 +29,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
-
 
 import {
 	Disposable, 

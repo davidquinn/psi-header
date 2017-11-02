@@ -1,19 +1,15 @@
 /**
  * File: insertFileHeaderCommand.ts
- * Relative Path: /src/insertFileHeaderCommand.ts
  * Project: psioniq File Header
- * File Created: Friday, 30th December 2016 5:33:30 pm
+ * File Created: Wednesday, 1st November 2017 7:39:26 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Sunday, July 16th 2017, 8:56:39 am
- * Modified By: David Quinn
+ * Last Modified: Thursday, 2nd November 2017 8:03:07 am
+ * Modified By: David Quinn <info@psioniq.uk>
  * -----
- * License: MIT License (SPDX = 'MIT')
- * License URL: http://www.opensource.org/licenses/MIT
- * 
  * MIT License
  * 
- * Copyright (c) 2017 psioniq
+ * Copyright (c) 2017 David Quinn
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -33,8 +29,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
-
 
 import {workspace, window, TextEditor, WorkspaceConfiguration, Selection, Position} from 'vscode';
 import {BASE_SETTINGS, ILangConfig, IConfig, IVariableList, getLanguageConfig, getTemplate, getConfig, getVariables, merge} from './helper';

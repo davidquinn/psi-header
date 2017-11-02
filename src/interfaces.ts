@@ -1,19 +1,15 @@
 /**
  * File: interfaces.ts
- * Relative Path: /src/interfaces.ts
  * Project: psioniq File Header
- * File Created: Sunday, 1st January 2017 10:16:39 am
+ * File Created: Friday, 6th October 2017 10:24:19 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Wednesday, 1st November 2017 8:38:33 am
- * Modified By: Dayfyd Quinn <info@psioniq.uk>
+ * Last Modified: Thursday, 2nd November 2017 8:03:32 am
+ * Modified By: David Quinn <info@psioniq.uk>
  * -----
- * License: MIT License (SPDX = 'MIT')
- * License URL: http://www.opensource.org/licenses/MIT
- * 
  * MIT License
  * 
- * Copyright (c) 2017 psioniq
+ * Copyright (c) 2017 David Quinn
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -33,8 +29,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
-
 
 import {Range} from 'vscode';
 
