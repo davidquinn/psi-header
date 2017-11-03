@@ -4,7 +4,7 @@
  * File Created: Friday, 6th October 2017 10:23:42 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Thursday, 2nd November 2017 8:02:52 am
+ * Last Modified: Friday, 3rd November 2017 8:40:04 am
  * Modified By: David Quinn <info@psioniq.uk>
  * -----
  * MIT License
@@ -673,16 +673,27 @@ function escapeRegExp(value: string) : string {
 }
 
 
+/**
+ * Returns the current configuration values for an array of strings.  
+ * Unlike the default VSC method, this will merge the various strings of the 
+ * Default then User then Workspace then WorkspaceFolder settings into a single 
+ * array that includes all strings (the default behaviour of VSC is to only 
+ * return the last array).
+ * 
+ * @param wsConfig The Workspace Configuration
+ * @param key The configuration key to retrieve - can use dot notation.
+ */
 export function getMergedStrings(wsConfig: WorkspaceConfiguration, key: string): Array<string> {
 	const cfg: IInspectableConfig<Array<string>> = wsConfig.inspect(key);
 	return cfg ? mergeStringLists(cfg.defaultValue || [], cfg.globalValue || [], cfg.workspaceValue || [], cfg.workspaceFolderValue || []) : [];
 }
 
 /**
+ * General method to merge one or more string arrays into a single array that 
+ * includes all of the strings from all of the passed in string arrays.
  * 
- * 
- * @param {...Array<string>} lists 
- * @returns {Array<string>} 
+ * @param {...Array<string>} lists The string array(s)
+ * @returns {Array<string>} The merged array of strings
  */
 function mergeStringLists(...lists: Array<Array<string>>): Array<string> {
 	let merged: Array<string> = [];
@@ -696,11 +707,24 @@ function mergeStringLists(...lists: Array<Array<string>>): Array<string> {
 	return merged;
 }
 
+/**
+ * Returns the full set of templates that are defined in Default, User, 
+ * Workspace and/or WorkspaceFolder settings.  Unlike the default VSC method, 
+ * the returned array will include all templates defined across all settings.
+ * 
+ * @param wsConfig The Workspace Configuration object.
+ */
 export function getMergedTemplates(wsConfig: WorkspaceConfiguration): ITemplateList {
 	const cfg: IInspectableConfig<ITemplateList> = wsConfig.inspect(k_.TEMPLATE_SETTINGS);
 	return cfg ? mergeTemplateLists(cfg.defaultValue || [], cfg.globalValue || [], cfg.workspaceValue || [], cfg.workspaceFolderValue || []) : [];
 }
 
+/**
+ * General method to merge one or more [[ITemplateList]] arrays into a single 
+ * array that includes all of the template lists from all of the passed in arrays.
+ * 
+ * @param lists The ITemplateList array(s)
+ */
 function mergeTemplateLists(...lists: ITemplateList[]): ITemplateList {
 	let merged: ITemplateList = [];
 	for (let list of lists) {
@@ -718,11 +742,26 @@ function mergeTemplateLists(...lists: ITemplateList[]): ITemplateList {
 	return merged;
 }
 
+/**
+ * Returns the full set of language configuration objects that are defined in 
+ * Default, User, Workspace and/or WorkspaceFolder settings.  Unlike the default 
+ * VSC method, the returned array will include all language configurations 
+ * defined across all settings.
+ * 
+ * @param wsConfig The Workspace Configuration object.
+ */
 export function getMergedLangConfig(wsConfig: WorkspaceConfiguration): ILangConfigList {
 	const cfg: IInspectableConfig<ILangConfigList> = wsConfig.inspect(k_.LANG_CONFIG_SETTINGS);
 	return cfg ? mergeLangConfigLists(cfg.defaultValue || [], cfg.globalValue || [], cfg.workspaceValue || [], cfg.workspaceFolderValue || []) : [];
 }
 
+/**
+ * General method to merge one or more [[ILangConfigList]] arrays into a single 
+ * array that includes all of the language configuration lists from all of the 
+ * passed in arrays.
+ * 
+ * @param lists The ILangConfigList array(s)
+ */
 function mergeLangConfigLists(...lists: ILangConfigList[]): ILangConfigList {
 	let merged: ILangConfigList = [];
 	for (let list of lists) {
@@ -740,11 +779,24 @@ function mergeLangConfigLists(...lists: ILangConfigList[]): ILangConfigList {
 	return merged;
 }
 
+/**
+ * Returns the full set of variables that are defined in Default, User, 
+ * Workspace and/or WorkspaceFolder settings.  Unlike the default VSC method, 
+ * the returned array will include all variables defined across all settings.
+ * 
+ * @param wsConfig The Workspace Configuration object.
+ */
 export function getMergedVariables(wsConfig: WorkspaceConfiguration): IVariableList {
 	const cfg: IInspectableConfig<IVariableList> = wsConfig.inspect(k_.VARIABLE_SETTINGS);
 	return cfg ? mergeVariableLists(cfg.defaultValue || [], cfg.globalValue || [], cfg.workspaceValue || [], cfg.workspaceFolderValue || []) : [];
 }
 
+/**
+ * General method to merge one or more [[IVariableList]] arrays into a single 
+ * array that includes all of the variable lists from all of the passed in arrays.
+ * 
+ * @param lists The IVariableList array(s)
+ */
 function mergeVariableLists(...lists: IVariableList[]): IVariableList {
 	let merged: IVariableList = [];
 	for (let list of lists) {
