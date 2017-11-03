@@ -29,14 +29,18 @@
 	],
 	"main": "./out/src/extension",
 	"contributes": {
-		"commands": [{
-			"command": "psi-header.insertFileHeader",
-			"title": "Header Insert"
-		}],
-		"keybindings": [{
-			"command": "psi-header.insertFileHeader",
-			"key": "ctrl+alt+H ctrl+alt+H"
-		}],
+		"commands": [
+			{
+				"command": "psi-header.insertFileHeader",
+				"title": "Header Insert"
+			}
+		],
+		"keybindings": [
+			{
+				"command": "psi-header.insertFileHeader",
+				"key": "ctrl+alt+H ctrl+alt+H"
+			}
+		],
 		"configuration": {
 			"type": "object",
 			"title": "Header Insert",

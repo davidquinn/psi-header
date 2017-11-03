@@ -4,7 +4,7 @@
  * File Created: Sunday, 29th October 2017 8:11:24 am
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Thursday, 2nd November 2017 8:02:10 am
+ * Last Modified: Thursday, 2nd November 2017 7:30:17 pm
  * Modified By: David Quinn <info@psioniq.uk>
  * -----
  * MIT License
@@ -123,7 +123,6 @@ export class ChangesTrackingController {
 				const langConfig: ILangConfig = getLanguageConfig(this._wsConfig, doc.languageId);
 				const mainConfig: IConfig = getConfig(this._wsConfig, langConfig);
 				const variables: IVariableList = getVariables(this._wsConfig, activeTextEditor, mainConfig, langConfig, true);
-				
 				const template: Array<string> = getTemplate(this._wsConfig, doc.languageId);
 				const modDatePrefix: string = langConfig.prefix + this._config.modDate;
 				const modAuthorPrefix: string = langConfig.prefix + this._config.modAuthor;
@@ -139,7 +138,6 @@ export class ChangesTrackingController {
 				if (modAuthorTemplate) {
 					modAuthorTemplate = langConfig.prefix + modAuthorTemplate;
 				}
-				
 				const date: string = this._config.modDateFormat === 'date' ? new Date().toDateString() : moment().format(this._config.modDateFormat);
 				let inComment: boolean = false;
 				let replacers: IRangeReplacerList = [];

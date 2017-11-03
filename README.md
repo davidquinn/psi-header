@@ -72,7 +72,7 @@ No requirements or dependencies.
 # Extension Settings
 It is quite possible to use this extension without making any changes to your VSCode's setting (although you probably want to set up a couple of variable values like author and company at least).  Extensive configuration options are available should you wish to get your hands dirty.
 
-Settings can be added as User and/or Workspace settings - VSCode handles the majik of merging them together.  Workspace settings take precedence over User settings.
+Settings can be added as User and/or Workspace and/or WorkspaceFolder settings - VSCode handles the majik of merging them together.  Workspace Folder settings take precedence over Workspace settings which take precedence over User settings (which in turn take precendce over Default values).
 
 * `psi-header.config`: Some global defaults:
   * `forceToTop`: If true, it will ignore the current cursor position and insert the header at the top of the document.
