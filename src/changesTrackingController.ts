@@ -4,12 +4,12 @@
  * File Created: Sunday, 29th October 2017 8:11:24 am
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Thursday, 2nd November 2017 7:30:17 pm
- * Modified By: David Quinn <info@psioniq.uk>
+ * Last Modified: Thursday, 16th November 2017 5:17:52 pm
+ * Modified By: David Quinn (info@psioniq.uk>)
  * -----
  * MIT License
  * 
- * Copyright (c) 2017 David Quinn
+ * Copyright 2017 - 2017 David Quinn, psioniq
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -65,6 +65,7 @@ import {
 	getAuthorName,
 	getMergedVariables
 } from './helper';
+import { log } from 'util';
 
 /**
  * Configuration and setup for changes tracking.
@@ -104,7 +105,7 @@ export class ChangesTrackingController {
 
 	/**
 	 * Delegate method triggered whenever a document will be saved.
-	 * Used to update modified date/user in header.
+	 * Used to update an existing header.
 	 * 
 	 * @private
 	 * @param {TextDocumentWillSaveEvent} e 
@@ -229,7 +230,7 @@ export class ChangesTrackingController {
 
 	/**
 	 * Called whenever the active editor is changed.
-	 * This controls automatic adding of headers.
+	 * This controls automatic adding of headers to new files.
 	 * 
 	 * @private
 	 * @param {TextEditor} editor 
@@ -358,8 +359,8 @@ export class ChangesTrackingController {
 			const langBegin: string = this._langBegin(doc.languageId);
 			for (let i: number = 0; i < doc.lineCount; i++) {
 				const txt: string = doc.lineAt(i).text;
-				if (txt && txt.length > 0 && txt !== langBegin) {
-					result = true;
+				if (txt && txt.length > 0 && txt == langBegin) {
+					result = false;
 					break;
 				}
 			}
