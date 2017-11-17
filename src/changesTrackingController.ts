@@ -4,7 +4,7 @@
  * File Created: Sunday, 29th October 2017 8:11:24 am
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Thursday, 16th November 2017 5:17:52 pm
+ * Last Modified: Friday, 17th November 2017 6:57:37 am
  * Modified By: David Quinn (info@psioniq.uk>)
  * -----
  * MIT License
@@ -356,6 +356,7 @@ export class ChangesTrackingController {
 	private _docNeedsHeader(doc: TextDocument) {
 		let result: boolean = doc.lineCount <= 1;
 		if (!result) {
+			result = true;
 			const langBegin: string = this._langBegin(doc.languageId);
 			for (let i: number = 0; i < doc.lineCount; i++) {
 				const txt: string = doc.lineAt(i).text;

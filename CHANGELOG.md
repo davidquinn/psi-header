@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 1.3.3 (17/11/2017)
+* __FIX__: Fixed a bug introduced by the previous fix for auto-header add where text has been added to the file.
+
 ## 1.3.2 (16/11/2017)
 * __FIX__: Fixed a bug where 2 headers could be inserted into a new file created via File->New or Cmd-N/Ctrl-N if (and only if) auto-header was active and you had manually added a header before the first ever save of the file.
 
