@@ -3,13 +3,16 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
-## 1.3.3 (17/11/2017)
+## 1.3.4 (22 Nov 2017)
+* __MAINT__: Just some housekeeping in the readme file for clarity - no new or changed functionality.
+
+## 1.3.3 (17 Nov 2017)
 * __FIX__: Fixed a bug introduced by the previous fix for auto-header add where text has been added to the file.
 
-## 1.3.2 (16/11/2017)
+## 1.3.2 (16 Nov 2017)
 * __FIX__: Fixed a bug where 2 headers could be inserted into a new file created via File->New or Cmd-N/Ctrl-N if (and only if) auto-header was active and you had manually added a header before the first ever save of the file.
 
-## 1.3.1 (01/11/2017)
+## 1.3.1 (01 Nov 2017)
 * __NEW__: Added new `psi-header.changes-tracking.replace` configuration setting.  This is an array of strings that let you define which additional lines from the template should be replaced during file save.  This would be useful for example for updating the file name in the header.  This setting is in addition to the existing modified date and author settings which don't need to be added here (although you could).
 * __CHANGE__: Replaced the default VSC logic for reading array-based configuration settings between user and workspace settings.  The original code would simply replace the user settings array with the workspace settings array.  The new logic merges the two so you can use workspace settings to override individual user setting array values or to add new array settings.  This affects `psi-header.variables`, `psi-header.lang-config` and `psi-header.templates`.
 * __FIX__: Removed a debug console log entry.

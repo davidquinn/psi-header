@@ -28,7 +28,7 @@ To run the extension, either:
 Refer to [Extension Settings](#extension-settings) for configuration details.
 
 * Adds a generic or language-specific header at the current cursor location.
-* Can optionally record changes in the header each time the file is saved (see [Changes Tracking](#changes-tracking)).
+* Can optionally [track changes](#changes-tracking) in the header each time the file is saved.
 * Can automatically add a header to new files.
 * Compatible with VSCode Multi Root Workspaces.
 * Separates language specific elements (e.g. comment block begin and end) from the template body to minimise the number of templates you might need to manage.
@@ -39,47 +39,80 @@ Refer to [Extension Settings](#extension-settings) for configuration details.
 * Provides language-specific syntax settings (e.g. comment block syntax) out of the box.
 * Configure your own custom language syntax globally and/or per language.
 * Create your own custom templates - global and/or per language.
-* Map custom templates across languages so you only need to enter the template body once.
-* Map custom language syntax settings across languages so you only need to enter the settings once.
-* Provides the following case-insensitive `system variables` for placeholder value substitution:
-  * `date`: inserts the current date using the current locale (see also dateformat() system function below).
-  * `time`: inserts the current time using the current locale.
-  * `year`: inserts the current year.
-  * `filepath`: inserts the fully-qualified name of the file.
-  * `filerelativepath`: inserts the file name including the relative path within the project.
-  * `filename`: just the file name without the path details.
-  * `projectpath`: inserts the fully-qualified path to the root directory of the project.
-  * `projectname`: Attempts to read package.json (in the current or any parent directory) for either a displayName or name property.  If there is no package.json file _and_ the file has been saved to disk, it will return the project path's base name.
-  * `company`: the name of your company.  In this release it defaults to "Your Company".
-  * `author`: the name of the file author.  Will attempt to get the user name of the current user, otherwise it defaults to "You".
-  * `authoremail`: the email address of the file author.  In this release it defaults to "you@you.you".
-  * `licensetext`: the full text of the license. This is determined automatically.
-  * `copyrightholder`: used in some licenses. If not provided it defaults to the same value as `company`.
-  * `licensename`: The name of the license. If not using a custom license, this is determined automatically.
-  * `licenseurl`: The url for the license. If using not using a license, this is determined automatically.
-  * `spdxid`: The SPDX License ID for the license. If not using a custom license, this is determined automatically.
-* Provides the following _case-sensitive_ `system functions` for configurable placeholder value substitution:
-  * `dateformat(args)`: inserts a date or date part using format strings.
-  * `filecreated(args)`: inserts the file created date and time using format strings.  This can also be used without arguments to use the current locale date format.
+* Map custom template and syntax settings across languages so you can easily reuse them.
+* Provides case-insensitive [System Variables](#system-variables) for placeholder value substitution.
+* Provides _case-sensitive_ [System Functions](#system-functions) for configurable placeholder value substitution.
 * Allows the overriding of system variable values with static global values within the configuration.
 * Create an unlimited number of custom static variables for use throughout your custom templates.
-* Can be run via a the key shortcut `ctrl+alt+H` then `ctrl+alt+H`.
+* Can be run via the key shortcut `ctrl+alt+H` then `ctrl+alt+H`.
 * Can automatically insert license text based on SPDX license IDs.
 
 # Dependencies
 No requirements or dependencies.
 
+# System Variables
+The following system variables are available for placeholder substitution in your templates.  They are case-insensitive.
+
+|Variable Name | Description |
+|---|---|
+| `date` | The current date using the current locale (also see the `dateformat()` [system function](#system-function) below for a formattable date string version). |
+| `time` | The current time using the current locale. |
+| `year` | The current year. |
+| `filepath` | The fully-qualified name of the file. |
+| `filerelativepath` | The file name including the relative path within the project. |
+| `filename` | Just the file name without the path details. |
+| `projectpath` | The fully-qualified path to the root directory of the project. |
+| `projectname` | Attempts to read package.json (in the current or any parent directory) for either a `displayName` or `name` property.  If there is no package.json file _and_ the file has been saved to disk, it will return the project path's base name. |
+| `company` | The name of your company.  In this release it defaults to "Your Company". |
+| `author` | Will attempt to get the user name of the current user, otherwise it defaults to "You". |
+| `authoremail` | The email address of the file author.  In this release it defaults to "you@you.you". |
+| `licensetext` | The full text of the license. This is determined automatically. |
+| `copyrightholder` | Used in some licenses. If not provided it defaults to the same value as `company`. |
+| `licensename` | The name of the license. If not using a custom license, this is determined automatically. |
+| `licenseurl` | The url for the license. If using not using a license, this is determined automatically. |
+| `spdxid` | The SPDX License ID for the license. If not using a custom license, this is determined automatically. |
+
+You can also create your own custom variables (for example if you are using this extension within a team) by adding your own variables to `psi-header.variables` then referring to them within your template like the following example which adds a custom variable called `projectCreationYear`:
+``` json
+	"psi-header.variables": [
+		["projectCreationYear", "2017"]
+	],
+	"psi-header.templates": [
+		{
+			"language": "*",
+			"template": [
+				"File: <<filename>>",
+				"Project: <<projectname>>",
+				"File Created: <<filecreated('dddd, Do MMMM YYYY h:mm:ss a')>>",
+				"Author: <<author>> (<<authoremail>>)",
+				"-----",
+				"Last Modified: <<dateformat('dddd, Do MMMM YYYY h:mm:ss a')>>",
+				"Modified By: <<author>> (<<authoremail>>>)",
+				"-----",
+				"Copyright <<projectCreationYear>> - <<year>> <<copyrightholder>>, <<company>>"
+			]
+		}
+	]
+```
+
+
+# System Functions
+The following _case-sensitive_ `system functions` are available for configurable placeholder value substitution.  These are similar to [System Variables](#system-variables) but they take arguments.
+
+|Function Name | Description |
+|---|---|
+| `dateformat(args)` | The current date or date part using format strings.  This function takes a single string argument which represents the moment.js compatible format string. |
+| `filecreated(args)` | The file created date and time using format strings.  This function takes a single string argument which represents the moment.js compatible format string.  It can also be used without arguments to use the current locale date format. |
+
 # Extension Settings
-It is quite possible to use this extension without making any changes to your VSCode's setting (although you probably want to set up a couple of variable values like author and company at least).  Extensive configuration options are available should you wish to get your hands dirty.
+It is quite possible to use this extension without making any changes to your VSCode's settings (although you probably want to set up a couple of variable values like author and company at least).  Extensive configuration options are available should you wish to get your hands dirty.
 
 Settings can be added as User and/or Workspace and/or WorkspaceFolder settings - VSCode handles the majik of merging them together.  Workspace Folder settings take precedence over Workspace settings which take precedence over User settings (which in turn take precendce over Default values).
 
 * `psi-header.config`: Some global defaults:
-  * `forceToTop`: If true, it will ignore the current cursor position and insert the header at the top of the document.
-	If false (the default), the header will be inserted at the current cursor position.
-	Can be overridden for specific languages (via *_psi-header.lang-config_*).
+  * `forceToTop`: If true, it will ignore the current cursor position and insert the header at the top of the document. If false (the default), the header will be inserted at the current cursor position. Can be overridden for specific languages (via *_psi-header.lang-config_*).
   * `blankLinesAfter`: Specify how many blank lines to insert after the header comment block.  Default is 0 (zero).
-  * `license`: The SPDX License ID of the license to insert into the header (or "Custom" if providing your own license text). Refer to [License Information](#license-information) for details.
+  * `license`: The SPDX License ID of the license to insert into the header (or `"Custom"` if providing your own license text). Refer to [License Information](#license-information) for details.
   * `author`: your name - used by the `author` system variable.  Optional with no default.
   * `authorEmail`: your email address - used by the `authoremail` system variable.  Optional with no default.
   * `company`: your Company's name - used by the `company` system variable.  Optional with no default.
@@ -402,7 +435,7 @@ The default (built in) template is:
 [
     "Filename: <<filepath>>",
     "Path: <<projectpath>>",
-	"Created Date: <<filecreated('dddd, MMMM Do YYYY, h:mm:ss a')>>",
+    "Created Date: <<filecreated('dddd, MMMM Do YYYY, h:mm:ss a')>>",
     "Author: <<author>>",
     "",
     "Copyright (c) <<year>> <<company>>"
