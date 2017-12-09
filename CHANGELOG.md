@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 1.3.5 (09 Dec 2017)
+* __FIX__: Fixed an issue determining the project name and root folder in Windows.  This could cause the `projectname` variable to fail when not using a package.json.
+
 ## 1.3.4 (22 Nov 2017)
 * __MAINT__: Just some housekeeping in the readme file for clarity - no new or changed functionality.
 

@@ -4,12 +4,12 @@
  * File Created: Friday, 6th October 2017 10:23:42 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Friday, 3rd November 2017 8:40:04 am
- * Modified By: David Quinn <info@psioniq.uk>
+ * Last Modified: Saturday, 9th December 2017 3:00:33 pm
+ * Modified By: David Quinn (info@psioniq.uk>)
  * -----
  * MIT License
  * 
- * Copyright (c) 2017 David Quinn
+ * Copyright 2017 - 2017 David Quinn, psioniq
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -317,17 +317,19 @@ export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEdito
  * @returns {string} The directory within the path that contains a package.json, else a blank string.
  */
 function getProjectRootPath(filename: string): string {
+	let found: boolean = false;
 	const parsed = path.parse(filename);
 	const dir: string = parsed ? parsed.dir : '';
 	let result: string = dir;
 	while(result.includes(path.sep)) {
 		if (fs.existsSync(path.join(result, 'package.json'))) {
+			found = true;
 			break;
 		} else {
 			result = result.substring(0, result.lastIndexOf(path.sep));
 		}
 	}
-	if (result.length === 0) {
+	if (!found) {
 		result = dir;
 	}
 	return result;
@@ -341,16 +343,19 @@ function getProjectRootPath(filename: string): string {
  */
 function getProjectName(filename: string): string {
 	try {
+		let projectName: string = null;
 		const rootPath: string = getProjectRootPath(filename);
 		const fname: string = path.join(rootPath, 'package.json');
 		if (fs.existsSync(fname)) {
 			const prj = JSON.parse(fs.readFileSync(fname).toString());
 			if (prj) {
-				return prj.displayName ? prj.displayName : prj.name;
+				projectName = prj.displayName ? prj.displayName : prj.name;
 			}
 		}
-		return path.basename(rootPath);
+		return projectName ? projectName : path.basename(rootPath);
 	} catch (error) {
+		console.log('psioniqFileHeader - error returned when trying to determine project name.  Error object below:');
+		console.log(error);
 		return null;
 	}
 }
