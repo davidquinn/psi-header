@@ -7,7 +7,7 @@ To report bugs, issues, suggestions: email `info@psioniq.uk`
 Here is a sample output:
 
 ```javascript
-/**
+/*
  * File: \Users\me\Development\psioniq\myProject\src\myPrecious.js
  * Project: \Users\me\Development\psioniq\myProject
  * Created Date: Saturday December 31 2016
@@ -137,6 +137,7 @@ Settings can be added as User and/or Workspace and/or WorkspaceFolder settings -
   * `blankLinesAfter`: Optional. Same as *_psi-header.config.blankLinesAfter_* but just for this language.  If set, this overrides the global setting.
   * `beforeHeader`: Optional.  Allows multiple lines of text to be inserted before the beginning of the header comment block (e.g. pre-processor commands).  NOTE: The extenion will not add comment prefixes to this text, so you will need to include them in your text if necessary.
   * `afterHeader`: Optional.  Allows multiple lines of text to be inserted after the end of the header comment block (e.g. pre-processor commands).  This will appear after any configured `blankLinesAfter`.  NOTE: The extenion will not add comment prefixes to this text, so you will need to include them in your text if necessary.
+  * `rootDirFileName`: Optional.  By default this extension looks for a file called `package.json` to determine the project's root path.  This allows you to also search for an additional file name that should exist in the root path.  The contents of the file are irrelevant (it can be a blank file).  Only really needed if you can't have a package.json file in your root path.
 * `psi-header.templates`: An array of template definitions.  Each definition must include either *_mapTo_* or *_template_*.  Includes:
   * `language`: Mandatory. Either the VSCode language ID or '*' for the global template.
   * `mapTo`: Optional.  If provided, this language will use the specified language's template (and will ignore the following *_template_* value).  The value is a VSCode language ID.  Ignored if *_language = "*"_*.
@@ -196,9 +197,9 @@ __Important Notes:__
 These functions use Moment.js and pass the function argument as a format string to moment().function(String).  The format string can use all [Moment.js format string options](http://momentjs.com/docs/#/displaying/format/).
 
 ## A Note about Project Paths
-When this extension was originally written VSCode only supported opening a single directory in a workspace.  So, working out the root directory was reasonably simple.  However, now with Multi Root Workspaces we can no longer assume the root directory (infact Microoft has deprecated the method that returned the root directory).
+When this extension was originally written VSCode only supported opening a single directory in a workspace.  So, working out the root directory was reasonably simple - life was good!  However, now with Multi Root Workspaces we can no longer assume the root directory (infact Microoft has deprecated the method that returned the root directory).
 
-Therefore, placeholders that need to know the project root directory (`filerelativepath`, `projectpath` and `projectname`) now try to work it out by iterating up the directory structure (starting at the current editor file location) until they come to a package.json file.  If one is found then that is assumed to be the root - otherwise it just assumes the same directory as the edited file.
+Therefore, placeholders that need to know the project root directory (`filerelativepath`, `projectpath` and `projectname`) now try to work it out by iterating up the directory structure (starting at the current editor file location) until they come to a package.json file or a filename set in the `psi-header.lang-config.rootDirFileName` configuration setting.  If either one is found then its location is assumed to be the root - otherwise it just assumes the same directory as the edited file.
 
 ## License Information
 The `psi-header.config.license` setting expects either a valid [SPDX license ID](https://spdx.org/licenses/) or `"Custom"` if you are providing your own license text.  When set to Custom, you need to provide the license text via the `psi-header.license-text` setting.
@@ -250,7 +251,7 @@ So, taking the example from the beginning of the README, let's say Uncle Jack Bo
 ```
 
 ```javascript
-/**
+/*
  * File: \Users\me\Development\psioniq\myProject\src\myPrecious.js
  * Project: \Users\me\Development\psioniq\myProject
  * Created Date: Saturday December 31 2016
@@ -290,7 +291,7 @@ So, modifying the Last Modified and Modified By lines in the template from the e
 ```
 
 ```javascript
-/**
+/*
  * File: \Users\me\Development\psioniq\myProject\src\myPrecious.js
  * Project: \Users\me\Development\psioniq\myProject
  * Created Date: Saturday December 31 2016
@@ -444,7 +445,7 @@ The default (built in) template is:
 ...which, when rendered would produce the following (assuming JS):
 
 ```javascript
-/**
+/*
  * Filename: \Users\me\Development\psioniq\myProject\src\myPrecious.js
  * Path: \Users\me\Development\psioniq\myProject
  * Created Date: Saturday, December 31st 2016, 10:27:35 am

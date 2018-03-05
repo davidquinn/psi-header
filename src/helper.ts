@@ -4,12 +4,12 @@
  * File Created: Friday, 6th October 2017 10:23:42 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Saturday, 9th December 2017 3:00:33 pm
+ * Last Modified: Monday, 5th March 2018 7:39:23 pm
  * Modified By: David Quinn (info@psioniq.uk>)
  * -----
  * MIT License
  * 
- * Copyright 2017 - 2017 David Quinn, psioniq
+ * Copyright 2017 - 2018 David Quinn, psioniq
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -146,7 +146,7 @@ export function getTemplate(wsConfig: WorkspaceConfiguration, langId: string): A
  * @returns {ILangConfig}
  */
 export function getLanguageConfig(wsConfig: WorkspaceConfiguration, langId: string): ILangConfig {
-	let base: ILangConfig = baseLanguageConfig(langId);
+	let base: ILangConfig = baseLangConfig(langId);
 	let cfg: ILangConfig;
 	let configs: ILangConfigList = getMergedLangConfig(wsConfig);
 	
@@ -168,7 +168,7 @@ export function getLanguageConfig(wsConfig: WorkspaceConfiguration, langId: stri
 		}
 	}
 
-	mapLanguageConfig(cfg, base);
+	mapLangConfig(cfg, base);
 	return base;
 }
 
@@ -178,31 +178,31 @@ export function getLanguageConfig(wsConfig: WorkspaceConfiguration, langId: stri
  * @param {string} langId
  * @returns
  */
-function baseLanguageConfig(langId: string) {
-	let config: ILangConfig = { language: '*', begin: '/**', prefix: ' * ', end: ' */' };
+function baseLangConfig(langId: string) {
+	let config: ILangConfig = { language: '*', begin: '/*', prefix: ' * ', end: ' */' };
 	switch(langId) {
 		case "swift":
-			mapLanguageConfig({ begin: '/**'}, config);
+			mapLangConfig({ begin: '/**'}, config);
 			break;
 		case "lua":
-			mapLanguageConfig({ begin: '--[[', prefix: '--', end: '--]]'}, config);
+			mapLangConfig({ begin: '--[[', prefix: '--', end: '--]]'}, config);
 			break;
 		case "perl":
 		case "ruby":
-			mapLanguageConfig({ begin: '#', prefix: '#', end: '#'}, config);
+			mapLangConfig({ begin: '#', prefix: '#', end: '#'}, config);
 			break;
 		case "vb":
-			mapLanguageConfig({ begin: "'", prefix: "'", end: "'"}, config);
+			mapLangConfig({ begin: "'", prefix: "'", end: "'"}, config);
 			break;
 		case 'clojure':
-			mapLanguageConfig({ begin: ';;', prefix: ';', end: ';;'}, config);
+			mapLangConfig({ begin: ';;', prefix: ';', end: ';;'}, config);
 			break;
 		case 'python':
-			mapLanguageConfig({ begin: "'''", prefix: '', end: "'''"}, config);
+			mapLangConfig({ begin: "'''", prefix: '', end: "'''"}, config);
 			break;
 		case "xml":
 		case "html":
-			mapLanguageConfig({ begin: '<!--', prefix: '', end: '-->'}, config);
+			mapLangConfig({ begin: '<!--', prefix: '', end: '-->'}, config);
 			break;
 	}
 	return config;
@@ -215,7 +215,7 @@ function baseLanguageConfig(langId: string) {
  * @param {Object} source
  * @param {ILangConfig} target
  */
-function mapLanguageConfig(source: Object, target: ILangConfig): void {
+function mapLangConfig(source: Object, target: ILangConfig): void {
 	if (source) {
 		mapProperty(source, target, 'language');
 		mapProperty(source, target, 'begin');
@@ -226,6 +226,7 @@ function mapLanguageConfig(source: Object, target: ILangConfig): void {
 		mapProperty(source, target, 'blankLinesAfter');
 		mapProperty(source, target, 'beforeHeader');
 		mapProperty(source, target, 'afterHeader');
+		mapProperty(source, target, 'rootDirFileName');
 	}
 }
 
@@ -264,12 +265,12 @@ export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEdito
 	variables.push([k_.VAR_TIME, now.toLocaleTimeString()]);
 	variables.push([k_.VAR_YEAR, now.getFullYear().toString()]);
 	variables.push([k_.VAR_FILE_PATH, currentFile]);
-	variables.push([k_.VAR_FILE_RELATIVE_PATH, getRelativeFilePath(currentFile)]);
-	variables.push([k_.VAR_PROJECT_PATH, getProjectRootPath(currentFile)]);
+	variables.push([k_.VAR_FILE_RELATIVE_PATH, getRelativeFilePath(currentFile, langConfig.rootDirFileName)]);
+	variables.push([k_.VAR_PROJECT_PATH, getProjectRootPath(currentFile, langConfig.rootDirFileName)]);
 	variables.push([k_.VAR_COMPANY, config && config.company ? config.company : 'Your Company']);
 	variables.push([k_.VAR_AUTHOR, config && config.author ? config.author : getAuthorName()]);
 	variables.push([k_.VAR_AUTHOR_EMAIL, config && config.authorEmail ? config.authorEmail : 'you@you.you']);
-	variables.push([k_.VAR_PROJECT_NAME, getProjectName(currentFile)]);
+	variables.push([k_.VAR_PROJECT_NAME, getProjectName(currentFile, langConfig.rootDirFileName)]);
 	variables.push([k_.VAR_FILE_NAME, extractFileName(currentFile)]);
 	// using filecreated function without arguments treats it like a variable.
 	variables.push([k_.FUNC_FILE_CREATED, fcreated.toDateString()]);
@@ -314,15 +315,17 @@ export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEdito
  * Iterates up through the directory structure until it finds a package.json file and if not found returns the original directory.
  * 
  * @param {string} filename The file to use as the basis for searching.
- * @returns {string} The directory within the path that contains a package.json, else a blank string.
+ * @param {string} rootDirFileName The name of the file to search for in the root directory - defaults to package.json.
+ * @returns {string} The directory within the path that contains a rootDirFileName, else fully qualified directory of the passed in filename.
  */
-function getProjectRootPath(filename: string): string {
+function getProjectRootPath(filename: string, rootDirFileName?: string): string {
 	let found: boolean = false;
 	const parsed = path.parse(filename);
 	const dir: string = parsed ? parsed.dir : '';
 	let result: string = dir;
+	rootDirFileName = rootDirFileName || 'package.json';
 	while(result.includes(path.sep)) {
-		if (fs.existsSync(path.join(result, 'package.json'))) {
+		if (fs.existsSync(path.join(result, rootDirFileName)) || fs.existsSync(path.join(result, 'package.json'))) {
 			found = true;
 			break;
 		} else {
@@ -341,10 +344,10 @@ function getProjectRootPath(filename: string): string {
  * @param {string} filename  The file to determine the project from.
  * @returns {string} 
  */
-function getProjectName(filename: string): string {
+function getProjectName(filename: string, rootDirFileName?: string): string {
 	try {
 		let projectName: string = null;
-		const rootPath: string = getProjectRootPath(filename);
+		const rootPath: string = getProjectRootPath(filename, rootDirFileName);
 		const fname: string = path.join(rootPath, 'package.json');
 		if (fs.existsSync(fname)) {
 			const prj = JSON.parse(fs.readFileSync(fname).toString());
@@ -393,11 +396,12 @@ function extractFileName(fullpath: string): string {
  * Gets the relative file path by removing the workspace root path.
  * 
  * @param {string} fullpath 
+ * @param {string} rootDirFileName the name of a unique file that is expected to be in the root directory
  * @returns {string} 
  */
-function getRelativeFilePath(fullpath: string): string {
+function getRelativeFilePath(fullpath: string, rootDirFileName?: string): string {
 	try {
-		const rootPath: string = getProjectRootPath(fullpath);
+		const rootPath: string = getProjectRootPath(fullpath, rootDirFileName);
 		return fullpath.substring(rootPath.length);
 	} catch (error) {
 		return null;

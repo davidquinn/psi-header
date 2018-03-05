@@ -4,12 +4,12 @@
  * File Created: Friday, 6th October 2017 10:24:19 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Thursday, 2nd November 2017 8:03:32 am
- * Modified By: David Quinn <info@psioniq.uk>
+ * Last Modified: Monday, 5th March 2018 6:02:39 pm
+ * Modified By: David Quinn (info@psioniq.uk>)
  * -----
  * MIT License
  * 
- * Copyright (c) 2017 David Quinn
+ * Copyright 2017 - 2018 David Quinn, psioniq
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -83,6 +83,7 @@ export interface ILangConfig {
     blankLinesAfter?: number;
 	beforeHeader?: Array<string>;
 	afterHeader?: Array<string>;
+	rootDirFileName?: string;
 }
 
 /**
