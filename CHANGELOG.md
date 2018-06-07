@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 1.4.0 (7 Jun 2018)
+* __NEW__: The header can now be created in "compact mode" without begin and end lines on the comment block. To activate this, you *must* set the `lang-config.begin` *and* `lang-config.end` configuration values to an empty string for any language where you want this behaviour.  Refer to the README.md file for more information.
+
 ## 1.3.6 (05 Mar 2018)
 * __CHANGE__: The default opening comment block has been changed from `"/**"` to `"/*"` because VSC doesn't show object help in intellisense correctly if there is a comment block that starts `"/**"` above the item being queried when using JSDoc or similar.  If you don't like this new behaviour, you can just create a default language config and set the begin property to `"/**"` to get the old behaviour.
 * __NEW__: New language configuration option `psi-header.lang-config.rootDirFileName` for projects that don't expect a package.json file (and for some reason you don't want to create one).  Allows you to set the name of a file that you would expect to see in the project's root directory (and nowhere else).  It is only used to try and determine the project root directory for `filerelativepath`, `projectpath` and `projectname` variables.  When set, the extension will determine the root path when _either_ of `rootDirFileName` or `package.json` file is found.

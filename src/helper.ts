@@ -489,22 +489,30 @@ function addLicenseVariables(wsConfig: WorkspaceConfiguration, variables: IVaria
  * @returns {string}
  */
 export function merge(template: Array<string>, langConfig: ILangConfig, variables: IVariableList, config: IConfig): string {
-	let body: Array<string> = [];
+	const body: Array<string> = [];
 	for (let i = 0; i < template.length; i++) {
 		body.push(langConfig.prefix + template[i]);
 	}
 	let merged: string = body.join('\n');
 	merged = replacePlaceholders(merged, variables);
 	
-	let beforeText: string = arrayToString(langConfig.hasOwnProperty('beforeHeader') ? langConfig.beforeHeader : null);
-	let afterText: string = arrayToString(langConfig.hasOwnProperty('afterHeader') ? langConfig.afterHeader : null);
-
+	const beforeText: string = arrayToString(langConfig.hasOwnProperty('beforeHeader') ? langConfig.beforeHeader : null);
+	const afterText: string = arrayToString(langConfig.hasOwnProperty('afterHeader') ? langConfig.afterHeader : null);
+	const isCompact: boolean = isCompactMode(langConfig);
+	const commentBegin: string = isCompact ? '' : `${langConfig.begin}\n`;
+	const commentEnd: string = isCompact ? '' : `${langConfig.end}\n`;
 	let endSpace: string = '';
 	for (let i = 0; i < (config.blankLinesAfter); i++) {
 		endSpace += '\n';
 	}
-	return `${beforeText}${langConfig.begin}\n${merged}\n${langConfig.end}\n${endSpace}${afterText}`;
+	return `${beforeText}${commentBegin}${merged}\n${commentEnd}${endSpace}${afterText}`;
 }
+
+export function isCompactMode(langConfig: ILangConfig): boolean {
+	return (!langConfig.begin || langConfig.begin.length === 0) && (!langConfig.end || langConfig.end.length === 0);
+}
+
+
 
 /**
  * Turns a string array into an EOL delimited string.

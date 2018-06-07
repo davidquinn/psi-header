@@ -130,9 +130,9 @@ Settings can be added as User and/or Workspace and/or WorkspaceFolder settings -
 * `psi-header.lang-config`: An array of objects that allow language-specific adjustments to be made to the configuration.  You can provide a subset of values if you only want to override some of the settings. Each object can include:
   * `language`: Mandatory. Either the VSCode language ID or '*' for global settings.
   * `mapTo`: Optional.  If provided, this language will use the specified language's configuration (and the settings below will be ignored).  The value is a VSCode language ID.  Ignored if language = "*".
-  * `begin`: Optional. Determines the comment block opening text (e.g. "/*").  This will be inserted as a line before the first line of the template.
+  * `begin`: Optional. Determines the comment block opening text (e.g. "/*").  This will be inserted as a line before the first line of the template.  See note below about "Compact Mode".
   * `prefix`: Optional. Determines a prefix for each body line of the header (e.g. " * ").
-  * `end`:  Optional. Determines the comment block closing text (e.g. " */").  This will be inserted after the last line of the template.
+  * `end`:  Optional. Determines the comment block closing text (e.g. " */").  This will be inserted after the last line of the template.  See note below about "Compact Mode".
   * `forceToTop`: Optional. Same as *_psi-header.config.forceToTop_* but just for this language.  If set, this overrides the global setting.
   * `blankLinesAfter`: Optional. Same as *_psi-header.config.blankLinesAfter_* but just for this language.  If set, this overrides the global setting.
   * `beforeHeader`: Optional.  Allows multiple lines of text to be inserted before the beginning of the header comment block (e.g. pre-processor commands).  NOTE: The extenion will not add comment prefixes to this text, so you will need to include them in your text if necessary.
@@ -155,6 +155,25 @@ When generating a header, the extension will do the following for the language-s
 The `mapTo` option provided under `psi-header.lang-config` and `psi-header.templates` will not endlessly iterate through a chain of mappings to find the ultimate target.  It assumes that you are pointing it to a language that has a valid configuration.
 
 Also, `mapTo` is ignored if the language value is set to "*".
+
+## Compact Mode
+The header can be created in "compact mode" - that is, without begin and end lines on the comment block. To activate this, you *must* set both the `lang-config.begin` *and* `lang-config.end` configuration values to an empty string for any language where you want this behaviour.  You can do this on the default language configuration (`lang-config.language = "*"`) to apply to all languages.  Obviously this will cause the header to work like a series of single line comments, so you must also make sure that the `lang-config.prefix` property is set to a valid single line comment prefix.
+
+Also note that the change tracking will not auto-insert a header in compact mode if there are any lines in the file that start with the `lang-config.prefix`.
+
+Again, this will only work if both the `lang-config.begin` *and* `lang-config.end` configuration values are present and set to an empty string.
+
+Example language configuration:
+```javascript
+	"psi-header.lang-config": [
+		{
+			"language": "javascript",
+			"begin": "",
+			"end": "",
+			"prefix": "// "
+		}
+	]
+```
 
 ## dateformat and filecreated System Functions
 These functions require an argument that defines the date/time format string.  In other respects they work like the other system variables.

@@ -63,7 +63,8 @@ import {
 	getTemplate,
 	replacePlaceholders,
 	getAuthorName,
-	getMergedVariables
+	getMergedVariables,
+	isCompactMode
 } from './helper';
 import { log } from 'util';
 
@@ -118,7 +119,6 @@ export class ChangesTrackingController {
 				// keep track of current window's selection
 				this._selections = activeTextEditor.selections;
 			}
-
 			const doc: TextDocument = e.document;
 			if (doc && doc.isDirty && this._wantLanguage(doc.languageId)) {
 				const langConfig: ILangConfig = getLanguageConfig(this._wsConfig, doc.languageId);
@@ -142,16 +142,17 @@ export class ChangesTrackingController {
 				const date: string = this._config.modDateFormat === 'date' ? new Date().toDateString() : moment().format(this._config.modDateFormat);
 				let inComment: boolean = false;
 				let replacers: IRangeReplacerList = [];
+				const isCompact: boolean = isCompactMode(langConfig);
 				for (let i: number = 0; i < doc.lineCount; i++) {
 					const txt: string = doc.lineAt(i).text;
 					if (txt && txt.length > 0) {
 						const range: Range = new Range(i, 0, i, txt.length);
 						if (!range.isEmpty) {
-							if (inComment && txt === langConfig.end) {
+							if (inComment && ((isCompact && !txt.startsWith(langConfig.prefix)) ||  txt === langConfig.end)) {
 								// stop searching if we come to the end of the first comment block in the document
 								break;
 							}
-							if (!inComment && txt === langConfig.begin) {
+							if (!inComment && ((isCompact && txt.startsWith(langConfig.prefix)) || txt === langConfig.begin)) {
 								// we have come to the first comment block in the file, so start searching
 								inComment = true;
 							} else if (inComment) {
@@ -328,22 +329,22 @@ export class ChangesTrackingController {
 		return this._config && (this._config.autoHeader === k_.AUTO_HEADER_MANUAL_SAVE || this._config.autoHeader === k_.AUTO_HEADER_AUTO_SAVE);
 	}
 
-	/**
-	 * Returns the first line of the header template for the specified language.
-	 * 
-	 * @private
-	 * @param {any} langId 
-	 * @returns 
-	 * @memberof ChangesTrackingController
-	 */
-	private _langBegin(langId) {
-		let result: string = null;
-		const cfg: ILangConfig = getLanguageConfig(this._wsConfig, langId);
-		if (cfg) {
-			result = cfg.begin;
-		}
-		return result;
-	}
+	// /**
+	//  * Returns the first line of the header template for the specified language.
+	//  * 
+	//  * @private
+	//  * @param {any} langId 
+	//  * @returns 
+	//  * @memberof ChangesTrackingController
+	//  */
+	// private _langBegin(langId) {
+	// 	let result: string = null;
+	// 	const cfg: ILangConfig = getLanguageConfig(this._wsConfig, langId);
+	// 	if (cfg) {
+	// 		result = cfg.begin;
+	// 	}
+	// 	return result;
+	// }
 
 	/**
 	 * Returns true if the file appears to need a header.
@@ -357,12 +358,22 @@ export class ChangesTrackingController {
 		let result: boolean = doc.lineCount <= 1;
 		if (!result) {
 			result = true;
-			const langBegin: string = this._langBegin(doc.languageId);
-			for (let i: number = 0; i < doc.lineCount; i++) {
-				const txt: string = doc.lineAt(i).text;
-				if (txt && txt.length > 0 && txt == langBegin) {
-					result = false;
-					break;
+			const lang: ILangConfig = getLanguageConfig(this._wsConfig, doc.languageId);
+			if (isCompactMode(lang)) {
+				for (let i: number = 0; i < doc.lineCount; i++) {
+					const txt: string = doc.lineAt(i).text;
+					if (txt && txt.length > 0 && txt.startsWith(lang.prefix)) {
+						result = false;
+						break;
+					}
+				}
+			} else {
+				for (let i: number = 0; i < doc.lineCount; i++) {
+					const txt: string = doc.lineAt(i).text;
+					if (txt && txt.length > 0 && txt == lang.begin) {
+						result = false;
+						break;
+					}
 				}
 			}
 		}
