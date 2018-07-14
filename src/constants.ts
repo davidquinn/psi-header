@@ -1,26 +1,26 @@
-/**
+/*
  * File: constants.ts
  * Project: psioniq File Header
  * File Created: Friday, 6th October 2017 10:23:19 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Thursday, 2nd November 2017 8:02:26 am
- * Modified By: David Quinn <info@psioniq.uk>
+ * Last Modified: Saturday, 14th July 2018 9:09:34 am
+ * Modified By: David Quinn (info@psioniq.uk>)
  * -----
  * MIT License
- * 
- * Copyright (c) 2017 David Quinn
- * 
+ *
+ * Copyright 2017 - 2018 David Quinn, psioniq
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
  * the Software without restriction, including without limitation the rights to
  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
  * of the Software, and to permit persons to whom the Software is furnished to do
  * so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -42,6 +42,7 @@ export const LICENSE_SETTINGS: string = 'license-text';
 export const TRACKING_SETTINGS: string = 'changes-tracking';
 
 export const FILE_HEADER_COMMAND = BASE_SETTINGS + '.insertFileHeader';
+export const CHANGE_LOG_INSERT_COMMAND = BASE_SETTINGS + '.insertChangeLog';
 
 /**
  * System Variable names
@@ -62,6 +63,7 @@ export const VAR_COPYRIGHT_HOLDER: string = 'copyrightholder';
 export const VAR_LICENSE_NAME: string = 'licensename';
 export const VAR_LICENSE_URL: string = 'licenseurl';
 export const VAR_SPDX_ID: string = 'spdxid';
+export const VAR_INITIALS: string = 'initials';
 
 /**
  * System functions
@@ -97,6 +99,10 @@ export const DEFAULT_TEMPLATE: Array<string> = [
     "",
     `Copyright (c) ${VAR_PREFIX}${VAR_YEAR}${VAR_SUFFIX} ${VAR_PREFIX}${VAR_COPYRIGHT_HOLDER}${VAR_SUFFIX}`
 ];
+
+export const CHANGE_LOG_ENTRY_TEMPLATE: Array<string> = [
+	`${VAR_PREFIX}${FUNC_DATE_FMT}('YYYY-MM-DD')${VAR_SUFFIX}\t${VAR_PREFIX}${VAR_INITIALS}${VAR_SUFFIX}\t`
+]
 
 /**
  * Valid auto header values

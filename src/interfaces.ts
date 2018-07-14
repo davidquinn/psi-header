@@ -1,26 +1,26 @@
-/**
+/*
  * File: interfaces.ts
  * Project: psioniq File Header
  * File Created: Friday, 6th October 2017 10:24:19 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Monday, 5th March 2018 6:02:39 pm
+ * Last Modified: Saturday, 14th July 2018 9:10:17 am
  * Modified By: David Quinn (info@psioniq.uk>)
  * -----
  * MIT License
- * 
+ *
  * Copyright 2017 - 2018 David Quinn, psioniq
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
  * the Software without restriction, including without limitation the rights to
  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
  * of the Software, and to permit persons to whom the Software is furnished to do
  * so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -36,23 +36,26 @@ import {Range} from 'vscode';
  * Interface for a template entry in the settings file.
  * Each entry will have either a template or mapTo property.
  * If both are provided, mapTo will take precedence.
- * 
+ *
  * @interface ITemplate
  */
-export interface ITemplate {
+export interface ITemplateConfig {
     language: string,
     mapTo?: string;
-    template?: Array<string>;
+	template?: Array<string>;
+	changeLogCaption?: string;
+	changeLogHeaderLineCount?: number;
+	changeLogEntryTemplate?: Array<string>;
 }
 
 /**
  * Interface for an array of [[ITemplate]].
  */
-export type ITemplateList = Array<ITemplate>;
+export type ITemplateConfigList = Array<ITemplateConfig>;
 
 /**
  * Global configuration options
- * 
+ *
  * @export
  * @interface IConfig
  */
@@ -64,13 +67,14 @@ export interface IConfig {
 	authorEmail?: string;
 	company?: string;
 	copyrightHolder?: string;
+	initials?: string;
 }
 
 /**
  * Interface for a configuration entry.
  * When adding entries to the user settings, any or all of the properties can be provided.
  * If mapTo is provided it will take precedence over all the other properties (i.e. others will be ignored).
- * 
+ *
  * @interface ILangConfig
  */
 export interface ILangConfig {
@@ -117,7 +121,7 @@ export type IVariableList = Array<IVariable>;
 
 /**
  * Delegate for function that returns a placeholder value
- * 
+ *
  * @export
  * @interface IPlaceholderFunction
  */
@@ -127,7 +131,7 @@ export interface IPlaceholderFunction {
 
 /**
  * Interface for a single range replacement
- * 
+ *
  * @export
  * @interface IRangeReplacer
  */

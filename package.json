@@ -3,7 +3,7 @@
 	"displayName": "psioniq File Header",
 	"description": "Configurable file header comment block and track last modified date/user on save.",
 	"icon": "img/psi-logo.png",
-	"version": "1.4.0",
+	"version": "1.5.0",
 	"publisher": "psioniq",
 	"license": "MIT",
 	"bugs": {
@@ -33,12 +33,20 @@
 			{
 				"command": "psi-header.insertFileHeader",
 				"title": "Header Insert"
+			},
+			{
+				"command": "psi-header.insertChangeLog",
+				"title": "Header Change Log Insert"
 			}
 		],
 		"keybindings": [
 			{
 				"command": "psi-header.insertFileHeader",
 				"key": "ctrl+alt+H ctrl+alt+H"
+			},
+			{
+				"command": "psi-header.insertChangeLog",
+				"key": "ctrl+alt+C ctrl+alt+C"
 			}
 		],
 		"configuration": {
@@ -79,6 +87,10 @@
 						"copyrightHolder": {
 							"type": "string",
 							"description": "Used to identify who owns the copyright.  If not provided it defaults to the value for company if that exists."
+						},
+						"initials": {
+							"type": "string",
+							"description": "Your initials"
 						}
 					}
 				},
@@ -252,6 +264,26 @@
 								"items": {
 									"type": "string"
 								}
+							},
+							"changeLogCaption": {
+								"type": "string",
+								"description": "Defines the caption for the change log and is used to identify where the change log starts.",
+								"default": "HISTORY:"
+							},
+							"changeLogHeaderLineCount": {
+								"type": "integer",
+								"description": "How many lines are there between the change log caption and the log items?  Useful if you want to add column headings above the items.",
+								"default": 0
+							},
+							"changeLogEntryTemplate": {
+								"type": "array",
+								"description": "The template text for a single change log item provided as an array of strings.",
+								"items": {
+									"type": "string"
+								},
+								"default": [
+									"<<dateformat('YYYY-MM-DD')>>\t<<initials>>\t"
+								]
 							}
 						}
 					}

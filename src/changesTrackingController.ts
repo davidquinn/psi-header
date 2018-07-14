@@ -1,26 +1,26 @@
-/**
+/*
  * File: changesTrackingController.ts
  * Project: psioniq File Header
  * File Created: Sunday, 29th October 2017 8:11:24 am
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Friday, 17th November 2017 6:57:37 am
+ * Last Modified: Saturday, 14th July 2018 7:16:47 am
  * Modified By: David Quinn (info@psioniq.uk>)
  * -----
  * MIT License
- * 
- * Copyright 2017 - 2017 David Quinn, psioniq
- * 
+ *
+ * Copyright 2017 - 2018 David Quinn, psioniq
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
  * the Software without restriction, including without limitation the rights to
  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
  * of the Software, and to permit persons to whom the Software is furnished to do
  * so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -31,12 +31,12 @@
  */
 
 import {
-	Disposable, 
-	WorkspaceConfiguration, 
-	Selection, 
-	TextDocumentWillSaveEvent, 
-	workspace, 
-	window, 
+	Disposable,
+	WorkspaceConfiguration,
+	Selection,
+	TextDocumentWillSaveEvent,
+	workspace,
+	window,
 	TextDocument,
 	TextEdit,
 	TextEditor,
@@ -60,7 +60,7 @@ import {
 	getFileCreationDate,
 	getVariables,
 	getConfig,
-	getTemplate,
+	getTemplateConfig,
 	replacePlaceholders,
 	getAuthorName,
 	getMergedVariables,
@@ -70,7 +70,7 @@ import { log } from 'util';
 
 /**
  * Configuration and setup for changes tracking.
- * 
+ *
  * @export
  * @class ChangesTrackingController
  */
@@ -97,7 +97,7 @@ export class ChangesTrackingController {
 
 	/**
 	 * Dispose of the ChangesTrackingController.
-	 * 
+	 *
 	 * @memberof ChangesTrackingController
 	 */
 	dispose(): void {
@@ -107,9 +107,9 @@ export class ChangesTrackingController {
 	/**
 	 * Delegate method triggered whenever a document will be saved.
 	 * Used to update an existing header.
-	 * 
+	 *
 	 * @private
-	 * @param {TextDocumentWillSaveEvent} e 
+	 * @param {TextDocumentWillSaveEvent} e
 	 * @memberof ChangesTrackingController
 	 */
 	private _onWillSave(e: TextDocumentWillSaveEvent): void {
@@ -124,7 +124,7 @@ export class ChangesTrackingController {
 				const langConfig: ILangConfig = getLanguageConfig(this._wsConfig, doc.languageId);
 				const mainConfig: IConfig = getConfig(this._wsConfig, langConfig);
 				const variables: IVariableList = getVariables(this._wsConfig, activeTextEditor, mainConfig, langConfig, true);
-				const template: Array<string> = getTemplate(this._wsConfig, doc.languageId);
+				const template: Array<string> = getTemplateConfig(this._wsConfig, doc.languageId).template;
 				const modDatePrefix: string = langConfig.prefix + this._config.modDate;
 				const modAuthorPrefix: string = langConfig.prefix + this._config.modAuthor;
 				let modDateTemplate: string = template.find((value) => {
@@ -158,7 +158,7 @@ export class ChangesTrackingController {
 							} else if (inComment) {
 								if (txt.startsWith(modAuthorPrefix)) {
 									replacers.push({
-										range: range, 
+										range: range,
 										newString: modAuthorTemplate && modAuthorTemplate !== modAuthorPrefix
 											? replacePlaceholders(modAuthorTemplate, variables)
 											: modAuthorPrefix + (modAuthorPrefix.endsWith(' ') ? '' : ' ') + this._author
@@ -166,7 +166,7 @@ export class ChangesTrackingController {
 								}
 								else if (txt.startsWith(modDatePrefix)) {
 									replacers.push({
-										range: range, 
+										range: range,
 										newString: modDateTemplate && modDateTemplate !== modDatePrefix
 											? replacePlaceholders(modDateTemplate, variables)
 											: modDatePrefix + (modDatePrefix.endsWith(' ') ? '' : ' ') + date
@@ -205,9 +205,9 @@ export class ChangesTrackingController {
 	}
 
 	/**
-	 * Delegate method called after document is saved.  
+	 * Delegate method called after document is saved.
 	 * Cleans up the selections and ensures the active editor is reinstated.
-	 * 
+	 *
 	 * @private
 	 * @memberof ChangesTrackingController
 	 */
@@ -221,7 +221,7 @@ export class ChangesTrackingController {
 
 	/**
 	 * Re-reads the configuration settings.
-	 * 
+	 *
 	 * @private
 	 * @memberof ChangesTrackingController
 	 */
@@ -232,9 +232,9 @@ export class ChangesTrackingController {
 	/**
 	 * Called whenever the active editor is changed.
 	 * This controls automatic adding of headers to new files.
-	 * 
+	 *
 	 * @private
-	 * @param {TextEditor} editor 
+	 * @param {TextEditor} editor
 	 * @memberof ChangesTrackingController
 	 */
 	private _onDidChangeActiveTextEditor(editor: TextEditor) {
@@ -253,18 +253,18 @@ export class ChangesTrackingController {
 
 	/**
 	 * Reads the configuration and caches it in this object.
-	 * 
+	 *
 	 * @private
 	 * @memberof ChangesTrackingController
 	 */
 	private _getConfig(): void {
 		this._wsConfig = workspace.getConfiguration(k_.BASE_SETTINGS);
-		
+
 		// get tracking config
 		let def: ITrackingConfig = {
-			isActive: false, 
-			modDate: 'Last Modified:', 
-			modAuthor: 'Modified By:', 
+			isActive: false,
+			modDate: 'Last Modified:',
+			modAuthor: 'Modified By:',
 			modDateFormat: 'date',
 			include: [],
 			exclude: [],
@@ -295,10 +295,10 @@ export class ChangesTrackingController {
 
 	/**
 	 * Returns true if change tracking is active for the specified language.
-	 * 
+	 *
 	 * @private
-	 * @param {string} langId 
-	 * @returns {boolean} 
+	 * @param {string} langId
+	 * @returns {boolean}
 	 * @memberof ChangesTrackingController
 	 */
 	private _wantLanguage(langId: string): boolean {
@@ -307,10 +307,10 @@ export class ChangesTrackingController {
 
 	/**
 	 * Returns true if the file is new (created within the past 3 seconds).
-	 * 
+	 *
 	 * @private
-	 * @param {any} filename 
-	 * @returns 
+	 * @param {any} filename
+	 * @returns
 	 * @memberof ChangesTrackingController
 	 */
 	private _fileIsNew(filename) {
@@ -320,9 +320,9 @@ export class ChangesTrackingController {
 
 	/**
 	 * Returns true if auto header creation is active.
-	 * 
+	 *
 	 * @private
-	 * @returns 
+	 * @returns
 	 * @memberof ChangesTrackingController
 	 */
 	private _wantAutoHeader() {
@@ -331,10 +331,10 @@ export class ChangesTrackingController {
 
 	// /**
 	//  * Returns the first line of the header template for the specified language.
-	//  * 
+	//  *
 	//  * @private
-	//  * @param {any} langId 
-	//  * @returns 
+	//  * @param {any} langId
+	//  * @returns
 	//  * @memberof ChangesTrackingController
 	//  */
 	// private _langBegin(langId) {
@@ -348,10 +348,10 @@ export class ChangesTrackingController {
 
 	/**
 	 * Returns true if the file appears to need a header.
-	 * 
+	 *
 	 * @private
-	 * @param {TextDocument} doc 
-	 * @returns 
+	 * @param {TextDocument} doc
+	 * @returns
 	 * @memberof ChangesTrackingController
 	 */
 	private _docNeedsHeader(doc: TextDocument) {

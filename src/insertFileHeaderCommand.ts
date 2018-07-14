@@ -1,26 +1,26 @@
-/**
+/*
  * File: insertFileHeaderCommand.ts
  * Project: psioniq File Header
  * File Created: Wednesday, 1st November 2017 7:39:26 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Thursday, 2nd November 2017 8:03:07 am
- * Modified By: David Quinn <info@psioniq.uk>
+ * Last Modified: Saturday, 14th July 2018 7:17:18 am
+ * Modified By: David Quinn (info@psioniq.uk>)
  * -----
  * MIT License
- * 
- * Copyright (c) 2017 David Quinn
- * 
+ *
+ * Copyright 2017 - 2018 David Quinn, psioniq
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
  * the Software without restriction, including without limitation the rights to
  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
  * of the Software, and to permit persons to whom the Software is furnished to do
  * so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -31,11 +31,11 @@
  */
 
 import {workspace, window, TextEditor, WorkspaceConfiguration, Selection, Position} from 'vscode';
-import {BASE_SETTINGS, ILangConfig, IConfig, IVariableList, getLanguageConfig, getTemplate, getConfig, getVariables, merge} from './helper';
+import {BASE_SETTINGS, ILangConfig, IConfig, IVariableList, getLanguageConfig, getTemplateConfig, getConfig, getVariables, merge} from './helper';
 
 /**
- * This is the command.  It inserts the header into the active editor document.
- * 
+ * This is the command that inserts the header into the active editor document.
+ *
  * @export
  * @returns
  */
@@ -48,11 +48,11 @@ export function insertFileHeader() {
 	const wsConfig: WorkspaceConfiguration = workspace.getConfiguration(BASE_SETTINGS);
 	const langId: string = editor.document.languageId;
 	const langConfig: ILangConfig = getLanguageConfig(wsConfig, langId);
-	const template: Array<string> = getTemplate(wsConfig, langId);
+	const template: Array<string> = getTemplateConfig(wsConfig, langId).template;
 	const config: IConfig = getConfig(wsConfig, langConfig);
 	const variables: IVariableList = getVariables(wsConfig, editor, config, langConfig);
 
-	console.log(`insertFileHeader into ${editor.document.fileName}`);
+	// console.log(`insertFileHeader into ${editor.document.fileName}`);
 
 	if (config.forceToTop) {
 		const position = new Position(0, 0);

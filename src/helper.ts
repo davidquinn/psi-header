@@ -1,26 +1,26 @@
-/**
+/*
  * File: helper.ts
  * Project: psioniq File Header
  * File Created: Friday, 6th October 2017 10:23:42 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Monday, 5th March 2018 7:39:23 pm
+ * Last Modified: Saturday, 14th July 2018 7:16:33 am
  * Modified By: David Quinn (info@psioniq.uk>)
  * -----
  * MIT License
- * 
+ *
  * Copyright 2017 - 2018 David Quinn, psioniq
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
  * the Software without restriction, including without limitation the rights to
  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
  * of the Software, and to permit persons to whom the Software is furnished to do
  * so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -38,8 +38,8 @@ import {
 } from 'vscode';
 import * as k_ from './constants';
 import {
-	ITemplate,
-	ITemplateList,
+	ITemplateConfig,
+	ITemplateConfigList,
 	IConfig,
 	ILangConfig,
 	ILangConfigList,
@@ -55,7 +55,7 @@ import * as username from 'username';
 
 /**
  * Retrieve the current configuration for this extension from the workspace settings.
- * 
+ *
  * @param {WorkspaceConfiguration} wsConfig
  * @param {ILangConfig} langConfig
  * @returns {IConfig}
@@ -66,7 +66,7 @@ export function getConfig(wsConfig: WorkspaceConfiguration, langConfig: ILangCon
 
 	const cfgForceToTop: boolean = cfg && cfg.hasOwnProperty('forceToTop') ? cfg.forceToTop : false;
 	def.forceToTop = (def.forceToTop === undefined) ? cfgForceToTop : def.forceToTop;
-	
+
 	const cfgBlankLinesAfter: number = cfg && cfg.hasOwnProperty('blankLinesAfter') ? cfg.blankLinesAfter : 0;
 	def.blankLinesAfter = (def.blankLinesAfter === undefined) ? cfgBlankLinesAfter : def.blankLinesAfter;
 
@@ -75,7 +75,7 @@ export function getConfig(wsConfig: WorkspaceConfiguration, langConfig: ILangCon
 	if (cfg.hasOwnProperty('author')) {
 		def.author = cfg.author;
 	}
-	
+
 	if (cfg.hasOwnProperty('authorEmail')) {
 		def.authorEmail = cfg.authorEmail;
 	}
@@ -88,6 +88,10 @@ export function getConfig(wsConfig: WorkspaceConfiguration, langConfig: ILangCon
 		def.copyrightHolder = cfg.copyrightHolder;
 	}
 
+	if (cfg.hasOwnProperty('initials')) {
+		def.initials = cfg.initials;
+	}
+
 	return def;
 }
 
@@ -96,37 +100,37 @@ export function getConfig(wsConfig: WorkspaceConfiguration, langConfig: ILangCon
  *   - language-specific template from workspace settings; else
  *   - default template from workspace settings; else
  *   - the default template as defined by this extension.
- * 
+ *
  * @param {WorkspaceConfiguration} wsConfig
  * @param {string} langId
  * @returns {Array<string>}
  */
-export function getTemplate(wsConfig: WorkspaceConfiguration, langId: string): Array<string> {
-	let def: ITemplate;
-	const templates: ITemplateList = getMergedTemplates(wsConfig);
-	
+export function getTemplateConfig(wsConfig: WorkspaceConfiguration, langId: string): ITemplateConfig {
+	let def: ITemplateConfig;
+	const templates: ITemplateConfigList = getMergedTemplates(wsConfig);
+
 	if (templates) {
-		def = templates.find(function(item: ITemplate): boolean {
+		def = templates.find(function(item: ITemplateConfig): boolean {
 			return item.language === langId;
 		});
 		if (def && def.hasOwnProperty('mapTo')) {
 			const mapTo = def.mapTo;
-			def = templates.find(function(item: ITemplate): boolean {
+			def = templates.find(function(item: ITemplateConfig): boolean {
 				return item.language === mapTo;
 			});
 		}
 		if (def == null || !def.template) {
-			def = templates.find(function(item: ITemplate): boolean {
+			def = templates.find(function(item: ITemplateConfig): boolean {
 				return item.language === k_.DEFAULT;
 			});
 		}
 	}
 
 	if (!def || !def.template) {
-		def = { language: k_.DEFAULT, template: k_.DEFAULT_TEMPLATE };
+		def = { language: k_.DEFAULT, template: k_.DEFAULT_TEMPLATE, changeLogHeaderLineCount: 0 };
 	}
-	
-	return def.template;
+
+	return def;
 }
 
 /**
@@ -134,13 +138,13 @@ export function getTemplate(wsConfig: WorkspaceConfiguration, langId: string): A
  *   - the base configuration is is defined by this extension, which is based on the document's language.
  *   - if there is a language-specific setting in the workspace settings, modify the base by that; else
  *   - if there is a default setting in the workspace settings, modify the base by that.
- * 
- * Note that the workspace settings can provide any or all of the configuration properties.  
+ *
+ * Note that the workspace settings can provide any or all of the configuration properties.
  * Any non-defined properties will not be changed from the defaults.
- * 
+ *
  * Within a language-specific workspace setting, include "mapTo" as a property to use the settings of another language.
  * The mapTo value is the name of the desired language.
- * 
+ *
  * @param {WorkspaceConfiguration} wsConfig
  * @param {string} langId
  * @returns {ILangConfig}
@@ -149,7 +153,7 @@ export function getLanguageConfig(wsConfig: WorkspaceConfiguration, langId: stri
 	let base: ILangConfig = baseLangConfig(langId);
 	let cfg: ILangConfig;
 	let configs: ILangConfigList = getMergedLangConfig(wsConfig);
-	
+
 	if (configs) {
 		cfg = configs.find(function(item: ILangConfig): boolean {
 			return item.language === langId;
@@ -174,7 +178,7 @@ export function getLanguageConfig(wsConfig: WorkspaceConfiguration, langId: stri
 
 /**
  * Generate the base language configuration object.
- * 
+ *
  * @param {string} langId
  * @returns
  */
@@ -211,7 +215,7 @@ function baseLangConfig(langId: string) {
 /**
  * Maps the values for language config properties from source to target.
  * Will not modify target for any property not found in source.
- * 
+ *
  * @param {Object} source
  * @param {ILangConfig} target
  */
@@ -233,7 +237,7 @@ function mapLangConfig(source: Object, target: ILangConfig): void {
 /**
  * Map the value of key from source to target.
  * Will not modify target if the property does not exist on source.
- * 
+ *
  * @param {Object} source
  * @param {Object} target
  * @param {string} key
@@ -247,7 +251,7 @@ function mapProperty(source: Object, target: Object, key: string): void {
 /**
  * Builds the template variables list from a combination of internal variables and those defined in the workspace settings.
  * Will overwrite internal variables if they are also included in the workspace settings.
- * 
+ *
  * @param {WorkspaceConfiguration} wsConfig
  * @param {TextEditor} editor
  * @param {IConfig} config
@@ -277,13 +281,14 @@ export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEdito
 	if (config && config.copyrightHolder) {
 		variables.push([k_.VAR_COPYRIGHT_HOLDER, config.copyrightHolder]);
 	}
+	variables.push([k_.VAR_INITIALS, config && config.initials ? config.initials : 'ABC']);
 
 	// custom variables
 	let vl: IVariableList = getMergedVariables(wsConfig);
 	if (vl && vl.length > 0) {
 		for (let v of vl) {
 			let item: IVariable = variables.find(function(element): boolean {
-				return element[0] == v[0]; 
+				return element[0] == v[0];
 			});
 			if (item) {
 				item[1] = v[1];
@@ -313,7 +318,7 @@ export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEdito
 /**
  * Pass in a fully qualified file path and return the part of the path where an associated package.json file is located.
  * Iterates up through the directory structure until it finds a package.json file and if not found returns the original directory.
- * 
+ *
  * @param {string} filename The file to use as the basis for searching.
  * @param {string} rootDirFileName The name of the file to search for in the root directory - defaults to package.json.
  * @returns {string} The directory within the path that contains a rootDirFileName, else fully qualified directory of the passed in filename.
@@ -340,9 +345,9 @@ function getProjectRootPath(filename: string, rootDirFileName?: string): string 
 
 /**
  * Get the name of the project - either from a package.json or the last part of the root project path.
- * 
+ *
  * @param {string} filename  The file to determine the project from.
- * @returns {string} 
+ * @returns {string}
  */
 function getProjectName(filename: string, rootDirFileName?: string): string {
 	try {
@@ -365,24 +370,24 @@ function getProjectName(filename: string, rootDirFileName?: string): string {
 
 /**
  * Tries to determine the name of the current user, or if not available returns 'You'.
- * 
- * @returns {string} 
+ *
+ * @returns {string}
  */
 export function getAuthorName(): string {
 	let name: string;
 	try {
 		name = username.sync();
 	} catch (error) {
-		
+
 	}
 	return name ? name : 'You';
 }
 
 /**
  * Get the filename from the file full path
- * 
- * @param {string} fullpath 
- * @returns {string} 
+ *
+ * @param {string} fullpath
+ * @returns {string}
  */
 function extractFileName(fullpath: string): string {
 	try {
@@ -394,10 +399,10 @@ function extractFileName(fullpath: string): string {
 
 /**
  * Gets the relative file path by removing the workspace root path.
- * 
- * @param {string} fullpath 
+ *
+ * @param {string} fullpath
  * @param {string} rootDirFileName the name of a unique file that is expected to be in the root directory
- * @returns {string} 
+ * @returns {string}
  */
 function getRelativeFilePath(fullpath: string, rootDirFileName?: string): string {
 	try {
@@ -410,7 +415,7 @@ function getRelativeFilePath(fullpath: string, rootDirFileName?: string): string
 
 /**
  * Return the current editor file's creation date (birthtime)
- * 
+ *
  */
 function getActiveFileCreationDate(): Date {
 	let result: Date = null;
@@ -423,7 +428,7 @@ function getActiveFileCreationDate(): Date {
 
 /**
  * Return the file creation date of the passed in file.
- * 
+ *
  * @param filename The name of the file to check.
  */
 export function getFileCreationDate(filename): Date {
@@ -443,7 +448,7 @@ export function getFileCreationDate(filename): Date {
 
 /**
  * Add the license and related variables from the SPDX data.
- * 
+ *
  * @param {WorkspaceConfiguration} wsConfig
  * @param {IVariableList} variables
  * @param {IConfig} config
@@ -479,9 +484,17 @@ function addLicenseVariables(wsConfig: WorkspaceConfiguration, variables: IVaria
 	}
 }
 
+export function replaceTemplateVariables(template: Array<string>, linePrefix: string, variables: IVariableList): string {
+	const body: Array<string> = [];
+	for (let i = 0; i < template.length; i++) {
+		body.push(linePrefix + template[i]);
+	}
+	return replacePlaceholders(body.join('\n'), variables);
+}
+
 /**
  *  Outputs the processed string by merging the template, language configuration, beforeText, afterText and variables.
- * 
+ *
  * @param {Array<string>} template
  * @param {ILangConfig} langConfig
  * @param {Array<[string, string]>} variables
@@ -489,13 +502,6 @@ function addLicenseVariables(wsConfig: WorkspaceConfiguration, variables: IVaria
  * @returns {string}
  */
 export function merge(template: Array<string>, langConfig: ILangConfig, variables: IVariableList, config: IConfig): string {
-	const body: Array<string> = [];
-	for (let i = 0; i < template.length; i++) {
-		body.push(langConfig.prefix + template[i]);
-	}
-	let merged: string = body.join('\n');
-	merged = replacePlaceholders(merged, variables);
-	
 	const beforeText: string = arrayToString(langConfig.hasOwnProperty('beforeHeader') ? langConfig.beforeHeader : null);
 	const afterText: string = arrayToString(langConfig.hasOwnProperty('afterHeader') ? langConfig.afterHeader : null);
 	const isCompact: boolean = isCompactMode(langConfig);
@@ -505,7 +511,7 @@ export function merge(template: Array<string>, langConfig: ILangConfig, variable
 	for (let i = 0; i < (config.blankLinesAfter); i++) {
 		endSpace += '\n';
 	}
-	return `${beforeText}${commentBegin}${merged}\n${commentEnd}${endSpace}${afterText}`;
+	return `${beforeText}${commentBegin}${replaceTemplateVariables(template, langConfig.prefix, variables)}\n${commentEnd}${endSpace}${afterText}`;
 }
 
 export function isCompactMode(langConfig: ILangConfig): boolean {
@@ -516,9 +522,9 @@ export function isCompactMode(langConfig: ILangConfig): boolean {
 
 /**
  * Turns a string array into an EOL delimited string.
- * 
- * @param {Array<string>} source 
- * @returns {string} 
+ *
+ * @param {Array<string>} source
+ * @returns {string}
  */
 function arrayToString(source: Array<string>): string {
 	return source && source.length > 0 ? source.join('\n') + '\n' : '';
@@ -526,7 +532,7 @@ function arrayToString(source: Array<string>): string {
 
 /**
  * Process template variable placeholders.
- * 
+ *
  * @param {string} source
  * @param {IVariableList} variables
  * @returns {string}
@@ -545,11 +551,11 @@ export function replacePlaceholders(source: string, variables: IVariableList): s
 
 /**
  * Process template function placeholders
- * 
+ *
  * @param source the templae text
  */
 function replaceFunctions(source: string): string {
-	let replaced: string = source;	
+	let replaced: string = source;
 	let replacements: IVariableList = [];
 	// get date part placeholders
 	constructFunctionReferences(replacements, source, k_.FUNC_DATE_FMT, (args: string): string => {
@@ -569,7 +575,7 @@ function replaceFunctions(source: string): string {
 			return fcreated.toDateString();
 		}
 	})
-	
+
 	// perform placeholder substitution
 	for (let v of replacements) {
 		let regex = new RegExp(escapeRegExp(v[0]), 'g');
@@ -580,11 +586,11 @@ function replaceFunctions(source: string): string {
 
 /**
  * Construct a placeholder variable list for a specified function based on the template text content.
- * 
+ *
  * @param {string} source the template text
  * @param {string} functionName the name of the template function
  * @param {IPlaceholderFunction} cb the method to run to retrieve the value based on the function arguments
- * @returns {IVariableList} 
+ * @returns {IVariableList}
  */
 function constructFunctionReferences(references: IVariableList, source: string, functionName: string, cb: IPlaceholderFunction) {
 	const funcNeedle: string = `${k_.VAR_PREFIX}${functionName}(`;
@@ -603,7 +609,7 @@ function constructFunctionReferences(references: IVariableList, source: string, 
 
 /**
  * Clean up some of the easier goo goo muck from the license text.
- * 
+ *
  * @param {string} lic
  * @returns {string}
  */
@@ -632,7 +638,7 @@ function cleanSpdxLicenseText(lic: string): string {
 
 /**
  * Wrap the word wrap wrapper in a wrapper that wraps words. (No rap!)
- * 
+ *
  * @param {string} str
  * @param {number} width
  * @returns {Array<string>}
@@ -645,7 +651,7 @@ function wordWrap(str: string, width: number): Array<string> {
 
 /**
  * Generate a placeholder string.
- * 
+ *
  * @param {string} str
  * @returns {string}
  */
@@ -655,7 +661,7 @@ function placeholder(str: string): string {
 
 /**
  * Search the haystack for instances of needle and return an array of index positions.
- * 
+ *
  * @param needle the value to search for
  * @param haystack the string to search
  * @param caseSensitive is the match case sensitive?
@@ -665,8 +671,8 @@ function getIndicesOf(needle: string, haystack: string, caseSensitive: boolean):
     if (searchStrLen == 0) {
         return [];
     }
-    var startIndex: number = 0, 
-		index: number, 
+    var startIndex: number = 0,
+		index: number,
 		indices: Array<number> = [];
 
     if (!caseSensitive) {
@@ -682,7 +688,7 @@ function getIndicesOf(needle: string, haystack: string, caseSensitive: boolean):
 
 /**
  * Escapes regular expression special characters
- * 
+ *
  * @param value the string to escape
  */
 function escapeRegExp(value: string) : string {
@@ -691,12 +697,12 @@ function escapeRegExp(value: string) : string {
 
 
 /**
- * Returns the current configuration values for an array of strings.  
- * Unlike the default VSC method, this will merge the various strings of the 
- * Default then User then Workspace then WorkspaceFolder settings into a single 
- * array that includes all strings (the default behaviour of VSC is to only 
+ * Returns the current configuration values for an array of strings.
+ * Unlike the default VSC method, this will merge the various strings of the
+ * Default then User then Workspace then WorkspaceFolder settings into a single
+ * array that includes all strings (the default behaviour of VSC is to only
  * return the last array).
- * 
+ *
  * @param wsConfig The Workspace Configuration
  * @param key The configuration key to retrieve - can use dot notation.
  */
@@ -706,9 +712,9 @@ export function getMergedStrings(wsConfig: WorkspaceConfiguration, key: string):
 }
 
 /**
- * General method to merge one or more string arrays into a single array that 
+ * General method to merge one or more string arrays into a single array that
  * includes all of the strings from all of the passed in string arrays.
- * 
+ *
  * @param {...Array<string>} lists The string array(s)
  * @returns {Array<string>} The merged array of strings
  */
@@ -725,28 +731,28 @@ function mergeStringLists(...lists: Array<Array<string>>): Array<string> {
 }
 
 /**
- * Returns the full set of templates that are defined in Default, User, 
- * Workspace and/or WorkspaceFolder settings.  Unlike the default VSC method, 
+ * Returns the full set of templates that are defined in Default, User,
+ * Workspace and/or WorkspaceFolder settings.  Unlike the default VSC method,
  * the returned array will include all templates defined across all settings.
- * 
+ *
  * @param wsConfig The Workspace Configuration object.
  */
-export function getMergedTemplates(wsConfig: WorkspaceConfiguration): ITemplateList {
-	const cfg: IInspectableConfig<ITemplateList> = wsConfig.inspect(k_.TEMPLATE_SETTINGS);
+export function getMergedTemplates(wsConfig: WorkspaceConfiguration): ITemplateConfigList {
+	const cfg: IInspectableConfig<ITemplateConfigList> = wsConfig.inspect(k_.TEMPLATE_SETTINGS);
 	return cfg ? mergeTemplateLists(cfg.defaultValue || [], cfg.globalValue || [], cfg.workspaceValue || [], cfg.workspaceFolderValue || []) : [];
 }
 
 /**
- * General method to merge one or more [[ITemplateList]] arrays into a single 
+ * General method to merge one or more [[ITemplateList]] arrays into a single
  * array that includes all of the template lists from all of the passed in arrays.
- * 
+ *
  * @param lists The ITemplateList array(s)
  */
-function mergeTemplateLists(...lists: ITemplateList[]): ITemplateList {
-	let merged: ITemplateList = [];
+function mergeTemplateLists(...lists: ITemplateConfigList[]): ITemplateConfigList {
+	let merged: ITemplateConfigList = [];
 	for (let list of lists) {
-		list.forEach((newTemplate: ITemplate) => {
-			const idx: number = merged.findIndex((mergedTemplate: ITemplate) => {
+		list.forEach((newTemplate: ITemplateConfig) => {
+			const idx: number = merged.findIndex((mergedTemplate: ITemplateConfig) => {
 				return mergedTemplate.language === newTemplate.language;
 			});
 			if (idx === -1) {
@@ -760,11 +766,11 @@ function mergeTemplateLists(...lists: ITemplateList[]): ITemplateList {
 }
 
 /**
- * Returns the full set of language configuration objects that are defined in 
- * Default, User, Workspace and/or WorkspaceFolder settings.  Unlike the default 
- * VSC method, the returned array will include all language configurations 
+ * Returns the full set of language configuration objects that are defined in
+ * Default, User, Workspace and/or WorkspaceFolder settings.  Unlike the default
+ * VSC method, the returned array will include all language configurations
  * defined across all settings.
- * 
+ *
  * @param wsConfig The Workspace Configuration object.
  */
 export function getMergedLangConfig(wsConfig: WorkspaceConfiguration): ILangConfigList {
@@ -773,10 +779,10 @@ export function getMergedLangConfig(wsConfig: WorkspaceConfiguration): ILangConf
 }
 
 /**
- * General method to merge one or more [[ILangConfigList]] arrays into a single 
- * array that includes all of the language configuration lists from all of the 
+ * General method to merge one or more [[ILangConfigList]] arrays into a single
+ * array that includes all of the language configuration lists from all of the
  * passed in arrays.
- * 
+ *
  * @param lists The ILangConfigList array(s)
  */
 function mergeLangConfigLists(...lists: ILangConfigList[]): ILangConfigList {
@@ -797,10 +803,10 @@ function mergeLangConfigLists(...lists: ILangConfigList[]): ILangConfigList {
 }
 
 /**
- * Returns the full set of variables that are defined in Default, User, 
- * Workspace and/or WorkspaceFolder settings.  Unlike the default VSC method, 
+ * Returns the full set of variables that are defined in Default, User,
+ * Workspace and/or WorkspaceFolder settings.  Unlike the default VSC method,
  * the returned array will include all variables defined across all settings.
- * 
+ *
  * @param wsConfig The Workspace Configuration object.
  */
 export function getMergedVariables(wsConfig: WorkspaceConfiguration): IVariableList {
@@ -809,9 +815,9 @@ export function getMergedVariables(wsConfig: WorkspaceConfiguration): IVariableL
 }
 
 /**
- * General method to merge one or more [[IVariableList]] arrays into a single 
+ * General method to merge one or more [[IVariableList]] arrays into a single
  * array that includes all of the variable lists from all of the passed in arrays.
- * 
+ *
  * @param lists The IVariableList array(s)
  */
 function mergeVariableLists(...lists: IVariableList[]): IVariableList {

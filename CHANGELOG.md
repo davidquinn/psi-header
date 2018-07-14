@@ -3,6 +3,10 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 1.5.0 (NOT YET RELEASED)
+* __NEW__: System variable `initials` and matching `psi-header.config.initials` configuration setting.  Allows you to enter your initials in the template.
+* __NEW__: Change Log feature allows you to define a template to insert change log (changes history) items into the header.  Details are in the README file.
+
 ## 1.4.0 (7 Jun 2018)
 * __NEW__: The header can now be created in "compact mode" without begin and end lines on the comment block. To activate this, you *must* set the `lang-config.begin` *and* `lang-config.end` configuration values to an empty string for any language where you want this behaviour.  Refer to the README.md file for more information.
 

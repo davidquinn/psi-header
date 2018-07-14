@@ -46,6 +46,14 @@ Refer to [Extension Settings](#extension-settings) for configuration details.
 * Create an unlimited number of custom static variables for use throughout your custom templates.
 * Can be run via the key shortcut `ctrl+alt+H` then `ctrl+alt+H`.
 * Can automatically insert license text based on SPDX license IDs.
+* Changes logging for recording details of changes to the file.
+
+# Commands
+This extension adds the following commands to VSCode:
+| Command name | Keyboard Shortcut | Description |
+|---|---|---|
+| Header Insert | ctrl-alt-H ctrl-alt-H | Inserts a new file header |
+| Header Change Log Insert | ctrl-alt-C ctrl-alt-C | Inserts a new [change log entry](#change-log) into an existing header |
 
 # Dependencies
 No requirements or dependencies.
@@ -65,6 +73,7 @@ The following system variables are available for placeholder substitution in you
 | `projectname` | Attempts to read package.json (in the current or any parent directory) for either a `displayName` or `name` property.  If there is no package.json file _and_ the file has been saved to disk, it will return the project path's base name. |
 | `company` | The name of your company.  In this release it defaults to "Your Company". |
 | `author` | Will attempt to get the user name of the current user, otherwise it defaults to "You". |
+| `initials` | Your initials (where you don't want the whole author name |
 | `authoremail` | The email address of the file author.  In this release it defaults to "you@you.you". |
 | `licensetext` | The full text of the license. This is determined automatically. |
 | `copyrightholder` | Used in some licenses. If not provided it defaults to the same value as `company`. |
@@ -114,6 +123,7 @@ Settings can be added as User and/or Workspace and/or WorkspaceFolder settings -
   * `blankLinesAfter`: Specify how many blank lines to insert after the header comment block.  Default is 0 (zero).
   * `license`: The SPDX License ID of the license to insert into the header (or `"Custom"` if providing your own license text). Refer to [License Information](#license-information) for details.
   * `author`: your name - used by the `author` system variable.  Optional with no default.
+  * `initials`: your initials - used by the `initials` system variable.  Optional with no default.
   * `authorEmail`: your email address - used by the `authoremail` system variable.  Optional with no default.
   * `company`: your Company's name - used by the `company` system variable.  Optional with no default.
   * `copyrightHolder`: your copyright name - used by the `copyrightholder` system variable.  Optional with no default.
@@ -142,6 +152,9 @@ Settings can be added as User and/or Workspace and/or WorkspaceFolder settings -
   * `language`: Mandatory. Either the VSCode language ID or '*' for the global template.
   * `mapTo`: Optional.  If provided, this language will use the specified language's template (and will ignore the following *_template_* value).  The value is a VSCode language ID.  Ignored if *_language = "*"_*.
   * `template`: This must be provided if *_mapTo_* is not declared.  Includes an array of strings that represent the body of the header.  No need to include the comment block syntax.
+  * `changeLogCaption`: mandatory if using the [Change Log](#change-log) feature.  Defines the caption for the change log that must also appear in the main header template.  The extension uses this caption to work out where to place a new change log entry.
+  * `changeLogHeaderLineCount`: used in the [Change Log](#change-log) feature to define the number of lines in the main template between the above _changeLogCaption_ and the log entries.  This can be used to configure the main template to include column headings for the change log.  Defaults to 0 if not provided.
+  * `changeLogItemTemplate`: the template for a change log entry.  Allows overriding of the default item template.
 * `psi-header.license-text`: Optional.  The license text to use where *_psi-header.config.license = "Custom"_*.
 
 Intellisense is provided for the above within the user and workspace settings files in VSCode.
@@ -149,7 +162,7 @@ Intellisense is provided for the above within the user and workspace settings fi
 When generating a header, the extension will do the following for the language-specific settings (`psi-header.lang-config` and `psi-header.templates`):
 1. If there is a configuration that matches the document language then that is used; else
 2. If there is a global configuration (`language = "*"`) that will be used; else
-3. Use the built in defaults. 
+3. Use the built in defaults.
 
 ## A Note About 'mapTo'
 The `mapTo` option provided under `psi-header.lang-config` and `psi-header.templates` will not endlessly iterate through a chain of mappings to find the ultimate target.  It assumes that you are pointing it to a language that has a valid configuration.
@@ -183,11 +196,11 @@ These functions require an argument that defines the date/time format string.  I
 `filecreated` will return the actual file creation date and time (birthtime).  If this cannot be determined it will return the current date and time (usually because the file has not yet been saved to disk, or the operating system failed to return the creation date and time) .
 
 `filecreated` can also return the current locale date string by either passing no arguments to filecreated:
-```javascript 
+```javascript
 	<<filecreated()>>
-``` 
+```
 or exclude the brackets completely to treat it like a system variable
-```javascript 
+```javascript
 	<<filecreated>>
 ```
 
@@ -288,7 +301,7 @@ If there are any characters in the template on either of the comment lines after
 
 Note that the `psi-header.changes-tracking.modDateFormat` configuration setting is ignored when using this option.
 
-So, modifying the Last Modified and Modified By lines in the template from the earlier example in _Option 1_, 
+So, modifying the Last Modified and Modified By lines in the template from the earlier example in _Option 1_,
 
 ```json
 "psi-header.templates": [
@@ -336,9 +349,153 @@ If the file is added via the `New File` icon in the `Explorer` the header will b
 
 The auto header configuration will honour the `include` and `exclude` language settings under `psi-header.changes-tracking`.
 
+# Change Log
+This feature allows you to add change log entries to the header to record major changes to the current file.  It provides a template for each change log entry and you then just add your own comments.  By default it is configured to record the date and initials of the user to which you can add a short comment, but you can configure it to your needs.
+
+Entries are added immediately after the Caption Line (described in the configuration section below) with the most recent entries at the top.
+
+To insert an entry into the change log, just hit `ctrl-alt-C ctrl-alt-C`.  Once inserted, the cursor will be placed at the end of the new log entry.
+
+Note that the above call will fail if the template has not been correctly configured, or if the document does not contain a header.
+
+## Configuring Change Logging
+To configure this you need to add a caption line to your `psi-header.templates[].template` which will enable the extension to insert new entries in the correct location.  This acts as a heading for the whole change log.  It is not possible to use this feature without this caption line.
+
+Next, you need to tell the extension how to find this caption line via the `psi-header.templates[].changeLogCaption` setting which must include enough of the above-mentioned caption line text to be enable it to be found within the header.
+
+You can also optionally add extra lines between the caption line and the change log entries via the `psi-header.templates[].changeLogHeaderLineCount` setting to add (for example) column headings for your entries.  This setting records the number of lines in your template in between the caption line and the log entries - it excludes the caption line itself.  This setting defaults to 0 (zero) - i.e. no extra lines.
+
+Finally, the default log entry template is a single line with date then a TAB then initials then another TAB but you can create your own template via the `psi-header.templates[].changeLogEntryTemplate` setting - see examples below.
+
+A simple example that just adds a caption to the header and uses the defaults for everything else is provided below:
+```json
+"psi-header.templates": [
+	{
+		"language": "*",
+		"template": [
+			"File: <<filepath>>",
+			"Project: <<projectpath>>",
+			"Created Date: <<filecreated('dddd MMMM Do YYYY')>>",
+			"Author: <<author>>",
+			"-----",
+			"Last Modified: <<filecreated('dddd MMMM Do YYYY h:mm:ss a')>>",
+			"Modified By: the developer formerly known as <<author>> at <<<authoremail>>>",
+			"-----",
+			"Copyright (c) <<year>> <<company>>"
+			"-----",
+			"HISTORY:"
+		],
+		"changeLogCaption": "HISTORY:"
+	},
+]
+```
+would give output similar to the following:
+```javascript
+/*
+ * File: \Users\me\Development\psioniq\myProject\src\myPrecious.js
+ * Project: \Users\me\Development\psioniq\myProject
+ * Created Date: Saturday December 31 2016
+ * Author: Arthur Bodkin, esq
+ * -----
+ * Last Modified: Tuesday January 03 2017 09:37:28 am
+ * Modified By: the developer formerly known as Uncle Jack Bodkin at <uncle.jack@psioniq.net>
+ * -----
+ * Copyright (c) 2016 psioniq Global Enterprises, Inc
+ * -----
+ * HISTORY:
+ * 2018-07-14	JB	Added a rabbit
+ * 2018-05-12	AB	Fixed the type of bug that only a mother could love.
+ */
+```
+
+Or for an example with a heading and custom template that uses a different date format and adds a blank line before each entry:
+```json
+"psi-header.templates": [
+	{
+		"language": "*",
+		"template": [
+			"File: <<filepath>>",
+			"Project: <<projectpath>>",
+			"Created Date: <<filecreated('dddd MMMM Do YYYY')>>",
+			"Author: <<author>>",
+			"-----",
+			"Last Modified: <<filecreated('dddd MMMM Do YYYY h:mm:ss a')>>",
+			"Modified By: the developer formerly known as <<author>> at <<<authoremail>>>",
+			"-----",
+			"Copyright (c) <<year>> <<company>>"
+			"-----",
+			"HISTORY:",
+			"Date      \tBy\tComments",
+			"----------\t---\t---------------------------------------------------------"
+		],
+		"changeLogCaption": "HISTORY:",
+		"changeLogHeaderLineCount": 2,
+		"changeLogEntryTemplate": [
+			"",
+			"<<dateformat(DD-MM-YYYY)>>\t<<initials>>\t"
+		]
+	},
+]
+```
+would give output similar to the following:
+```javascript
+/*
+ * File: \Users\me\Development\psioniq\myProject\src\myPrecious.js
+ * Project: \Users\me\Development\psioniq\myProject
+ * Created Date: Saturday December 31 2016
+ * Author: Arthur Bodkin, esq
+ * -----
+ * Last Modified: Tuesday January 03 2017 09:37:28 am
+ * Modified By: the developer formerly known as Uncle Jack Bodkin at <uncle.jack@psioniq.net>
+ * -----
+ * Copyright (c) 2016 psioniq Global Enterprises, Inc
+ * -----
+ * HISTORY:
+ * Date      	By	Comment
+ * ----------	---	-----------------------------------------------------------
+ *
+ * 14-07-2018	JB	Added a rabbit
+ *
+ * 12-05-2018	AB	Fixed the type of bug that only a mother could love.
+ */
+```
+
+## Questions about Change Logs
+
+### Can this be configured to not have a caption line?
+No.  The caption line is how the extension works out where to add the log entries.  You may have edited the header manually, so there is no easy way for the extension to map the raw template back to the edited header.
+
+### Can it be configured to automatically add a log entry?
+No, because this would be extremely annoying if an entry was added every time the file was saved (which would then expect you to add a comment which would necessitate another save which would add another entry which would require you to add a comment which would...).
+
+### Can I have comments on a separate line?
+Yes.  Just provide your own `psi-header.templates[].changeLogEntryTemplate` which allows you to define a multi line template.  You could add a log entry template something like:
+
+```json
+"psi-header.templates": [
+	{
+		...other settings...
+		"changeLogEntryTemplate": [
+			"<<dateformat(YYYY-MM-DD)>>  (<<author>>)",
+			""
+		]
+	},
+]
+```
+
+### Why do I have to manually add the comment?
+The most likely cause is that your Visual Studio Brain Implant(TM) is not correctly configured for your instance of VSCode.  Try facing your computer and moving your head in a figure of eight pattern to establish a connection.  If this fails, move your fingers frantically up and down near the keyboard.
+
+OR
+
+I am not very good at working out what your comment should contain.
+
+### What if I need longer comments?
+No problem.  Just add additional lines to your comment/entry.  New log entries are always added to the top, so it doesn't care if you have hacked about with the layout of earlier entries.
+
 # An Example Custom Configuration
 In the following example:
-* Javascript and Typescript files will both use the custom template and configuration where `language = "javascript"`. 
+* Javascript and Typescript files will both use the custom template and configuration where `language = "javascript"`.
 * Lua will use it's own custom configuration (`language="lua"`), but will use the global custom template (`language = "*"`).
 * All other languages will use the global custom template (`language = "*"`) and the built in configuration settings because there is no custom global `psi-header.lang-config` defined.
 * changes tracking is turned on, but will skip Markdown and JSON files.
