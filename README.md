@@ -29,6 +29,7 @@ Refer to [Extension Settings](#extension-settings) for configuration details.
 
 * Adds a generic or language-specific header at the current cursor location.
 * Can optionally [track changes](#changes-tracking) in the header each time the file is saved.
+* Whitelists and blacklists can be created to determine which files can be change tracked.
 * Can automatically add a header to new files.
 * Compatible with VSCode Multi Root Workspaces.
 * Separates language specific elements (e.g. comment block begin and end) from the template body to minimise the number of templates you might need to manage.
@@ -133,7 +134,9 @@ Settings can be added as User and/or Workspace and/or WorkspaceFolder settings -
   * `modDate`: Identifies the label used on the comment line where the _date modified_ value is shown.  Default value is "Last Modified:".
   * `modDateFormat`: The format string for the modified date value.  Valid values are either "date" (system date - same as the `date` system variable) or a [Moment.js format string](http://momentjs.com/docs/#/displaying/format/).  The default value is "date".  Note that this setting is ignored if `modDate` line is based on a custom string.
   * `include`: Defines an array of VSC language IDs for the file types to include in changes tracking.  The default is an empty array which indicates any file type.
+  * `includeGlob`: Defines an array of file globs for the files to include in changes tracking.  The default is an empty array which indicates any file.
   * `exclude`: Defines an array of VSC language IDs for the file types to exclude from changes tracking.  The default is an empty array which indicates no exclusions.
+  * `excludeGlob`: Defines an array of file globs for the files to exclude from changes tracking.  The default is an empty array which indicates no exclusions.
   * `autoHeader`: Determines whether the header should be added automatically to new files.  Refer to the [Auto Header](#auto-header) section for details.
   * `replace`: An array of template line prefixes that define additional header lines to replace during a file save.  By way of example, you could use this to ensure that changes to file name or project name are always updated during save (it happens!).
 * `psi-header.variables`: An array of name/value pairs that provide value substitution within templates.  This can be used to override the system variables as well as add new items for your own custom templates.
@@ -241,9 +244,17 @@ This extension can optionally track changes to files during save by writing the 
 
 It works when saving either single or multiple files (e.g. during a *_Save All_*).  It will only update the details if VSC reports the document as "dirty".
 
-When enabled, change tracking processes every dirty file on save.  You can restrict which files are processed via the `psi-header.changes-tracking` properties `include` and `exclude`.  The first defines a whitelist of language file types to include, whilst the second is a blacklist of language file types to exclude.  `exclude` is ignored if `include` is not empty.
+By default change tracking processes every dirty file on save.  You can restrict which files are processed via the `psi-header.changes-tracking` properties:
+* `include`: an array that provides a whitelist of language file types to include;
+* `exclude`: an array that provides a blacklist of language file types to exclude;
+* `includeGlob`: an array that provides a whitelist of file globs to include;
+* `excludeGlob`: an array that provides a blacklist of file globs to exclude.
 
-By default this functionality is disabled - you can activate it via the `psi-header.changes-tracking.isActive` boolean configuration property.
+The extension uses the following logic to work out whether to change-track the current file:
+* if both `include` and `includeGlob` are null or empty then any file can be included.  However, if either (or both) `include` or `includeGlob` are not empty then only files that satisfy the non-empty whitelist(s) can be included; then
+* if the current file satisfies the above criteria, the extension will test the file against the `exclude` and `excludeGlob` settings.
+
+By default changes tracking is disabled - you can activate it via the `psi-header.changes-tracking.isActive` boolean configuration property.
 
 Early versions of the extension simply replaced everything after the line identifier.  However, from version 1.1.3 you can use the template to customise the whole line. These two options are described below.
 
@@ -347,7 +358,7 @@ It will only create headers for files added directly via VSCode.
 
 If the file is added via the `New File` icon in the `Explorer` the header will be created immediately.  However, if the file is created via the `File->New File` menu item or via `Ctrl/Cmd-N` the header will not be added _until you perform a physical save_.  Why?  Mainly because we do not know what language the file will use until it is saved.  The extension will not add a header to a new file that already contains a multi-line comment block.
 
-The auto header configuration will honour the `include` and `exclude` language settings under `psi-header.changes-tracking`.
+The auto header configuration will honour the `include`, `exclude`, `includeGlob` and `excludeGlob` settings under `psi-header.changes-tracking`.
 
 # Change Log
 This feature allows you to add change log entries to the header to record major changes to the current file.  It provides a template for each change log entry and you then just add your own comments.  By default it is configured to record the date and initials of the user to which you can add a short comment, but you can configure it to your needs.

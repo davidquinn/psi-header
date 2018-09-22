@@ -3,7 +3,7 @@
 	"displayName": "psioniq File Header",
 	"description": "Configurable file header comment block and track last modified date/user on save.",
 	"icon": "img/psi-logo.png",
-	"version": "1.5.0",
+	"version": "1.5.1",
 	"publisher": "psioniq",
 	"license": "MIT",
 	"bugs": {
@@ -129,6 +129,22 @@
 						"exclude": {
 							"type": "array",
 							"description": "An array of VSC language IDs to define which file types should not be tracked.",
+							"default": [],
+							"items": {
+								"type": "string"
+							}
+						},
+						"includeGlob": {
+							"type": "array",
+							"description": "An array of file globs to define which files should be tracked.",
+							"default": [],
+							"items": {
+								"type": "string"
+							}
+						},
+						"excludeGlob": {
+							"type": "array",
+							"description": "An array of file globs to define which files should not be tracked.",
 							"default": [],
 							"items": {
 								"type": "string"

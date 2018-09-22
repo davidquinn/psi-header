@@ -4,7 +4,7 @@
  * File Created: Sunday, 29th October 2017 8:11:24 am
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Saturday, 14th July 2018 7:16:47 am
+ * Last Modified: Saturday, 22nd September 2018 4:13:39 pm
  * Modified By: David Quinn (info@psioniq.uk>)
  * -----
  * MIT License
@@ -67,6 +67,7 @@ import {
 	isCompactMode
 } from './helper';
 import { log } from 'util';
+import * as mm from 'minimatch';
 
 /**
  * Configuration and setup for changes tracking.
@@ -120,7 +121,7 @@ export class ChangesTrackingController {
 				this._selections = activeTextEditor.selections;
 			}
 			const doc: TextDocument = e.document;
-			if (doc && doc.isDirty && this._wantLanguage(doc.languageId)) {
+			if (doc && doc.isDirty && this._want(doc.languageId, doc.fileName)) {
 				const langConfig: ILangConfig = getLanguageConfig(this._wsConfig, doc.languageId);
 				const mainConfig: IConfig = getConfig(this._wsConfig, langConfig);
 				const variables: IVariableList = getVariables(this._wsConfig, activeTextEditor, mainConfig, langConfig, true);
@@ -240,7 +241,7 @@ export class ChangesTrackingController {
 	private _onDidChangeActiveTextEditor(editor: TextEditor) {
 		if (editor && editor.document) {
 			const doc = editor.document;
-			if (this._wantAutoHeader() && doc.uri.scheme === 'file' && this._wantLanguage(doc.languageId) && this._docNeedsHeader(doc) && this._fileIsNew(doc.fileName)) {
+			if (this._wantAutoHeader() && doc.uri.scheme === 'file' && this._want(doc.languageId, doc.fileName) && this._docNeedsHeader(doc) && this._fileIsNew(doc.fileName)) {
 				const $this = this;
 				commands.executeCommand(k_.FILE_HEADER_COMMAND).then(() => {
 					if ($this._config.autoHeader === k_.AUTO_HEADER_AUTO_SAVE) {
@@ -268,6 +269,8 @@ export class ChangesTrackingController {
 			modDateFormat: 'date',
 			include: [],
 			exclude: [],
+			includeGlob: [],
+			excludeGlob: [],
 			autoHeader: k_.AUTO_HEADER_OFF,
 			replace: []
 		};
@@ -279,6 +282,8 @@ export class ChangesTrackingController {
 			def.modDateFormat = cfg.modDateFormat ? cfg.modDateFormat : def.modDateFormat;
 			def.include = cfg.include ? cfg.include : def.include;
 			def.exclude = cfg.exclude ? cfg.exclude : def.exclude;
+			def.includeGlob = cfg.includeGlob ? cfg.includeGlob : def.includeGlob;
+			def.excludeGlob = cfg.excludeGlob ? cfg.excludeGlob : def.excludeGlob;
 			def.autoHeader = cfg.autoHeader ? cfg.autoHeader : k_.AUTO_HEADER_OFF;
 			def.replace = cfg.replace ? cfg.replace : def.replace;
 		}
@@ -294,15 +299,33 @@ export class ChangesTrackingController {
 	}
 
 	/**
-	 * Returns true if change tracking is active for the specified language.
+	 * Returns true if change tracking is active for the specified language,
+	 * or if the filename matches an active glob pattern.
 	 *
 	 * @private
 	 * @param {string} langId
+	 * @param {string} filename
 	 * @returns {boolean}
 	 * @memberof ChangesTrackingController
 	 */
-	private _wantLanguage(langId: string): boolean {
-		return this._config && this._config.exclude.indexOf(langId) < 0 && (this._config.include.length === 0 || this._config.include.indexOf(langId) >= 0);
+	private _want(langId: string, filename: string): boolean {
+		// return this._config && this._config.exclude.indexOf(langId) < 0 && (this._config.include.length === 0 || this._config.include.indexOf(langId) >= 0);
+		if (!this._config) {
+			return false;
+		}
+		return (
+				(this._config.include.length === 0 && this._config.includeGlob.length === 0)
+				|| this._config.include.indexOf(langId) >= 0
+				|| this._filenameInGlobs(filename, this._config.includeGlob)
+			)
+			&& this._config.exclude.indexOf(langId) < 0
+			&& !this._filenameInGlobs(filename, this._config.excludeGlob);
+	}
+
+	private _filenameInGlobs(filename: string, globs: string[]) {
+		return globs.some((glob) => {
+			return mm.match([filename], glob, {}).length === 1;
+		});
 	}
 
 	/**
