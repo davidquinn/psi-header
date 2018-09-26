@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 1.5.2 (26 Sep 2018)
+* __FIX__: Try to force VSCode to install the minimatch library to get around the `command 'psi-header.insertFileHeader' not found` issue that some users reported.
+
 ## 1.5.1 (22 Sep 2018)
 * __NEW__: You can now use file globs to determine which files to include/exclude from change tracking via the new `includeGlob` and `excludeGlob` settings under `psi-header.changes-tracking`.  These settings work in tandem with the existing `include` and `exclude` settings.
 * __CHANGE__: The behaviour of changes tracking has changed slightly as a result of the glob enhancement above because we now have two dimensions of inclusion and exclusion (languageID and fileName).  Previously, if you provided both the `include` and `exclude` properties then the `exclude` would have been ignored (but you never did that did you because that would have been silly!).  This has now changed and the extension will process all includes followed by all excludes to determine whether to track changes to the file.
