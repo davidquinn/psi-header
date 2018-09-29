@@ -129,7 +129,7 @@ The following _case-sensitive_ `system functions` are available for configurable
 # Extension Settings
 It is quite possible to use this extension without making any changes to your VSCode's settings (although you probably want to set up a couple of variable values like author and company at least).  Extensive configuration options are available should you wish to get your hands dirty.
 
-There are some specific settings that you must setup if you want to use the [change logging]('#configuring-change-logging') feature.
+There are some specific settings that you must setup if you want to use the [Change Log](#change-log) feature.
 
 Settings can be added as User and/or Workspace and/or WorkspaceFolder settings - VSCode handles the majik of merging them together.  Workspace Folder settings take precedence over Workspace settings which take precedence over User settings (which in turn take precendce over Default values).
 
