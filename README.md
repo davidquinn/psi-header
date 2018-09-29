@@ -1,6 +1,10 @@
 The `psioniq File Header` VSCode Extension will insert a header into the current document - either at the start of the document or at the current cursor position. The header can be configured globally and/or per language.  However, the configuration separates the comment syntax from the template body so it is likely that a single template will be able to cover most languages.
 
-It can also log the last modified (user and date) via the change tracking feature which will update the header whenever the file is saved.
+It can optionally log modifications to the file via the change tracking feature which will update the header whenever the file is saved.
+
+It is also possible to add templated comment blocks to the header to record for example a historic summary of changes to the file.
+
+There are a veritable plethora of configuration options to cover your innermost headular cravings.
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
@@ -20,16 +24,24 @@ Here is a sample output:
  */
 ```
 
-To run the extension, either:
+To add a new header manually:
 * thump `F1` and type `Header Insert`; or
 * type the keyboard shortcut `ctrl-alt-H` then `ctrl-alt-H`.
 
-# Features
+To insert an entry into the change log:
+* hit `F1` and type `Header Change Log Insert`; or
+* type the keyboard shortcut `ctrl-alt-C ctrl-alt-C`.
+
+Once inserted, the cursor will be placed at the end of the new log entry.
+
+Now grab a coffee and read on...
+
+# Summary of Features
 Refer to [Extension Settings](#extension-settings) for configuration details.
 
-* Adds a generic or language-specific header at the current cursor location.
-* Can optionally [track changes](#changes-tracking) in the header each time the file is saved.
-* Whitelists and blacklists can be created to determine which files can be change tracked.
+* Adds a generic or language-specific header at the current cursor location or at the top of the file.
+* Optionally [tracks changes](#changes-tracking) in the header each time the file is saved.
+* Configurable whitelists and blacklists to determine which files can be change tracked.
 * Can automatically add a header to new files.
 * Compatible with VSCode Multi Root Workspaces.
 * Separates language specific elements (e.g. comment block begin and end) from the template body to minimise the number of templates you might need to manage.
@@ -45,9 +57,9 @@ Refer to [Extension Settings](#extension-settings) for configuration details.
 * Provides _case-sensitive_ [System Functions](#system-functions) for configurable placeholder value substitution.
 * Allows the overriding of system variable values with static global values within the configuration.
 * Create an unlimited number of custom static variables for use throughout your custom templates.
-* Can be run via the key shortcut `ctrl+alt+H` then `ctrl+alt+H`.
+* HEader insertion can be run manually via the key shortcut `ctrl+alt+H` then `ctrl+alt+H`.
 * Can automatically insert license text based on SPDX license IDs.
-* Changes logging for recording details of changes to the file.
+* Allows changes logging for recording a history of changes to the file.
 
 # Commands
 This extension adds the following commands to VSCode:
@@ -82,7 +94,7 @@ The following system variables are available for placeholder substitution in you
 | `licenseurl` | The url for the license. If using not using a license, this is determined automatically. |
 | `spdxid` | The SPDX License ID for the license. If not using a custom license, this is determined automatically. |
 
-You can also create your own custom variables (for example if you are using this extension within a team) by adding your own variables to `psi-header.variables` then referring to them within your template like the following example which adds a custom variable called `projectCreationYear`:
+You can also create your own custom variables (for example if you are using this extension within a team or you need project-specific variables in your template) by adding your own variables to `psi-header.variables` then referring to them within your template like the following example which adds a custom variable called `projectCreationYear`:
 ``` json
 	"psi-header.variables": [
 		["projectCreationYear", "2017"]
@@ -112,14 +124,16 @@ The following _case-sensitive_ `system functions` are available for configurable
 |Function Name | Description |
 |---|---|
 | `dateformat(args)` | The current date or date part using format strings.  This function takes a single string argument which represents the moment.js compatible format string. |
-| `filecreated(args)` | The file created date and time using format strings.  This function takes a single string argument which represents the moment.js compatible format string.  It can also be used without arguments to use the current locale date format. |
+| `filecreated(args)` | The file created date and time using format strings.  This function takes a single string argument which represents the moment.js compatible format string.  It can also be called without arguments to use the current locale date format. |
 
 # Extension Settings
 It is quite possible to use this extension without making any changes to your VSCode's settings (although you probably want to set up a couple of variable values like author and company at least).  Extensive configuration options are available should you wish to get your hands dirty.
 
+There are some specific settings that you must setup if you want to use the [change logging]('#configuring-change-logging') feature.
+
 Settings can be added as User and/or Workspace and/or WorkspaceFolder settings - VSCode handles the majik of merging them together.  Workspace Folder settings take precedence over Workspace settings which take precedence over User settings (which in turn take precendce over Default values).
 
-* `psi-header.config`: Some global defaults:
+* `psi-header.config`: Global defaults:
   * `forceToTop`: If true, it will ignore the current cursor position and insert the header at the top of the document. If false (the default), the header will be inserted at the current cursor position. Can be overridden for specific languages (via *_psi-header.lang-config_*).
   * `blankLinesAfter`: Specify how many blank lines to insert after the header comment block.  Default is 0 (zero).
   * `license`: The SPDX License ID of the license to insert into the header (or `"Custom"` if providing your own license text). Refer to [License Information](#license-information) for details.
@@ -173,7 +187,7 @@ The `mapTo` option provided under `psi-header.lang-config` and `psi-header.templ
 Also, `mapTo` is ignored if the language value is set to "*".
 
 ## Compact Mode
-The header can be created in "compact mode" - that is, without begin and end lines on the comment block. To activate this, you *must* set both the `lang-config.begin` *and* `lang-config.end` configuration values to an empty string for any language where you want this behaviour.  You can do this on the default language configuration (`lang-config.language = "*"`) to apply to all languages.  Obviously this will cause the header to work like a series of single line comments, so you must also make sure that the `lang-config.prefix` property is set to a valid single line comment prefix.
+The header can be created in `"compact mode"` - that is, without begin and end lines on the comment block. To activate this, you *must* set both the `lang-config.begin` *and* `lang-config.end` configuration values to an empty string for any language where you want this behaviour.  You can do this on the default language configuration (`lang-config.language = "*"`) to apply to all languages.  Obviously this will cause the header to work like a series of single line comments, so you must also make sure that the `lang-config.prefix` property is set to a valid single line comment prefix.
 
 Also note that the change tracking will not auto-insert a header in compact mode if there are any lines in the file that start with the `lang-config.prefix`.
 
@@ -234,7 +248,7 @@ These functions use Moment.js and pass the function argument as a format string 
 ## A Note about Project Paths
 When this extension was originally written VSCode only supported opening a single directory in a workspace.  So, working out the root directory was reasonably simple - life was good!  However, now with Multi Root Workspaces we can no longer assume the root directory (infact Microoft has deprecated the method that returned the root directory).
 
-Therefore, placeholders that need to know the project root directory (`filerelativepath`, `projectpath` and `projectname`) now try to work it out by iterating up the directory structure (starting at the current editor file location) until they come to a package.json file or a filename set in the `psi-header.lang-config.rootDirFileName` configuration setting.  If either one is found then its location is assumed to be the root - otherwise it just assumes the same directory as the edited file.
+Therefore, placeholders that need to know the project root directory (`filerelativepath`, `projectpath` and `projectname`) try to work it out by iterating up the directory structure (starting at the current editor file location) until they come to a package.json file or a filename set in the `psi-header.lang-config.rootDirFileName` configuration setting.  If either one is found then its location is assumed to be the root - otherwise it just assumes the same directory as the edited file.
 
 ## License Information
 The `psi-header.config.license` setting expects either a valid [SPDX license ID](https://spdx.org/licenses/) or `"Custom"` if you are providing your own license text.  When set to Custom, you need to provide the license text via the `psi-header.license-text` setting.
@@ -252,7 +266,7 @@ By default change tracking processes every dirty file on save.  You can restrict
 
 The extension uses the following logic to work out whether to change-track the current file:
 * if both `include` and `includeGlob` are null or empty then any file can be included.  However, if either (or both) `include` or `includeGlob` are not empty then only files that satisfy the non-empty whitelist(s) can be included; then
-* if the current file satisfies the above criteria, the extension will test the file against the `exclude` and `excludeGlob` settings.
+* if the current file satisfies the above criteria, the extension will test to make sure the file is not covered by the `exclude` and `excludeGlob` settings.
 
 By default changes tracking is disabled - you can activate it via the `psi-header.changes-tracking.isActive` boolean configuration property.
 
@@ -268,7 +282,7 @@ It will look for lines within the header that start with `languageCommentPrefix 
   * the author's name (same logic as the `author` system variable); or
   * the current date formatted via the configured `psi-header.changes-tracking.modDateFormat` (refer to the configuration settings for details).
 
-Note that it will replace the whole line so is not suitable for lines where you want to control the text of the line .
+Note that it will replace the whole line so is not suitable for lines where you want to control the text of the line.
 
 Also, because the whole line is replaced, you need to make sure your label configuration includes all characters before the new value (e.g. the ":" in the above defaults).  Although, the extension will insert a space before the value if necessary.
 
@@ -308,7 +322,7 @@ So, taking the example from the beginning of the README, let's say Uncle Jack Bo
 ```
 
 ### Option 2: Template Substitution
-If there are any characters in the template on either of the comment lines after the `label` then the extension will use that text during the update.  You can use any of the system variables and functions.
+If there are any characters in the template on either of the comment lines after the `label` then the extension will preserve it during the update.  You can include text as well as any of the system variables and functions.
 
 Note that the `psi-header.changes-tracking.modDateFormat` configuration setting is ignored when using this option.
 
@@ -367,7 +381,7 @@ Entries are added immediately after the Caption Line (described in the configura
 
 To insert an entry into the change log, just hit `ctrl-alt-C ctrl-alt-C`.  Once inserted, the cursor will be placed at the end of the new log entry.
 
-Note that the above call will fail if the template has not been correctly configured, or if the document does not contain a header.
+Note that the above call will fail if the template has not been correctly configured (see below) or if the document does not contain a header.
 
 ## Configuring Change Logging
 To configure this you need to add a caption line to your `psi-header.templates[].template` which will enable the extension to insert new entries in the correct location.  This acts as a heading for the whole change log.  It is not possible to use this feature without this caption line.
@@ -495,14 +509,14 @@ Yes.  Just provide your own `psi-header.templates[].changeLogEntryTemplate` whic
 ```
 
 ### Why do I have to manually add the comment?
-The most likely cause is that your Visual Studio Brain Implant(TM) is not correctly configured for your instance of VSCode.  Try facing your computer and moving your head in a figure of eight pattern to establish a connection.  If this fails, move your fingers frantically up and down near the keyboard.
+The most likely cause is that your Visual Studio Brain Implant(TM) module is not correctly configured for your instance of VSCode.  Try facing your computer and moving your head in a figure of eight pattern to establish a connection.  If this fails, move your fingers frantically up and down near the keyboard.
 
 OR
 
 I am not very good at working out what your comment should contain.
 
 ### What if I need longer comments?
-No problem.  Just add additional lines to your comment/entry.  New log entries are always added to the top, so it doesn't care if you have hacked about with the layout of earlier entries.
+No problem.  Just add additional lines to your comment/entry.  New log entries are always added to the top of the log, so it doesn't care if you have changed the layout of earlier entries.
 
 # An Example Custom Configuration
 In the following example:
@@ -529,11 +543,15 @@ In the following example:
 			"markdown",
 			"json"
 		],
+		"excludeGlob": [
+			"out/**",
+			"src/**/*.xyz"
+		],
 		"autoHeader": "manualSave"
 	},
 	"psi-header.license-text": [
 		"All shall be well and all shall be well and all manner of things shall be well.",
-		"We're doomed!"
+		"Nope...we're doomed!"
 	],
 	"psi-header.variables": [
 		["company", "psioniq"],
@@ -586,7 +604,16 @@ In the following example:
 				"-----",
 				"Copyright (c) <<year>> <<company>>"
 				"",
-				"<<licensetext>>"
+				"<<licensetext>>",
+				"-----"
+				"HISTORY:",
+				"Date      \tBy\tComments",
+				"----------\t---\t----------------------------------------------------------"
+			],
+			"changeLogCaption": "HISTORY:",
+			"changeLogHeaderLineCount": 2,
+			"changeLogEntryTemplate": [
+				"<<dateformat('YYYY-MM-DD')>>\t<<initials>>\t"
 			]
 		},
 		{
@@ -654,3 +681,4 @@ This extension uses the following npm packages...thank you :):
 * [`wordwrap`](https://github.com/substack/node-wordwrap) to word wrap the licenses.
 * [`momentJs`](http://momentjs.com) for date parameter values.
 * [`username`](https://github.com/sindresorhus/username) to get the default author name.
+* [`minimatch`](https://github.com/isaacs/minimatch) to process the include and exclude globs for changes tracking.

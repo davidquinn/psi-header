@@ -3,7 +3,7 @@
 	"displayName": "psioniq File Header",
 	"description": "Configurable file header comment block and track last modified date/user on save.",
 	"icon": "img/psi-logo.png",
-	"version": "1.5.2",
+	"version": "1.5.3",
 	"publisher": "psioniq",
 	"license": "MIT",
 	"bugs": {

@@ -3,54 +3,57 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
-## 1.5.2 (26 Sep 2018)
+## 1.5.3 (30 September 2018)
+* __CHANGE__: Just an overdue bit of documentation clean up.
+
+## 1.5.2 (26 September 2018)
 * __FIX__: Try to force VSCode to install the minimatch library to get around the `command 'psi-header.insertFileHeader' not found` issue that some users reported.
 
-## 1.5.1 (22 Sep 2018)
+## 1.5.1 (22 September 2018)
 * __NEW__: You can now use file globs to determine which files to include/exclude from change tracking via the new `includeGlob` and `excludeGlob` settings under `psi-header.changes-tracking`.  These settings work in tandem with the existing `include` and `exclude` settings.
 * __CHANGE__: The behaviour of changes tracking has changed slightly as a result of the glob enhancement above because we now have two dimensions of inclusion and exclusion (languageID and fileName).  Previously, if you provided both the `include` and `exclude` properties then the `exclude` would have been ignored (but you never did that did you because that would have been silly!).  This has now changed and the extension will process all includes followed by all excludes to determine whether to track changes to the file.
 
-## 1.5.0 (14 Jul 2018)
+## 1.5.0 (14 July 2018)
 * __NEW__: System variable `initials` and matching `psi-header.config.initials` configuration setting.  Allows you to enter your initials in the template.
 * __NEW__: Change Log feature allows you to define a template to insert change log (changes history) items into the header.  Details are in the README file.
 
-## 1.4.0 (7 Jun 2018)
+## 1.4.0 (7 June 2018)
 * __NEW__: The header can now be created in "compact mode" without begin and end lines on the comment block. To activate this, you *must* set the `lang-config.begin` *and* `lang-config.end` configuration values to an empty string for any language where you want this behaviour.  Refer to the README.md file for more information.
 
-## 1.3.6 (05 Mar 2018)
+## 1.3.6 (05 March 2018)
 * __CHANGE__: The default opening comment block has been changed from `"/**"` to `"/*"` because VSC doesn't show object help in intellisense correctly if there is a comment block that starts `"/**"` above the item being queried when using JSDoc or similar.  If you don't like this new behaviour, you can just create a default language config and set the begin property to `"/**"` to get the old behaviour.
 * __NEW__: New language configuration option `psi-header.lang-config.rootDirFileName` for projects that don't expect a package.json file (and for some reason you don't want to create one).  Allows you to set the name of a file that you would expect to see in the project's root directory (and nowhere else).  It is only used to try and determine the project root directory for `filerelativepath`, `projectpath` and `projectname` variables.  When set, the extension will determine the root path when _either_ of `rootDirFileName` or `package.json` file is found.
 
-## 1.3.5 (09 Dec 2017)
+## 1.3.5 (09 December 2017)
 * __FIX__: Fixed an issue determining the project name and root folder in Windows.  This could cause the `projectname` variable to fail when not using a package.json.
 
-## 1.3.4 (22 Nov 2017)
+## 1.3.4 (22 November 2017)
 * __MAINT__: Just some housekeeping in the readme file for clarity - no new or changed functionality.
 
-## 1.3.3 (17 Nov 2017)
+## 1.3.3 (17 November 2017)
 * __FIX__: Fixed a bug introduced by the previous fix for auto-header add where text has been added to the file.
 
-## 1.3.2 (16 Nov 2017)
+## 1.3.2 (16 November 2017)
 * __FIX__: Fixed a bug where 2 headers could be inserted into a new file created via File->New or Cmd-N/Ctrl-N if (and only if) auto-header was active and you had manually added a header before the first ever save of the file.
 
-## 1.3.1 (01 Nov 2017)
+## 1.3.1 (01 November 2017)
 * __NEW__: Added new `psi-header.changes-tracking.replace` configuration setting.  This is an array of strings that let you define which additional lines from the template should be replaced during file save.  This would be useful for example for updating the file name in the header.  This setting is in addition to the existing modified date and author settings which don't need to be added here (although you could).
 * __CHANGE__: Replaced the default VSC logic for reading array-based configuration settings between user and workspace settings.  The original code would simply replace the user settings array with the workspace settings array.  The new logic merges the two so you can use workspace settings to override individual user setting array values or to add new array settings.  This affects `psi-header.variables`, `psi-header.lang-config` and `psi-header.templates`.
 * __FIX__: Removed a debug console log entry.
 
-## 1.2.1 (27 Oct 2017)
+## 1.2.1 (27 October 2017)
 * __NEW__: Added new `psi-header.config` settings for `author`, `authorEmail`, `company` and `copyrightHolder`.  You can still use the `psi-header.variables` (which if present will override the values of these new settings) but the new settings allow you to override individual values between user settings and workspace settings.
 
-## 1.1.5 (26 Oct 2017)
+## 1.1.5 (26 October 2017)
 * __CHANGE__: Closed a loophole in the template selection logic where a template.mapTo points to an existing but invalid language template (for example setting mapTo to a language entry that itself has a mapTo).  In this case, the extension will map back to the default ("*") template if it exists.
 * __FIX__: Fixed a bug in the mapTo template selection which could cause a valid mapping to not be honoured.
 * __FIX__: Fixed a bug in the mapTo language selection which could cause a valid mapping to not be honoured.
 
-## 1.1.3 (25 Oct 2017)
+## 1.1.3 (25 October 2017)
 * __CHANGE__: In prior versions, changes tracking just looked for lines in the first comment block that started with the configuration prefixes `psi-header.changes-tracking.modAuthor` and `psi-header.changes-tracking.modDate` and replaced the rest of the line with a 'hard-coded' author name or date respectively.  This has now been changed to reference back to the template so that you can control how the rest of the line is updated.  If your template has no characters after the abovementioned prefixes then the update will continue to work as previously.  However, you can now configure the whole line - including using the system variables and functions.  Refer to the *Changes Tracking* section in the readme file for more information.  Note that if you extend the modDate line in the template, the `psi-header.changes-tracking.modDateFormat` setting will be ignored (because you are controllong what shows on the line).
 * __CHANGE__: You no longer need to add a trailing space to `psi-header.changes-tracking.modAuthor` and `psi-header.changes-tracking.modDate` configuration settings.
 
-## 1.0.0 (07 Oct 2017)
+## 1.0.0 (07 October 2017)
 * __CHANGE__: This extension should now be compatible with Multi Root Workspaces in VSCode (Refer to *A Note about Project Paths* in the readme file for an explanation of how this now works.
 
 ## 0.9.8 (17 July 2017)
