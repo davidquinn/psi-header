@@ -4,12 +4,12 @@
  * File Created: Wednesday, 1st November 2017 7:39:26 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Saturday, 14th July 2018 7:17:18 am
+ * Last Modified: Friday, 21st December 2018 8:13:38 am
  * Modified By: David Quinn (info@psioniq.uk>)
  * -----
  * MIT License
  *
- * Copyright 2017 - 2018 David Quinn, psioniq
+ * Copyright 2018 - 2018 David Quinn, psioniq
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -60,6 +60,6 @@ export function insertFileHeader() {
 	}
 
 	editor.edit(function(edit) {
-		edit.insert(editor.selection.active, merge(template, langConfig, variables, config));
+		edit.insert(editor.selection.active, merge(template, langConfig, variables, config, editor));
 	});
 }

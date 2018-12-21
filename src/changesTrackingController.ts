@@ -4,12 +4,12 @@
  * File Created: Sunday, 29th October 2017 8:11:24 am
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Saturday, 22nd September 2018 4:13:39 pm
+ * Last Modified: Friday, 21st December 2018 7:12:59 pm
  * Modified By: David Quinn (info@psioniq.uk>)
  * -----
  * MIT License
  *
- * Copyright 2017 - 2018 David Quinn, psioniq
+ * Copyright 2018 - 2018 David Quinn, psioniq
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -64,7 +64,8 @@ import {
 	replacePlaceholders,
 	getAuthorName,
 	getMergedVariables,
-	isCompactMode
+	isCompactMode,
+	addLineSuffix
 } from './helper';
 import { log } from 'util';
 import * as mm from 'minimatch';
@@ -160,17 +161,27 @@ export class ChangesTrackingController {
 								if (txt.startsWith(modAuthorPrefix)) {
 									replacers.push({
 										range: range,
-										newString: modAuthorTemplate && modAuthorTemplate !== modAuthorPrefix
-											? replacePlaceholders(modAuthorTemplate, variables)
-											: modAuthorPrefix + (modAuthorPrefix.endsWith(' ') ? '' : ' ') + this._author
+										newString: addLineSuffix(
+											modAuthorTemplate && modAuthorTemplate !== modAuthorPrefix
+												? replacePlaceholders(modAuthorTemplate, variables)
+												: modAuthorPrefix + (modAuthorPrefix.endsWith(' ') ? '' : ' ') + this._author,
+											langConfig.suffix,
+											langConfig.lineLength,
+											<number> activeTextEditor.options.tabSize
+										)
 									});
 								}
 								else if (txt.startsWith(modDatePrefix)) {
 									replacers.push({
 										range: range,
-										newString: modDateTemplate && modDateTemplate !== modDatePrefix
-											? replacePlaceholders(modDateTemplate, variables)
-											: modDatePrefix + (modDatePrefix.endsWith(' ') ? '' : ' ') + date
+										newString: addLineSuffix(
+											modDateTemplate && modDateTemplate !== modDatePrefix
+												? replacePlaceholders(modDateTemplate, variables)
+												: modDatePrefix + (modDatePrefix.endsWith(' ') ? '' : ' ') + date,
+											langConfig.suffix,
+											langConfig.lineLength,
+											<number> activeTextEditor.options.tabSize
+										)
 									});
 								} else if (this._config.replace && this._config.replace.length > 0) {
 									for (let replace of this._config.replace) {
@@ -183,7 +194,12 @@ export class ChangesTrackingController {
 												modReplaceTemplate = langConfig.prefix + modReplaceTemplate;
 												replacers.push({
 													range: range,
-													newString: replacePlaceholders(modReplaceTemplate, variables)
+													newString: addLineSuffix(
+														replacePlaceholders(modReplaceTemplate, variables),
+														langConfig.suffix,
+														langConfig.lineLength,
+														<number> activeTextEditor.options.tabSize
+													)
 												});
 											}
 										}

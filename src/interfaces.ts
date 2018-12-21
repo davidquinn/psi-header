@@ -4,12 +4,12 @@
  * File Created: Friday, 6th October 2017 10:24:19 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Saturday, 22nd September 2018 1:50:16 pm
+ * Last Modified: Thursday, 20th December 2018 7:56:05 pm
  * Modified By: David Quinn (info@psioniq.uk>)
  * -----
  * MIT License
  *
- * Copyright 2017 - 2018 David Quinn, psioniq
+ * Copyright 2018 - 2018 David Quinn, psioniq
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -81,7 +81,9 @@ export interface ILangConfig {
     language: string;
     mapTo?: string;
     begin?: string;
-    prefix?: string;
+	prefix?: string;
+	suffix?: string;
+	lineLength?: number;
     end?: string;
     forceToTop?: boolean;
     blankLinesAfter?: number;

@@ -3,7 +3,7 @@
 	"displayName": "psioniq File Header",
 	"description": "Configurable file header comment block and track last modified date/user on save.",
 	"icon": "img/psi-logo.png",
-	"version": "1.5.3",
+	"version": "1.6.1",
 	"publisher": "psioniq",
 	"license": "MIT",
 	"bugs": {
@@ -215,6 +215,14 @@
 								"type": "string",
 								"default": " * ",
 								"description": "The string that defines the beginning of each line of the header comment block."
+							},
+							"suffix": {
+								"type": "string",
+								"description": "An optional line end suffix that allows for block-style comment headers."
+							},
+							"lineLength": {
+								"type": "number",
+								"description": "An optional line length specifier used along with the suffix for block-style comment headers."
 							},
 							"end": {
 								"type": "string",

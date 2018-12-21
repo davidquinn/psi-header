@@ -3,6 +3,10 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 1.6.1 (21 December 2018)
+* __NEW__: Implemented block-style comment headers.
+* __MAINT__: Documentation review.
+
 ## 1.5.3 (30 September 2018)
 * __CHANGE__: Just an overdue bit of documentation clean up.
 

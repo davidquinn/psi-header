@@ -4,12 +4,12 @@
  * File Created: Friday, 6th October 2017 10:23:42 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Saturday, 14th July 2018 7:16:33 am
+ * Last Modified: Friday, 21st December 2018 7:08:52 pm
  * Modified By: David Quinn (info@psioniq.uk>)
  * -----
  * MIT License
  *
- * Copyright 2017 - 2018 David Quinn, psioniq
+ * Copyright 2018 - 2018 David Quinn, psioniq
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -208,6 +208,8 @@ function baseLangConfig(langId: string) {
 		case "html":
 			mapLangConfig({ begin: '<!--', prefix: '', end: '-->'}, config);
 			break;
+		case "matlab":
+			mapLangConfig({ begin: '', prefix: '%', end: ''}, config);
 	}
 	return config;
 }
@@ -224,6 +226,8 @@ function mapLangConfig(source: Object, target: ILangConfig): void {
 		mapProperty(source, target, 'language');
 		mapProperty(source, target, 'begin');
 		mapProperty(source, target, 'prefix');
+		mapProperty(source, target, 'suffix');
+		mapProperty(source, target, 'suffixPosition');
 		mapProperty(source, target, 'end');
 		mapProperty(source, target, 'mapTo');
 		mapProperty(source, target, 'forceToTop');
@@ -231,6 +235,13 @@ function mapLangConfig(source: Object, target: ILangConfig): void {
 		mapProperty(source, target, 'beforeHeader');
 		mapProperty(source, target, 'afterHeader');
 		mapProperty(source, target, 'rootDirFileName');
+	}
+
+	target.suffix = target.suffix || '';
+	if (target.suffix.length > 0) {
+		if (!target.hasOwnProperty('lineLength') || target.lineLength <= 0) {
+			target.lineLength = getEditorWordWrapColumn(80);
+		}
 	}
 }
 
@@ -501,7 +512,7 @@ export function replaceTemplateVariables(template: Array<string>, linePrefix: st
  * @param {IConfig} config
  * @returns {string}
  */
-export function merge(template: Array<string>, langConfig: ILangConfig, variables: IVariableList, config: IConfig): string {
+export function merge(template: Array<string>, langConfig: ILangConfig, variables: IVariableList, config: IConfig, editor: TextEditor): string {
 	const beforeText: string = arrayToString(langConfig.hasOwnProperty('beforeHeader') ? langConfig.beforeHeader : null);
 	const afterText: string = arrayToString(langConfig.hasOwnProperty('afterHeader') ? langConfig.afterHeader : null);
 	const isCompact: boolean = isCompactMode(langConfig);
@@ -511,14 +522,34 @@ export function merge(template: Array<string>, langConfig: ILangConfig, variable
 	for (let i = 0; i < (config.blankLinesAfter); i++) {
 		endSpace += '\n';
 	}
-	return `${beforeText}${commentBegin}${replaceTemplateVariables(template, langConfig.prefix, variables)}\n${commentEnd}${endSpace}${afterText}`;
+
+	var body: string = replaceTemplateVariables(template, langConfig.prefix, variables);
+
+	if (langConfig.suffix.length > 0) {
+		const lines = body.split('\n');
+		for (let idx = 0; idx < lines.length; idx++) {
+			lines[idx] = addLineSuffix(lines[idx], langConfig.suffix, langConfig.lineLength, <number> editor.options.tabSize);
+		}
+		body = lines.join('\n');
+	}
+	return `${beforeText}${commentBegin}${body}\n${commentEnd}${endSpace}${afterText}`;
 }
 
+/**
+ * Test if the corrent language config is for compact mode headers.
+ *
+ * @export
+ * @param {ILangConfig} langConfig
+ * @returns {boolean}
+ */
 export function isCompactMode(langConfig: ILangConfig): boolean {
 	return (!langConfig.begin || langConfig.begin.length === 0) && (!langConfig.end || langConfig.end.length === 0);
 }
 
-
+function getEditorWordWrapColumn(def: number = 80) {
+	let config = workspace.getConfiguration('editor');
+	return config ? config.get('wordWrapColumn', def) : def;
+}
 
 /**
  * Turns a string array into an EOL delimited string.
@@ -547,6 +578,45 @@ export function replacePlaceholders(source: string, variables: IVariableList): s
 	}
 	replaced = replaceFunctions(replaced);
 	return replaced;
+}
+
+/**
+ * Adds the suffix to the end of the line left-padded with spaces if necessary
+ * to bring up the line length to wrapCol.  Just returns line if suffix is empty.
+ *
+ * @export
+ * @param {string} line The base line
+ * @param {string} suffix The suffix.
+ * @param {number} wrapCol
+ * @returns {string}
+ */
+export function addLineSuffix(line: string, suffix: string, wrapCol: number, tabSize: number): string {
+	wrapCol = wrapCol && wrapCol > 0 ? wrapCol : 80;
+	if (!suffix || suffix.length == 0) {
+		return line;
+	}
+	line = line || '';
+	const fullLineLength: number = wrapCol - suffix.length;
+
+	// TODO: need to account for tab characters in the string
+	var padLength: number = fullLineLength - line.length;
+	let spacedContentLength: number = line.length;
+	if (line.indexOf('\t') >= 0) {
+		spacedContentLength = 0;
+		for (let idx: number = 0; idx < line.length; idx++) {
+			spacedContentLength++;
+			if (line.charAt(idx) == '\t') {
+				while(spacedContentLength % tabSize !== 0) {
+					spacedContentLength++;
+				}
+			}
+		}
+	}
+	while (spacedContentLength < fullLineLength) {
+		spacedContentLength++;
+		line += ' ';
+	}
+	return line + suffix;
 }
 
 /**
