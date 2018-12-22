@@ -3,6 +3,10 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 1.6.2 (22 December 2018)
+* __NEW__: Implemented ability to override the `changes-tracking` settings `modDate`, `modDateFormat` and `modAuthor` within the language configuration.
+* __NEW__: Added default language config for `matlab`.
+
 ## 1.6.1 (21 December 2018)
 * __NEW__: Implemented block-style comment headers.
 * __MAINT__: Documentation review.

@@ -4,7 +4,7 @@
  * File Created: Friday, 6th October 2017 10:23:42 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Friday, 21st December 2018 7:08:52 pm
+ * Last Modified: Saturday, 22nd December 2018 9:32:57 am
  * Modified By: David Quinn (info@psioniq.uk>)
  * -----
  * MIT License
@@ -209,7 +209,7 @@ function baseLangConfig(langId: string) {
 			mapLangConfig({ begin: '<!--', prefix: '', end: '-->'}, config);
 			break;
 		case "matlab":
-			mapLangConfig({ begin: '', prefix: '%', end: ''}, config);
+			mapLangConfig({ begin: '%{', prefix: '%', end: '%}'}, config);
 	}
 	return config;
 }
@@ -235,6 +235,9 @@ function mapLangConfig(source: Object, target: ILangConfig): void {
 		mapProperty(source, target, 'beforeHeader');
 		mapProperty(source, target, 'afterHeader');
 		mapProperty(source, target, 'rootDirFileName');
+		mapProperty(source, target, 'modDate');
+		mapProperty(source, target, 'modDateFormat');
+		mapProperty(source, target, 'modAuthor');
 	}
 
 	target.suffix = target.suffix || '';

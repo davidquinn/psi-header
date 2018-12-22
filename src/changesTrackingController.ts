@@ -4,7 +4,7 @@
  * File Created: Sunday, 29th October 2017 8:11:24 am
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Friday, 21st December 2018 7:12:59 pm
+ * Last Modified: Saturday, 22nd December 2018 9:43:50 am
  * Modified By: David Quinn (info@psioniq.uk>)
  * -----
  * MIT License
@@ -127,21 +127,24 @@ export class ChangesTrackingController {
 				const mainConfig: IConfig = getConfig(this._wsConfig, langConfig);
 				const variables: IVariableList = getVariables(this._wsConfig, activeTextEditor, mainConfig, langConfig, true);
 				const template: Array<string> = getTemplateConfig(this._wsConfig, doc.languageId).template;
-				const modDatePrefix: string = langConfig.prefix + this._config.modDate;
-				const modAuthorPrefix: string = langConfig.prefix + this._config.modAuthor;
+				const modDate: string = langConfig.modDate || this._config.modDate;
+				const modDatePrefix: string = langConfig.prefix + modDate;
+				const modAuthor: string = langConfig.modAuthor || this._config.modAuthor;
+				const modAuthorPrefix: string = langConfig.prefix + modAuthor;
 				let modDateTemplate: string = template.find((value) => {
-					return value.startsWith(this._config.modDate);
+					return value.startsWith(modDate);
 				});
 				if (modDateTemplate) {
 					modDateTemplate = langConfig.prefix + modDateTemplate;
 				}
 				let modAuthorTemplate: string = template.find((value) => {
-					return value.startsWith(this._config.modAuthor);
+					return value.startsWith(modAuthor);
 				});
 				if (modAuthorTemplate) {
 					modAuthorTemplate = langConfig.prefix + modAuthorTemplate;
 				}
-				const date: string = this._config.modDateFormat === 'date' ? new Date().toDateString() : moment().format(this._config.modDateFormat);
+				const mdf = langConfig.modDateFormat || this._config.modDateFormat;
+				const date: string = mdf === 'date' ? new Date().toDateString() : moment().format(mdf);
 				let inComment: boolean = false;
 				let replacers: IRangeReplacerList = [];
 				const isCompact: boolean = isCompactMode(langConfig);
