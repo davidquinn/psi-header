@@ -4,7 +4,7 @@
  * File Created: Friday, 6th October 2017 10:23:42 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Saturday, 22nd December 2018 9:32:57 am
+ * Last Modified: Tuesday, 25th December 2018 1:56:43 pm
  * Modified By: David Quinn (info@psioniq.uk>)
  * -----
  * MIT License
@@ -600,8 +600,6 @@ export function addLineSuffix(line: string, suffix: string, wrapCol: number, tab
 	}
 	line = line || '';
 	const fullLineLength: number = wrapCol - suffix.length;
-
-	// TODO: need to account for tab characters in the string
 	var padLength: number = fullLineLength - line.length;
 	let spacedContentLength: number = line.length;
 	if (line.indexOf('\t') >= 0) {
