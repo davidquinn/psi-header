@@ -3,7 +3,7 @@
 	"displayName": "psioniq File Header",
 	"description": "Configurable file header comment block and track last modified date/user on save.",
 	"icon": "img/psi-logo.png",
-	"version": "1.6.2",
+	"version": "1.6.4",
 	"publisher": "psioniq",
 	"license": "MIT",
 	"bugs": {
@@ -271,6 +271,13 @@
 							"modDateFormat": {
 								"type": "string",
 								"description": "Optional. Overrides the modDateFormat changes tracking setting for this language.  The date fomat string for the modified date.  Either 'date' for the standard system date (same as the 'date' placeholder) or a MomentJS format string."
+							},
+							"replace": {
+								"type": "array",
+								"description": "Optional. Overrides the modDateFormat changes tracking setting for this language.  An array of template line prefixes that define lines that should be replaced during a save.",
+								"items": {
+									"type": "string"
+								}
 							}
 						}
 					}

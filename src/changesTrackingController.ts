@@ -4,7 +4,7 @@
  * File Created: Sunday, 29th October 2017 8:11:24 am
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Saturday, 22nd December 2018 9:43:50 am
+ * Last Modified: Friday, 28th December 2018 1:24:47 pm
  * Modified By: David Quinn (info@psioniq.uk>)
  * -----
  * MIT License
@@ -131,6 +131,7 @@ export class ChangesTrackingController {
 				const modDatePrefix: string = langConfig.prefix + modDate;
 				const modAuthor: string = langConfig.modAuthor || this._config.modAuthor;
 				const modAuthorPrefix: string = langConfig.prefix + modAuthor;
+				const replaceList: Array<string> = langConfig.replace || this._config.replace;
 				let modDateTemplate: string = template.find((value) => {
 					return value.startsWith(modDate);
 				});
@@ -186,12 +187,12 @@ export class ChangesTrackingController {
 											<number> activeTextEditor.options.tabSize
 										)
 									});
-								} else if (this._config.replace && this._config.replace.length > 0) {
-									for (let replace of this._config.replace) {
-										const replacePrefix: string = langConfig.prefix + replace;
+								} else if (replaceList && replaceList.length > 0) {
+									for (let replaceStr of replaceList) {
+										const replacePrefix: string = langConfig.prefix + replaceStr;
 										if (txt.startsWith(replacePrefix)) {
 											let modReplaceTemplate: string = template.find((value) => {
-												return value.startsWith(replace);
+												return value.startsWith(replaceStr);
 											});
 											if (modReplaceTemplate) {
 												modReplaceTemplate = langConfig.prefix + modReplaceTemplate;
