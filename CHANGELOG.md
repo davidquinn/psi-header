@@ -3,10 +3,13 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
-## 1.6.4 (28 Dec 2018)
+## 1.6.5 (29 December 2018)
+*__FIX__: The block-style header now correctly reads the `lineLength` property if it is set.
+
+## 1.6.4 (28 December 2018)
 *__FIX__: Fixed a typo in the documentation.
 
-## 1.6.3 (28 Dec 2018)
+## 1.6.3 (28 December 2018)
 * __NEW__: Implemented ability to override the `changes-tracking.replace` setting within the language configuration.
 
 ## 1.6.2 (22 December 2018)

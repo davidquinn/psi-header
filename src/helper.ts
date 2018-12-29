@@ -4,7 +4,7 @@
  * File Created: Friday, 6th October 2017 10:23:42 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Friday, 28th December 2018 1:24:50 pm
+ * Last Modified: Saturday, 29th December 2018 9:58:44 am
  * Modified By: David Quinn (info@psioniq.uk>)
  * -----
  * MIT License
@@ -227,7 +227,7 @@ function mapLangConfig(source: Object, target: ILangConfig): void {
 		mapProperty(source, target, 'begin');
 		mapProperty(source, target, 'prefix');
 		mapProperty(source, target, 'suffix');
-		mapProperty(source, target, 'suffixPosition');
+		mapProperty(source, target, 'lineLength');
 		mapProperty(source, target, 'end');
 		mapProperty(source, target, 'mapTo');
 		mapProperty(source, target, 'forceToTop');
