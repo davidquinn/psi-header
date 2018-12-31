@@ -17,8 +17,8 @@
 - [A Note about Project Paths](#a-note-about-project-paths)
 - [License Information](#license-information)
 - [Changes Tracking](#changes-tracking)
-	- [Option 1: Simple Replacement](#option-1-simple-replacement)
-	- [Option 2: Template Substitution](#option-2-template-substitution)
+	- [Option 1 Simple Replacement](#option-1-simple-replacement)
+	- [Option 2 Template Substitution](#option-2-template-substitution)
 - [Auto Header](#auto-header)
 - [Change Log](#change-log)
 	- [Configuring Change Logging](#configuring-change-logging)
@@ -334,7 +334,7 @@ The `psi-header.config.license` setting expects either a valid [SPDX license ID]
 The extension does some clean up of the SPDX license text (mapping to variables, etc) but not everything is cleaned.  In particular, a number of licenses use a placeholder logic based on `<<var;...>>` that this extension does not try to convert at this stage - and some licenses have placeholder text like `<insert your slartibartfast here.  We wore an onion on our belt because that was the fashion of the day>`.  If you find hokey little anomolies that can be dealt with, let me know.  Otherwise, I suggest you copy the license text into your custom license settings and fix it there.
 
 # Changes Tracking
-This extension can optionally track changes to files during save by writing the last modified date and/or user to the header comment block.  It does this by looking for specific text at the start of individual lines within the header, and replacing the whole line.  It will only search the first multi-line comment block within each file.
+This extension can optionally track changes to files during save by writing the last modified date and/or user to the header comment block.  It does this by looking for specific text (ignoring initial whitespace) at the start of individual lines within the header, and replacing the whole line.  It will only search the first multi-line comment block within each file.
 
 It works when saving either single or multiple files (e.g. during a *_Save All_*).  It will only update the details if VSC reports the document as "dirty".
 
@@ -352,8 +352,8 @@ By default changes tracking is disabled - you can activate it via the `psi-heade
 
 Early versions of the extension simply replaced everything after the line identifier.  However, from version 1.1.3 you can use the template to customise the whole line. These two options are described below.
 
-## Option 1: Simple Replacement
-It will look for lines within the header that start with `languageCommentPrefix + label` (e.g. "` * Date Modified:`" or "` * Modified By:`") and will replace the _whole_ line with `languageCommentPrefix + label + newValue`.  Where:
+## Option 1 Simple Replacement
+It will look for lines within the header that start with `languageCommentPrefix + trimStart(label)` (e.g. "` * Date Modified:`" or "` * Modified By:`") and will replace the _whole_ line with `languageCommentPrefix + label + newValue`.  Where:
 * `languageCommentPrefix` is the comment line prefix for the document's language (`psi-header.lang-config[language].prefix`);
 * `label` is either:
   * the configured `psi-header.changes-tracking.modAuthor` (defaults to "Modified By:"); or
@@ -366,8 +366,7 @@ Note that it will replace the whole line so is not suitable for lines where you 
 
 Also, because the whole line is replaced, you need to make sure your label configuration includes all characters before the new value (e.g. the ":" in the above defaults).  Although, the extension will insert a space before the value if necessary.
 
-So, taking the example from the beginning of the README, let's say Uncle Jack Bodkin modified the file three days after Tammy, then (assuming default values) the header would look like the following after save:
-
+So, taking the following example template from the beginning of the README:
 ```json
 "psi-header.templates": [
 	{
@@ -387,6 +386,7 @@ So, taking the example from the beginning of the README, let's say Uncle Jack Bo
 ]
 ```
 
+Let's say Uncle Jack Bodkin modified the file three days after Tammy, then (assuming default values) the header would look like the following after save:
 ```javascript
 /*
  * File: \Users\me\Development\psioniq\myProject\src\myPrecious.js
@@ -401,14 +401,16 @@ So, taking the example from the beginning of the README, let's say Uncle Jack Bo
  */
 ```
 
-## Option 2: Template Substitution
+NOTE: What is important in the above is that there is no text beyond the label in the template for the two lines we are replacing.
+
+## Option 2 Template Substitution
 If there are any characters in the template on either of the comment lines after the `label` then the extension will preserve it during the update.  You can include text as well as any of the system variables and functions.
 
 You can also use this method to update other lines from the template via the `psi-header.changes-tracking.replace` array.  The array holds strings that represent the beginning of the line from the template (excluding the line prefix) - you just need to include enough characters from the beginning of the line to ensure uniqueness.
 
 Note that the `psi-header.changes-tracking.modDateFormat` configuration setting is ignored when using this option.
 
-So, modifying the Last Modified and Modified By lines in the template from the earlier example in _Option 1_,
+So, modifying the `"Last Modified:"` and `"Modified By:"` lines in the template from the earlier example in _Option 1_,
 
 ```json
 "psi-header.templates": [
@@ -429,6 +431,7 @@ So, modifying the Last Modified and Modified By lines in the template from the e
 ]
 ```
 
+Because there is now text after the labels on these lines, the extra text is used to generate the following output:
 ```javascript
 /*
  * File: \Users\me\Development\psioniq\myProject\src\myPrecious.js

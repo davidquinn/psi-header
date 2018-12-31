@@ -3,6 +3,10 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 1.6.6 (30 December 2018)
+*__FIX__: Fixed problem with link to some headings in the README file when viewing the details in a browser (i.e. on the Visual Studio Marketplace website) caused by the Markdown to HTML conversion.
+*__CHANGE__: Changes tracking will trim left whitespace when trying to find the `modAuthor`, `modDate` and `replace[]` settings in the template and in the header.  So you can now use spaces and tabs to indent your template and not have to add that whitespace to the abovementioned `changes-tracking` settings.
+
 ## 1.6.5 (29 December 2018)
 *__FIX__: The block-style header now correctly reads the `lineLength` property if it is set.
 
@@ -21,7 +25,7 @@ To report bugs, issues, suggestions: email `info@psioniq.uk`
 * __MAINT__: Documentation review.
 
 ## 1.5.3 (30 September 2018)
-* __CHANGE__: Just an overdue bit of documentation clean up.
+* __MAINT__: Just an overdue bit of documentation clean up.
 
 ## 1.5.2 (26 September 2018)
 * __FIX__: Try to force VSCode to install the minimatch library to get around the `command 'psi-header.insertFileHeader' not found` issue that some users reported.

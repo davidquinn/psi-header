@@ -1,25 +1,25 @@
 /*
  * File: extension.ts
  * Project: psioniq File Header
- * File Created: Friday, 30th December 2016 5:20:27 pm
+ * File Created: Saturday, 7th July 2018 12:19:44 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Saturday, 14th July 2018 7:17:02 am
- * Modified By: David Quinn (info@psioniq.uk>)
+ * Last Modified: Monday, 31st December 2018 12:59:26 pm
+ * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
  *
- * Copyright 2017 - 2018 David Quinn, psioniq
+ * Copyright 2016 - 2018 David Quinn (psioniq)
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is furnished to do
- * so, subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,

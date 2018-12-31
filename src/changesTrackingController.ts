@@ -1,25 +1,25 @@
 /*
  * File: changesTrackingController.ts
  * Project: psioniq File Header
- * File Created: Sunday, 29th October 2017 8:11:24 am
+ * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Friday, 28th December 2018 1:24:47 pm
- * Modified By: David Quinn (info@psioniq.uk>)
+ * Last Modified: Monday, 31st December 2018 12:58:42 pm
+ * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
  *
- * Copyright 2018 - 2018 David Quinn, psioniq
+ * Copyright 2016 - 2018 David Quinn (psioniq)
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is furnished to do
- * so, subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -40,7 +40,6 @@ import {
 	TextDocument,
 	TextEdit,
 	TextEditor,
-	TextLine,
 	Range,
 	commands
 } from 'vscode';
@@ -49,7 +48,6 @@ import {
 	IVariableList,
 	IVariable,
 	ILangConfig,
-	IRangeReplacer,
 	IRangeReplacerList,
 	IConfig
 } from './interfaces';
@@ -65,7 +63,8 @@ import {
 	getAuthorName,
 	getMergedVariables,
 	isCompactMode,
-	addLineSuffix
+	addLineSuffix,
+	trimStart
 } from './helper';
 import { log } from 'util';
 import * as mm from 'minimatch';
@@ -127,25 +126,32 @@ export class ChangesTrackingController {
 				const mainConfig: IConfig = getConfig(this._wsConfig, langConfig);
 				const variables: IVariableList = getVariables(this._wsConfig, activeTextEditor, mainConfig, langConfig, true);
 				const template: Array<string> = getTemplateConfig(this._wsConfig, doc.languageId).template;
+
 				const modDate: string = langConfig.modDate || this._config.modDate;
-				const modDatePrefix: string = langConfig.prefix + modDate;
+				const modDateWithPrefix: string = langConfig.prefix + modDate;
+
 				const modAuthor: string = langConfig.modAuthor || this._config.modAuthor;
-				const modAuthorPrefix: string = langConfig.prefix + modAuthor;
+				const modAuthorWithPrefix: string = langConfig.prefix + modAuthor;
+
 				const replaceList: Array<string> = langConfig.replace || this._config.replace;
+
 				let modDateTemplate: string = template.find((value) => {
-					return value.startsWith(modDate);
+					return trimStart(value).startsWith(trimStart(modDate));
 				});
 				if (modDateTemplate) {
 					modDateTemplate = langConfig.prefix + modDateTemplate;
 				}
+
 				let modAuthorTemplate: string = template.find((value) => {
-					return value.startsWith(modAuthor);
+					return trimStart(value).startsWith(trimStart(modAuthor));
 				});
 				if (modAuthorTemplate) {
 					modAuthorTemplate = langConfig.prefix + modAuthorTemplate;
 				}
+
 				const mdf = langConfig.modDateFormat || this._config.modDateFormat;
 				const date: string = mdf === 'date' ? new Date().toDateString() : moment().format(mdf);
+
 				let inComment: boolean = false;
 				let replacers: IRangeReplacerList = [];
 				const isCompact: boolean = isCompactMode(langConfig);
@@ -162,37 +168,36 @@ export class ChangesTrackingController {
 								// we have come to the first comment block in the file, so start searching
 								inComment = true;
 							} else if (inComment) {
-								if (txt.startsWith(modAuthorPrefix)) {
+								if (this._startsWith(txt, langConfig.prefix, modAuthor)) {
 									replacers.push({
 										range: range,
 										newString: addLineSuffix(
-											modAuthorTemplate && modAuthorTemplate !== modAuthorPrefix
+											modAuthorTemplate && modAuthorTemplate !== modAuthorWithPrefix
 												? replacePlaceholders(modAuthorTemplate, variables)
-												: modAuthorPrefix + (modAuthorPrefix.endsWith(' ') ? '' : ' ') + this._author,
+												: modAuthorWithPrefix + (modAuthorWithPrefix.endsWith(' ') ? '' : ' ') + this._author,
 											langConfig.suffix,
 											langConfig.lineLength,
 											<number> activeTextEditor.options.tabSize
 										)
 									});
 								}
-								else if (txt.startsWith(modDatePrefix)) {
+								else if (this._startsWith(txt, langConfig.prefix, modDate)) {
 									replacers.push({
 										range: range,
 										newString: addLineSuffix(
-											modDateTemplate && modDateTemplate !== modDatePrefix
+											modDateTemplate && modDateTemplate !== modDateWithPrefix
 												? replacePlaceholders(modDateTemplate, variables)
-												: modDatePrefix + (modDatePrefix.endsWith(' ') ? '' : ' ') + date,
+												: modDateWithPrefix + (modDateWithPrefix.endsWith(' ') ? '' : ' ') + date,
 											langConfig.suffix,
 											langConfig.lineLength,
 											<number> activeTextEditor.options.tabSize
 										)
 									});
 								} else if (replaceList && replaceList.length > 0) {
-									for (let replaceStr of replaceList) {
-										const replacePrefix: string = langConfig.prefix + replaceStr;
-										if (txt.startsWith(replacePrefix)) {
+									for (let replaceString of replaceList) {
+										if (this._startsWith(txt, langConfig.prefix, replaceString)) {
 											let modReplaceTemplate: string = template.find((value) => {
-												return value.startsWith(replaceStr);
+												return trimStart(value).startsWith(trimStart(replaceString));
 											});
 											if (modReplaceTemplate) {
 												modReplaceTemplate = langConfig.prefix + modReplaceTemplate;
@@ -372,23 +377,6 @@ export class ChangesTrackingController {
 		return this._config && (this._config.autoHeader === k_.AUTO_HEADER_MANUAL_SAVE || this._config.autoHeader === k_.AUTO_HEADER_AUTO_SAVE);
 	}
 
-	// /**
-	//  * Returns the first line of the header template for the specified language.
-	//  *
-	//  * @private
-	//  * @param {any} langId
-	//  * @returns
-	//  * @memberof ChangesTrackingController
-	//  */
-	// private _langBegin(langId) {
-	// 	let result: string = null;
-	// 	const cfg: ILangConfig = getLanguageConfig(this._wsConfig, langId);
-	// 	if (cfg) {
-	// 		result = cfg.begin;
-	// 	}
-	// 	return result;
-	// }
-
 	/**
 	 * Returns true if the file appears to need a header.
 	 *
@@ -421,5 +409,13 @@ export class ChangesTrackingController {
 			}
 		}
 		return result;
+	}
+
+	private _startsWith(line: string, langPrefix: string, searchText: string): boolean {
+		if (!line || !langPrefix || !searchText || line.length == 0 || searchText.length == 0 || (langPrefix.length > 0 && !line.startsWith(langPrefix))) {
+			return false;
+		}
+		const haystack: string = trimStart(line.substr(langPrefix.length));
+		return haystack.startsWith(trimStart(searchText));
 	}
 }
