@@ -4,7 +4,7 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Monday, 31st December 2018 12:58:42 pm
+ * Last Modified: Tuesday, 5th March 2019 6:37:13 pm
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -412,10 +412,10 @@ export class ChangesTrackingController {
 	}
 
 	private _startsWith(line: string, langPrefix: string, searchText: string): boolean {
-		if (!line || !langPrefix || !searchText || line.length == 0 || searchText.length == 0 || (langPrefix.length > 0 && !line.startsWith(langPrefix))) {
+		if (!line || !searchText || line.length == 0 || searchText.length == 0 || (langPrefix.length > 0 && !line.startsWith(langPrefix))) {
 			return false;
 		}
-		const haystack: string = trimStart(line.substr(langPrefix.length));
+		const haystack: string = trimStart(line.substr(langPrefix ? langPrefix.length : 0));
 		return haystack.startsWith(trimStart(searchText));
 	}
 }

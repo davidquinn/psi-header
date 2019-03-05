@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 1.6.7 (05 March 2019)
+*__FIX__: Changes tracking will track changes for languages that are configured with an empty prefix for the comment lines.
+
 ## 1.6.6 (31 December 2018)
 *__FIX__: Fixed problem with link to some headings in the README file when viewing the details in a browser (i.e. on the Visual Studio Marketplace website) caused by the Markdown to HTML conversion.
 *__CHANGE__: Changes tracking will trim left whitespace when trying to find the `modAuthor`, `modDate` and `replace[]` settings in the template and in the header.  So you can now use spaces and tabs to indent your template and not have to add that whitespace to the abovementioned `changes-tracking` settings.
