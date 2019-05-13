@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 1.6.8 (13 May 2019)
+*__CHANGE__: Changed the title of the extension within the VSCode Settings UI (from `Header Insert` to `psioniq File Header`).
+
 ## 1.6.7 (05 March 2019)
 *__FIX__: Changes tracking will track changes for languages that are configured with an empty prefix for the comment lines.
 
