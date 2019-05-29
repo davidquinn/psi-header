@@ -3,6 +3,11 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 1.7.0 (29 May 2019)
+*__NEW__: Added changes tracking option `enforceHeader` which will check the file during save and add a header to the file if none exists.  For this to work well you should ensure that the `forceToTop` global config option is TRUE as the logic scans the file looking for any comment blocks to determine if there is a header (it just assumes that the first comment block it finds is a header).  If `forceToTop` is true it won't keep searching the file beyond the first lines.
+
+*__MAINT__*: Updated npm package dependencies for vscode, moment & mocha for audit warnings.
+
 ## 1.6.8 (13 May 2019)
 *__CHANGE__: Changed the title of the extension within the VSCode Settings UI (from `Header Insert` to `psioniq File Header`).
 

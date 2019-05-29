@@ -4,7 +4,7 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Tuesday, 5th March 2019 6:37:13 pm
+ * Last Modified: Wednesday, 29th May 2019 7:07:13 am
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -68,6 +68,7 @@ import {
 } from './helper';
 import { log } from 'util';
 import * as mm from 'minimatch';
+import { insertFileHeader } from './insertFileHeaderCommand';
 
 /**
  * Configuration and setup for changes tracking.
@@ -122,6 +123,9 @@ export class ChangesTrackingController {
 			}
 			const doc: TextDocument = e.document;
 			if (doc && doc.isDirty && this._want(doc.languageId, doc.fileName)) {
+				if (this._config.enforceHeader && this._docNeedsHeader(doc)) {
+					insertFileHeader();
+				}
 				const langConfig: ILangConfig = getLanguageConfig(this._wsConfig, doc.languageId);
 				const mainConfig: IConfig = getConfig(this._wsConfig, langConfig);
 				const variables: IVariableList = getVariables(this._wsConfig, activeTextEditor, mainConfig, langConfig, true);
@@ -272,7 +276,7 @@ export class ChangesTrackingController {
 					if ($this._config.autoHeader === k_.AUTO_HEADER_AUTO_SAVE) {
 						doc.save();
 					}
-				})
+				});
 			}
 		}
 	}
@@ -297,7 +301,8 @@ export class ChangesTrackingController {
 			includeGlob: [],
 			excludeGlob: [],
 			autoHeader: k_.AUTO_HEADER_OFF,
-			replace: []
+			replace: [],
+			enforceHeader: false
 		};
 		let cfg: ITrackingConfig = this._wsConfig && this._wsConfig.has(k_.TRACKING_SETTINGS) ? this._wsConfig.get<ITrackingConfig>(k_.TRACKING_SETTINGS) : null;
 		if (cfg) {
@@ -311,6 +316,7 @@ export class ChangesTrackingController {
 			def.excludeGlob = cfg.excludeGlob ? cfg.excludeGlob : def.excludeGlob;
 			def.autoHeader = cfg.autoHeader ? cfg.autoHeader : k_.AUTO_HEADER_OFF;
 			def.replace = cfg.replace ? cfg.replace : def.replace;
+			def.enforceHeader = cfg.enforceHeader ? cfg.enforceHeader : false;
 		}
 		this._config = def;
 		// get author name
@@ -397,12 +403,18 @@ export class ChangesTrackingController {
 						result = false;
 						break;
 					}
+					if (lang.forceToTop && (!lang.beforeHeader || i >= lang.beforeHeader.length)) {
+						break;
+					}
 				}
 			} else {
 				for (let i: number = 0; i < doc.lineCount; i++) {
 					const txt: string = doc.lineAt(i).text;
 					if (txt && txt.length > 0 && txt == lang.begin) {
 						result = false;
+						break;
+					}
+					if (lang.forceToTop && (!lang.beforeHeader || i >= lang.beforeHeader.length)) {
 						break;
 					}
 				}

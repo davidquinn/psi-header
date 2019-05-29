@@ -3,7 +3,7 @@
 	"displayName": "psioniq File Header",
 	"description": "Configurable file header comment block and track last modified date/user on save.",
 	"icon": "img/psi-logo.png",
-	"version": "1.6.8",
+	"version": "1.7.0",
 	"publisher": "psioniq",
 	"license": "MIT",
 	"bugs": {
@@ -157,7 +157,7 @@
 								"manualSave",
 								"autoSave"
 							],
-							"description": "Setting for automatic header creation. Valid values are 'off': (default) no auto header; 'manualSave': header is added but not saved; 'autoSave': header is added and immediately saved to file.",
+							"description": "Setting for automatic header creation in new files. Valid values are 'off': (default) no auto header; 'manualSave': header is added but not saved; 'autoSave': header is added and immediately saved to file.",
 							"default": "off"
 						},
 						"replace": {
@@ -167,6 +167,11 @@
 							"items": {
 								"type": "string"
 							}
+						},
+						"enforceHeader": {
+							"type": "boolean",
+							"description": "If true, will automatically insert a header during save if none exists.",
+							"default": false
 						}
 					}
 				},
@@ -341,15 +346,15 @@
 		"test": "node ./node_modules/vscode/bin/test"
 	},
 	"devDependencies": {
-		"typescript": "^2.0.3",
-		"vscode": "^1.0.0",
-		"mocha": "^2.3.3",
+		"@types/mocha": "^5.2.6",
 		"@types/node": "^6.0.40",
-		"@types/mocha": "^2.2.32"
+		"mocha": "^6.1.4",
+		"typescript": "^2.0.3",
+		"vscode": "^1.1.34"
 	},
 	"dependencies": {
 		"minimatch": "^3.0.4",
-		"moment": "^2.18.1",
+		"moment": "^2.24.0",
 		"spdx-license-list": "^3.0.1",
 		"username": "^3.0.0",
 		"wordwrap": "^1.0.0"

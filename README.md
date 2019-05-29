@@ -230,7 +230,8 @@ Options that affect changes tracking.
 | `includeGlob` | Defines an array of file globs for the files to include in changes tracking.  The default is an empty array which indicates any file. |
 | `exclude` | Defines an array of VSC language IDs for the file types to exclude from changes tracking.  The default is an empty array which indicates no exclusions. |
 | `excludeGlob` | Defines an array of file globs for the files to exclude from changes tracking.  The default is an empty array which indicates no exclusions. |
-| `autoHeader` | Determines whether the header should be added automatically to new files.  Refer to the [Auto Header](#auto-header) section for details. |
+| `autoHeader` | Determines whether the header should be added automatically to *_new_* files.  Refer to the [Auto Header](#auto-header) section for details. |
+| `enforceHeader` | Determines if the extension should automatically check the file and add a header whenever the file is saved if an existing header is not found.  This setting is independent of `autoHeader` and works best with `psi-header.config.forceToTop` set to `true` as otherwise any comment block is interpreted as a potential header.  |
 | `replace` | An array of template line prefixes that define additional header lines to replace during a file save.  By way of example, you could use this to ensure that changes to file name or project name are always updated during save (it happens!). |
 
 
@@ -453,7 +454,7 @@ This extension can be configured to automatically add a file header on creating 
 * `manualSave`: a header will be added but the file will not be automatically saved; or
 * `autoSave`: the header will be added and the file immediately saved.
 
-It will only create headers for files added directly via VSCode.
+It will only create headers for *_new_* files added directly via VSCode.  To insert a header in any file during save, set `psi-header.changes-tracking.enforceHeader` option to true.  `enforceHeader` will scan the file during save to check if there is a header - it works best with `psi-header.config.forceToTop` set to true, otherwise any comment block in the file could be interpreted as a header.
 
 If the file is added via the `New File` icon in the `Explorer` the header will be created immediately.  However, if the file is created via the `File->New File` menu item or via `Ctrl/Cmd-N` the header will not be added _until you perform a physical save_.  Why?  Mainly because we do not know what language the file will use until it is saved.  The extension will not add a header to a new file that already contains a multi-line comment block.
 

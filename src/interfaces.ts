@@ -4,7 +4,7 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Monday, 31st December 2018 1:00:25 pm
+ * Last Modified: Wednesday, 29th May 2019 6:53:32 am
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -110,6 +110,7 @@ export interface ITrackingConfig {
 	excludeGlob?: string[];
 	autoHeader?: string;
 	replace?: string[];
+	enforceHeader?: boolean;
 }
 
 /**
