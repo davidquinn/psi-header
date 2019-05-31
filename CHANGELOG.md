@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 1.7.1 (31 May 2019)
+*__MAINT__: Just some extra info in the README around usage of the `enforceHeader` setting.  No changes to the extension functionality at all.
+
 ## 1.7.0 (29 May 2019)
 *__NEW__: Added changes tracking option `enforceHeader` which will check the file during save and add a header to the file if none exists.  For this to work well you should ensure that the `forceToTop` global config option is TRUE as the logic scans the file looking for any comment blocks to determine if there is a header (it just assumes that the first comment block it finds is a header).  If `forceToTop` is true it won't keep searching the file beyond the first lines.
 

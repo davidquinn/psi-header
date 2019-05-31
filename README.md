@@ -20,6 +20,7 @@
 	- [Option 1 Simple Replacement](#option-1-simple-replacement)
 	- [Option 2 Template Substitution](#option-2-template-substitution)
 - [Auto Header](#auto-header)
+- [Enforce Header](#enforce-header)
 - [Change Log](#change-log)
 	- [Configuring Change Logging](#configuring-change-logging)
 	- [Questions about Change Logs](#questions-about-change-logs)
@@ -231,7 +232,7 @@ Options that affect changes tracking.
 | `exclude` | Defines an array of VSC language IDs for the file types to exclude from changes tracking.  The default is an empty array which indicates no exclusions. |
 | `excludeGlob` | Defines an array of file globs for the files to exclude from changes tracking.  The default is an empty array which indicates no exclusions. |
 | `autoHeader` | Determines whether the header should be added automatically to *_new_* files.  Refer to the [Auto Header](#auto-header) section for details. |
-| `enforceHeader` | Determines if the extension should automatically check the file and add a header whenever the file is saved if an existing header is not found.  This setting is independent of `autoHeader` and works best with `psi-header.config.forceToTop` set to `true` as otherwise any comment block is interpreted as a potential header.  |
+| `enforceHeader` | Determines if the extension should automatically check the file and add a header whenever the file is saved if an existing header is not found.  This setting is independent of `autoHeader` and works best with `psi-header.config.forceToTop` set to `true`.  Refer to the [Enforce Header](#enforce-header) section for details and usage recommendations.  |
 | `replace` | An array of template line prefixes that define additional header lines to replace during a file save.  By way of example, you could use this to ensure that changes to file name or project name are always updated during save (it happens!). |
 
 
@@ -454,11 +455,15 @@ This extension can be configured to automatically add a file header on creating 
 * `manualSave`: a header will be added but the file will not be automatically saved; or
 * `autoSave`: the header will be added and the file immediately saved.
 
-It will only create headers for *_new_* files added directly via VSCode.  To insert a header in any file during save, set `psi-header.changes-tracking.enforceHeader` option to true.  `enforceHeader` will scan the file during save to check if there is a header - it works best with `psi-header.config.forceToTop` set to true, otherwise any comment block in the file could be interpreted as a header.
-
 If the file is added via the `New File` icon in the `Explorer` the header will be created immediately.  However, if the file is created via the `File->New File` menu item or via `Ctrl/Cmd-N` the header will not be added _until you perform a physical save_.  Why?  Mainly because we do not know what language the file will use until it is saved.  The extension will not add a header to a new file that already contains a multi-line comment block.
 
 The auto header configuration will honour the `include`, `exclude`, `includeGlob` and `excludeGlob` settings under `psi-header.changes-tracking`.
+
+# Enforce Header
+The Auto Header setting will only create headers for *_new_* files added directly via VSCode.  To insert a header in *_any_* file during save, set `psi-header.changes-tracking.enforceHeader` option to true.  `enforceHeader` will scan the file during save to check if there is a header - it works best with `psi-header.config.forceToTop` set to true, otherwise any comment block in the file could be interpreted as a header.
+
+If you are using this setting, I would recommend that you also add `"**/settings.json"` to the `psi-header.changes-tracking.excludeGlob` to ensure that headers do not get added to VSCode's settings file.
+
 
 # Change Log
 This feature allows you to add change log entries to the header to record major changes to the current file.  It provides a template for each change log entry and you then just add your own comments.  By default it is configured to record the date and initials of the user to which you can add a short comment, but you can configure it to your needs.
