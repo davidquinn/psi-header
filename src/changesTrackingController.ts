@@ -4,7 +4,7 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Wednesday, 29th May 2019 7:07:13 am
+ * Last Modified: Friday, 21st June 2019 8:50:01 pm
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -108,7 +108,7 @@ export class ChangesTrackingController {
 
 	/**
 	 * Delegate method triggered whenever a document will be saved.
-	 * Used to update an existing header.
+	 * Used to update an existing header or force a header if enforceHeader is true.
 	 *
 	 * @private
 	 * @param {TextDocumentWillSaveEvent} e
@@ -123,11 +123,11 @@ export class ChangesTrackingController {
 			}
 			const doc: TextDocument = e.document;
 			if (doc && doc.isDirty && this._want(doc.languageId, doc.fileName)) {
+				const langConfig: ILangConfig = getLanguageConfig(this._wsConfig, doc.languageId);
+				const mainConfig: IConfig = getConfig(this._wsConfig, langConfig);
 				if (this._config.enforceHeader && this._docNeedsHeader(doc)) {
 					insertFileHeader();
 				}
-				const langConfig: ILangConfig = getLanguageConfig(this._wsConfig, doc.languageId);
-				const mainConfig: IConfig = getConfig(this._wsConfig, langConfig);
 				const variables: IVariableList = getVariables(this._wsConfig, activeTextEditor, mainConfig, langConfig, true);
 				const template: Array<string> = getTemplateConfig(this._wsConfig, doc.languageId).template;
 
@@ -270,7 +270,7 @@ export class ChangesTrackingController {
 	private _onDidChangeActiveTextEditor(editor: TextEditor) {
 		if (editor && editor.document) {
 			const doc = editor.document;
-			if (this._wantAutoHeader() && doc.uri.scheme === 'file' && this._want(doc.languageId, doc.fileName) && this._docNeedsHeader(doc) && this._fileIsNew(doc.fileName)) {
+			if (this._wantAutoHeader() && doc.uri.scheme === 'file' && this._want(doc.languageId, doc.fileName) && this._fileIsNew(doc.fileName) && this._docNeedsHeader(doc)) {
 				const $this = this;
 				commands.executeCommand(k_.FILE_HEADER_COMMAND).then(() => {
 					if ($this._config.autoHeader === k_.AUTO_HEADER_AUTO_SAVE) {
@@ -396,31 +396,42 @@ export class ChangesTrackingController {
 		if (!result) {
 			result = true;
 			const lang: ILangConfig = getLanguageConfig(this._wsConfig, doc.languageId);
-			if (isCompactMode(lang)) {
-				for (let i: number = 0; i < doc.lineCount; i++) {
-					const txt: string = doc.lineAt(i).text;
-					if (txt && txt.length > 0 && txt.startsWith(lang.prefix)) {
-						result = false;
-						break;
-					}
-					if (lang.forceToTop && (!lang.beforeHeader || i >= lang.beforeHeader.length)) {
-						break;
-					}
+			const mainConfig: IConfig = getConfig(this._wsConfig, lang);
+			let skip: number = lang.beforeHeader ? lang.beforeHeader.length : 0;
+			for (let i: number = 0; i < doc.lineCount; i++) {
+				const txt: string = doc.lineAt(i).text;
+				if (txt && (
+					(isCompactMode(lang) && txt.startsWith(lang.prefix))
+					|| (!isCompactMode(lang) && txt == lang.begin)
+				)) {
+					result = false;
+					break;
 				}
-			} else {
-				for (let i: number = 0; i < doc.lineCount; i++) {
-					const txt: string = doc.lineAt(i).text;
-					if (txt && txt.length > 0 && txt == lang.begin) {
-						result = false;
-						break;
-					}
-					if (lang.forceToTop && (!lang.beforeHeader || i >= lang.beforeHeader.length)) {
-						break;
-					}
+				if (this._isIgnorableLine(txt, lang.ignoreLines)) {
+					skip++;
+				}
+				if (mainConfig.forceToTop && (i >= skip)) {
+					break;
 				}
 			}
 		}
 		return result;
+	}
+
+	private _isIgnorableLine(line: string, ignorants: Array<string>): boolean {
+		let ignorable: boolean = false;
+		if (line !== undefined && line !== null && line.trim().length === 0) {
+			ignorable = true;
+		}
+		if (!ignorable && line && line.length > 0 && ignorants && ignorants.length > 0) {
+			for (let i: number = 0; i < ignorants.length; i++) {
+				if (line.startsWith(ignorants[i])) {
+					ignorable = true;
+					break;
+				}
+			}
+		}
+		return ignorable;
 	}
 
 	private _startsWith(line: string, langPrefix: string, searchText: string): boolean {

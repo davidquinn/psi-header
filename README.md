@@ -265,6 +265,7 @@ An array of objects that allow language-specific adjustments to be made to the c
 | `modDate` | Optional. Overrides the [changes-tracking.modDate](##-changes-tracking-configuration) setting for this language.  Identifies the label used on the comment line where the _date modified_ value is shown.    There is no default value as by default the changes tracking setting will be used. |
 | `modDateFormat` | Optional. Overrides the [changes-tracking.modDateFormat](##-changes-tracking-configuration) setting for this language.  The format string for the modified date value.  Valid values are either "date" (system date - same as the `date` system variable) or a [Moment.js format string](http://momentjs.com/docs/#/displaying/format/).    There is no default value as by default the changes tracking setting will be used.  Note that this setting is ignored if `modDate` line is based on a custom string. |
 | `replace` | Optional. Overrides the [changes-tracking.replace](##-changes-tracking-configuration) setting for this language.  An array of template line prefixes that define additional header lines to replace during a file save.  If defined, the value here replaces the `replace` settings in `changes-tracking` for this language. |
+| `ignoreLines` | Optional array of strings.  Used by the logic that determines if a header needs to be auto-inserted to exclude any lines that start with the specified string(s) that may appear before the header.  Useful where VSCode or another extension may try to insert lines above your header.  Refer to the [Auto Header](#auto-header) section for more information. |
 
 ## Templates
 An array of template definitions.  Each definition must include either *_mapTo_* or *_template_*.  Includes the following options.
@@ -459,11 +460,14 @@ If the file is added via the `New File` icon in the `Explorer` the header will b
 
 The auto header configuration will honour the `include`, `exclude`, `includeGlob` and `excludeGlob` settings under `psi-header.changes-tracking`.
 
+Where the header is supposed to be at the top of the file, you may want to use the `psi-header.lang-config.ignoreLines` string array setting.  The save process will exclude lines that *_start with_* any of the ignoreLines strings when trying to work out if the file already has a header.  Use this to get around the problem where this extension is tricked into adding a duplicate header because VSCode has annoyingly auto-inserted import statements (etc) above your carefully constructed header.  Note that blank lines at the top of the file are always ignored.
+
 # Enforce Header
 The Auto Header setting will only create headers for *_new_* files added directly via VSCode.  To insert a header in *_any_* file during save, set `psi-header.changes-tracking.enforceHeader` option to true.  `enforceHeader` will scan the file during save to check if there is a header - it works best with `psi-header.config.forceToTop` set to true, otherwise any comment block in the file could be interpreted as a header.
 
-If you are using this setting, I would recommend that you also add `"**/settings.json"` to the `psi-header.changes-tracking.excludeGlob` to ensure that headers do not get added to VSCode's settings file.
+If you are using this setting, I would recommend that you also add `"**/settings.json"` to `psi-header.changes-tracking.excludeGlob` to ensure that headers do not get added to VSCode's settings file.  I also suggest you add `["jsonc","json"]` to the `psi-header.changes-tracking.exclude` setting to ensure headers are not added to json files (`jsonc` is VSCode's language id for json files that are enabled for comments).
 
+The `psi-header.lang-config.ignoreLines` discussion in the [Auto Header](#auto-header) section is particularly important to help ensure this setting sdoes not result in duplicate headers.
 
 # Change Log
 This feature allows you to add change log entries to the header to record major changes to the current file.  It provides a template for each change log entry and you then just add your own comments.  By default it is configured to record the date and initials of the user to which you can add a short comment, but you can configure it to your needs.

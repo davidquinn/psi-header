@@ -4,7 +4,7 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Wednesday, 29th May 2019 6:53:32 am
+ * Last Modified: Friday, 21st June 2019 7:25:47 am
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -94,6 +94,7 @@ export interface ILangConfig {
 	modDateFormat?: string;
 	modAuthor?: string;
 	replace?: Array<string>;
+	ignoreLines?: Array<string>;
 }
 
 /**

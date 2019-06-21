@@ -4,7 +4,7 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Monday, 31st December 2018 1:24:14 pm
+ * Last Modified: Friday, 21st June 2019 7:31:05 am
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -239,6 +239,7 @@ function mapLangConfig(source: Object, target: ILangConfig): void {
 		mapProperty(source, target, 'modDateFormat');
 		mapProperty(source, target, 'modAuthor');
 		mapProperty(source, target, 'replace');
+		mapProperty(source, target, 'ignoreLines');
 	}
 
 	target.suffix = target.suffix || '';
