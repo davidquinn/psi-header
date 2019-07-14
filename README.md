@@ -12,6 +12,7 @@
 	- [Variable Values](#variable-values)
 	- [Language Configuration](#language-configuration)
 	- [Templates](#templates)
+	- [Licence Text](#licence-text)
 - [Compact Mode](#compact-mode)
 - [Block-Style Comment Headers](#block-style-comment-headers)
 - [A Note about Project Paths](#a-note-about-project-paths)
@@ -197,8 +198,9 @@ The configuration settings are organised into the following areas described belo
   * `config`: global configuration settings;
   * `changes-tracking`: settings relates to changes tracking;
   * `variables`: an array of key/value pairs for variable substitution values;
-  * `lang-config`: an array of language-specific (and general) settings (comment styles, etc)
-  * `templates`: an array of language-specific (and general) header templates.
+  * `lang-config`: an array of language-specific (and general) settings (comment styles, etc);
+  * `templates`: an array of language-specific (and general) header templates;
+  * `licence-text`: an array of strings that defines custom licence text.
 
 ## Global Options
 Options that affect the whole extension.  In some cases these defaults can be overridden within specific language configurations.
@@ -277,12 +279,17 @@ An array of template definitions.  Each definition must include either *_mapTo_*
 | `language` | Mandatory. Either the VSCode language ID or '*' for the global template. |
 | `mapTo` | Optional.  If provided, this language will use the specified language's template (and will ignore the following *_template_* value).  The value is a VSCode language ID.  You can not `mapTo` a language that itself has the `mapTo` value set.  Ignored if *_language = "*"_*. |
 | `template` | This must be provided if *_mapTo_* is not declared.  Includes an array of strings that represent the body of the header.  No need to include the comment block syntax. |
-| `changeLogCaption` | Mandatory if using the [Change Log](#change-log) feature.  Defines the caption for the change log that must also appear in the main header template.  The extension uses this caption to work out where to place a new change log entry. |
-| `changeLogHeaderLineCount` | Used in the [Change Log](#change-log) feature to define the number of lines in the main template between the above _changeLogCaption_ and the log entries.  This can be used to configure the main template to include column headings for the change log.  Defaults to 0 if not provided. |
+| `changeLogCaption` | Used by the [Change Log](#change-log) feature.  Defines the caption for the change log that must also appear in the main header template.  The extension uses this caption to work out where to place a new change log entry. Ignored if `changeLogNaturalOrder` is `true`. |
+| `changeLogHeaderLineCount` | Used in the [Change Log](#change-log) feature to define the number of lines in the main template between the above _changeLogCaption_ and the log entries.  This can be used to configure the main template to include column headings for the change log.  Defaults to 0 if not provided.  Ignored if `changeLogNaturalOrder` is `true`. |
 | `changeLogItemTemplate` | The template for a change log entry.  Allows overriding of the default item template. |
-| `psi-header.license-text` | Optional.  The license text to use where *_psi-header.config.license = "Custom"_*. |
+| `changeLogNaturalOrder` | If true, change log entries will be shown in chronological order (latest entry last) at the end of the header.  The default is false. |
 
 *_NOTE:_*   Also, `mapTo` is ignored if the language value is set to "*".
+
+## Licence Text
+An optional array of strings for defining custom licence text.  Used where *_psi-header.config.license = "Custom"_*.
+
+*_Configuration Section:_* `psi-header.licence-text`
 
 # Compact Mode
 The header can be created in `"compact mode"` - that is, without begin and end lines on the comment block. To activate this, you *must* set both the `lang-config.begin` *and* `lang-config.end` configuration values to an empty string for any language where you want this behaviour.  You can do this on the default language configuration (`lang-config.language = "*"`) to apply to all languages.  Obviously this will cause the header to work like a series of single line comments, so you must also make sure that the `lang-config.prefix` property is set to a valid single line comment prefix.
@@ -472,18 +479,22 @@ The `psi-header.lang-config.ignoreLines` discussion in the [Auto Header](#auto-h
 # Change Log
 This feature allows you to add change log entries to the header to record major changes to the current file.  It provides a template for each change log entry and you then just add your own comments.  By default it is configured to record the date and initials of the user to which you can add a short comment, but you can configure it to your needs.
 
-Entries are added immediately after the Caption Line (described in the configuration section below) with the most recent entries at the top.
+By default, entries are added immediately after the Caption Line (described in the configuration section below) with the most recent entries at the top.  Since v1.7.3, you can set the `psi-header.templates[].changeLogNaturalOrder` to `true` to have entries shown in natural chronological order (latest entry last).
 
-To insert an entry into the change log, just hit `ctrl-alt-C ctrl-alt-C`.  Once inserted, the cursor will be placed at the end of the new log entry.
+To insert an entry into the change log, just hit `ctrl-alt-C, ctrl-alt-C`.  Once inserted, the cursor will be placed at the end of the new log entry.
 
 Note that the above call will fail if the template has not been correctly configured (see below) or if the document does not contain a header.
 
 ## Configuring Change Logging
-To configure this you need to add a caption line to your `psi-header.templates[].template` which will enable the extension to insert new entries in the correct location.  This acts as a heading for the whole change log.  It is not possible to use this feature without this caption line.
+To configure this you must do one of either:
+1. add a caption line to your `psi-header.templates[].template` *and* reference the caption text in `psi-header.templates[].changeLogCaption` which must include enough of the caption line to enable it to be found within the header; or
+2. set `psi-header.templates[].changeLogNaturalOrder` to `true`.
 
-Next, you need to tell the extension how to find this caption line via the `psi-header.templates[].changeLogCaption` setting which must include enough of the above-mentioned caption line text to be enable it to be found within the header.
+It is not possible to use this feature without one of these settings.
 
-You can also optionally add extra lines between the caption line and the change log entries via the `psi-header.templates[].changeLogHeaderLineCount` setting to add (for example) column headings for your entries.  This setting records the number of lines in your template in between the caption line and the log entries - it excludes the caption line itself.  This setting defaults to 0 (zero) - i.e. no extra lines.
+Option #1 will show newest entries at the top of the log.  You can also optionally add extra lines between the caption line and the change log entries via the `psi-header.templates[].changeLogHeaderLineCount` setting to add (for example) column headings for your entries.  This setting records the number of lines in your template in between the caption line and the log entries - it excludes the caption line itself.  This setting defaults to 0 (zero) - i.e. no extra lines.
+
+Option #2 will show the entries in natural chronological order (last entry at the bottom) and always at the very end of the header - there can be no other header lines after the change log.  This option ignores the `changeLogCaption` setting and no caption line is required.
 
 Finally, the default log entry template is a single line with date then a TAB then initials then another TAB but you can create your own template via the `psi-header.templates[].changeLogEntryTemplate` setting - see examples below.
 

@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 1.7.3 (14 July 2019)
+*__NEW__*: Boolean setting `psi-header.templates[].changeLogNaturalOrder` allows change log entries to be shown in chronological order (latest entry last).  The change logs will always be added at the very end of the header.  Read overview for more information.
+
 ## 1.7.2 (21 June 2019)
 *__FIX__*: Fixed a problem where this extension could be tricked into adding an extra header to the file during save. Added `psi-header.lang-config.ignoreLines` string array setting.  The save process will exclude lines that start with any of the included strings when trying to work out if the file already has a header (e.g. where auto-header and force header options are active).  Use this to get round the problem where the header should be at the top of the file but something has annoyingly auto-inserted lines above your carefully constructed header.  Also, blank lines at the top of the file are now ignored.  Many extensions could add lines to the top of your files, but the most common one is VSCode auto-adding the very first import statement above your existing header in javascript/typescript files.
 

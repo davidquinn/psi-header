@@ -4,7 +4,7 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Friday, 21st June 2019 7:25:47 am
+ * Last Modified: Sunday, 14th July 2019 9:16:29 am
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -46,6 +46,7 @@ export interface ITemplateConfig {
 	changeLogCaption?: string;
 	changeLogHeaderLineCount?: number;
 	changeLogEntryTemplate?: Array<string>;
+	changeLogNaturalOrder?: boolean;
 }
 
 /**
