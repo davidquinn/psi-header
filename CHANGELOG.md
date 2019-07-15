@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 1.7.4 (15 July 2017)
+*__NEW__*: Integer setting `psi-header.templates[].changeLogFooterLineCount` used when `psi-header.templates[].changeLogNaturalOrder` is `true` to add lines between the bottom of the header and the log lines.
+
 ## 1.7.3 (14 July 2019)
 *__NEW__*: Boolean setting `psi-header.templates[].changeLogNaturalOrder` allows change log entries to be shown in chronological order (latest entry last).  The change logs will always be added at the very end of the header.  Read overview for more information.
 

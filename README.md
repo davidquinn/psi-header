@@ -283,6 +283,7 @@ An array of template definitions.  Each definition must include either *_mapTo_*
 | `changeLogHeaderLineCount` | Used in the [Change Log](#change-log) feature to define the number of lines in the main template between the above _changeLogCaption_ and the log entries.  This can be used to configure the main template to include column headings for the change log.  Defaults to 0 if not provided.  Ignored if `changeLogNaturalOrder` is `true`. |
 | `changeLogItemTemplate` | The template for a change log entry.  Allows overriding of the default item template. |
 | `changeLogNaturalOrder` | If true, change log entries will be shown in chronological order (latest entry last) at the end of the header.  The default is false. |
+| `changeLogFooterLineCount` | Used in the [Change Log](#change-log) feature to define the number of lines in the main template between the bottom of the footer and the log entries.  Defaults to 0 if not provided.  Ignored if `changeLogNaturalOrder` is `false`. |
 
 *_NOTE:_*   Also, `mapTo` is ignored if the language value is set to "*".
 
@@ -494,7 +495,7 @@ It is not possible to use this feature without one of these settings.
 
 Option #1 will show newest entries at the top of the log.  You can also optionally add extra lines between the caption line and the change log entries via the `psi-header.templates[].changeLogHeaderLineCount` setting to add (for example) column headings for your entries.  This setting records the number of lines in your template in between the caption line and the log entries - it excludes the caption line itself.  This setting defaults to 0 (zero) - i.e. no extra lines.
 
-Option #2 will show the entries in natural chronological order (last entry at the bottom) and always at the very end of the header - there can be no other header lines after the change log.  This option ignores the `changeLogCaption` setting and no caption line is required.
+Option #2 will show the entries in natural chronological order (last entry at the bottom) and appears at the end of the header.  This option ignores the `changeLogCaption` setting and no caption line is required.  You can also optionally add extra lines between the bottom of the header and the change log entries via the `psi-header.templates[].changeLogFooterLineCount` setting.  This setting defaults to 0 (zero) - i.e. no extra lines.
 
 Finally, the default log entry template is a single line with date then a TAB then initials then another TAB but you can create your own template via the `psi-header.templates[].changeLogEntryTemplate` setting - see examples below.
 

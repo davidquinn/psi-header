@@ -4,7 +4,7 @@
  * File Created: Wednesday, 11th July 2018 6:31:17 am
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Sunday, 14th July 2019 1:42:27 pm
+ * Last Modified: Monday, 15th July 2019 8:42:06 pm
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -64,7 +64,7 @@ export function insertChangeLog() {
 	const config: helper.IConfig = helper.getConfig(wsConfig, langConfig);
 	const variables: helper.IVariableList = helper.getVariables(wsConfig, editor, config, langConfig);
 	const mergedChangeLog: Array<string> = helper.replaceTemplateVariables(tpl, langConfig.prefix, variables).split('\n');
-	const row: number = captionRow + (naturalOrder ? 0 : templateConfig.changeLogHeaderLineCount || 0);
+	const row: number = captionRow + (naturalOrder ? (-1 * (templateConfig.changeLogFooterLineCount || 0)) : (templateConfig.changeLogHeaderLineCount || 0));
 	const col: number =  editor.document.lineAt(row).text.length;
 	const pos: Position = new Position(row, col);
 	editor.selection = new Selection(pos, pos);
