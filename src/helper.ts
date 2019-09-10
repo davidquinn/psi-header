@@ -4,7 +4,7 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Friday, 21st June 2019 7:31:05 am
+ * Last Modified: Tuesday, 10th September 2019 7:45:46 am
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -298,6 +298,7 @@ export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEdito
 		variables.push([k_.VAR_COPYRIGHT_HOLDER, config.copyrightHolder]);
 	}
 	variables.push([k_.VAR_INITIALS, config && config.initials ? config.initials : 'ABC']);
+	variables.push([k_.VAR_PROJ_VERSION, getProjectVersion(currentFile)]);
 
 	// custom variables
 	let vl: IVariableList = getMergedVariables(wsConfig);
@@ -379,6 +380,31 @@ function getProjectName(filename: string, rootDirFileName?: string): string {
 		return projectName ? projectName : path.basename(rootPath);
 	} catch (error) {
 		console.log('psioniqFileHeader - error returned when trying to determine project name.  Error object below:');
+		console.log(error);
+		return null;
+	}
+}
+
+/**
+ * Get the name of the project - either from a package.json or the last part of the root project path.
+ *
+ * @param {string} filename  The file to determine the project from.
+ * @returns {string}
+ */
+function getProjectVersion(filename: string, defaultVersion?: string): string {
+	try {
+		let projectVersion: string = null;
+		const rootPath: string = getProjectRootPath(filename);
+		const fname: string = path.join(rootPath, 'package.json');
+		if (fs.existsSync(fname)) {
+			const prj = JSON.parse(fs.readFileSync(fname).toString());
+			if (prj) {
+				projectVersion = prj.version;
+			}
+		}
+		return projectVersion || defaultVersion;
+	} catch (error) {
+		console.log('psioniqFileHeader - error returned when trying to determine project version.  Error object below:');
 		console.log(error);
 		return null;
 	}

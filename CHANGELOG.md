@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 1.8.0 (10 Sept 2019)
+*__NEW__*: New projectversion system variable to set the project version in a header.
+
 ## 1.7.4 (15 July 2017)
 *__NEW__*: Integer setting `psi-header.templates[].changeLogFooterLineCount` used when `psi-header.templates[].changeLogNaturalOrder` is `true` to add lines between the bottom of the header and the log lines.
 

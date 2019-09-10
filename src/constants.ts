@@ -4,7 +4,7 @@
  * File Created: Friday, 6th October 2017 10:23:19 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Monday, 31st December 2018 12:59:04 pm
+ * Last Modified: Tuesday, 10th September 2019 7:37:45 am
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -64,6 +64,7 @@ export const VAR_LICENSE_NAME: string = 'licensename';
 export const VAR_LICENSE_URL: string = 'licenseurl';
 export const VAR_SPDX_ID: string = 'spdxid';
 export const VAR_INITIALS: string = 'initials';
+export const VAR_PROJ_VERSION: string = 'projectversion';
 
 /**
  * System functions

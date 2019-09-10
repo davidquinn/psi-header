@@ -117,6 +117,7 @@ The following system variables are available for placeholder substitution in you
 | `filename` | Just the file name without the path details. |
 | `projectpath` | The fully-qualified path to the root directory of the project. |
 | `projectname` | Attempts to read package.json (in the current or any parent directory) for either a `displayName` or `name` property.  If there is no package.json file _and_ the file has been saved to disk, it will return the project path's base name. |
+| `projectversion` | Attempts to read package.json (in the current or any parent directory) for a `version` property. |
 | `company` | The name of your company.  In this release it defaults to "Your Company". |
 | `author` | Will attempt to get the user name of the current user, otherwise it defaults to "You". |
 | `initials` | Your initials (where you don't want the whole author name |
