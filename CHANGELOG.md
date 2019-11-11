@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 1.8.1 (04 Nov 2019)
+*__NEW__*: New filenamebase system variable returns the filename without the extension.
+
 ## 1.8.0 (10 Sept 2019)
 *__NEW__*: New projectversion system variable to set the project version in a header.
 

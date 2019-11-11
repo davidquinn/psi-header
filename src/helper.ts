@@ -4,7 +4,7 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Tuesday, 10th September 2019 7:45:46 am
+ * Last Modified: Monday, 4th November 2019 7:59:08 pm
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -292,6 +292,7 @@ export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEdito
 	variables.push([k_.VAR_AUTHOR_EMAIL, config && config.authorEmail ? config.authorEmail : 'you@you.you']);
 	variables.push([k_.VAR_PROJECT_NAME, getProjectName(currentFile, langConfig.rootDirFileName)]);
 	variables.push([k_.VAR_FILE_NAME, extractFileName(currentFile)]);
+	variables.push([k_.VAR_FILE_NAME_BASE, extractFileName(currentFile, true)]);
 	// using filecreated function without arguments treats it like a variable.
 	variables.push([k_.FUNC_FILE_CREATED, fcreated.toDateString()]);
 	if (config && config.copyrightHolder) {
@@ -431,9 +432,15 @@ export function getAuthorName(): string {
  * @param {string} fullpath
  * @returns {string}
  */
-function extractFileName(fullpath: string): string {
+function extractFileName(fullpath: string, excludePath?: boolean): string {
 	try {
-		return path.basename(fullpath);
+		const basename = path.basename(fullpath);
+		const idx: number = basename.lastIndexOf('.');
+		if (excludePath && idx > 0) {
+			return basename.substring(0, idx);
+		} else {
+			return basename;
+		}
 	} catch (error) {
 		return null;
 	}

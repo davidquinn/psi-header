@@ -115,6 +115,7 @@ The following system variables are available for placeholder substitution in you
 | `filepath` | The fully-qualified name of the file. |
 | `filerelativepath` | The file name including the relative path within the project. |
 | `filename` | Just the file name without the path details. |
+| `filenamebase` | Just the file name without the path details or extension. |
 | `projectpath` | The fully-qualified path to the root directory of the project. |
 | `projectname` | Attempts to read package.json (in the current or any parent directory) for either a `displayName` or `name` property.  If there is no package.json file _and_ the file has been saved to disk, it will return the project path's base name. |
 | `projectversion` | Attempts to read package.json (in the current or any parent directory) for a `version` property. |

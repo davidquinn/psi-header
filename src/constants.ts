@@ -4,7 +4,7 @@
  * File Created: Friday, 6th October 2017 10:23:19 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Tuesday, 10th September 2019 7:37:45 am
+ * Last Modified: Monday, 4th November 2019 7:27:34 pm
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -53,6 +53,7 @@ export const VAR_YEAR: string = 'year';
 export const VAR_FILE_PATH: string = 'filepath';
 export const VAR_FILE_RELATIVE_PATH: string = 'filerelativepath';
 export const VAR_FILE_NAME: string = 'filename';
+export const VAR_FILE_NAME_BASE: string = 'filenamebase';
 export const VAR_PROJECT_PATH: string = 'projectpath';
 export const VAR_PROJECT_NAME: string = 'projectname';
 export const VAR_COMPANY: string = 'company';
