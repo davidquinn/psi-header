@@ -120,7 +120,8 @@ The following system variables are available for placeholder substitution in you
 | `projectname` | Attempts to read package.json (in the current or any parent directory) for either a `displayName` or `name` property.  If there is no package.json file _and_ the file has been saved to disk, it will return the project path's base name. |
 | `projectversion` | Attempts to read package.json (in the current or any parent directory) for a `version` property. |
 | `company` | The name of your company.  In this release it defaults to "Your Company". |
-| `author` | Will attempt to get the user name of the current user, otherwise it defaults to "You". |
+| `author` | Will attempt to get the name of the current user.  The options are coalesced in the following order: `psi-header.config.author` then `fullname from the OS` then `username from the OS`.  If none of these return a value, it defaults to "You". |
+| `ignoreAuthorFullName` | On some systems it can be expensive to attempt to get fullname from the OS, so this option ignores this when determining the above `author` value |
 | `initials` | Your initials (where you don't want the whole author name |
 | `authoremail` | The email address of the file author.  In this release it defaults to "you@you.you". |
 | `licensetext` | The full text of the license. This is determined automatically. |

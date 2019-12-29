@@ -321,7 +321,8 @@ export class ChangesTrackingController {
 		this._config = def;
 		// get author name
 		let config: IConfig = this._wsConfig && this._wsConfig.has(k_.CONFIG_SETTINGS) ? this._wsConfig.get<IConfig>(k_.CONFIG_SETTINGS) : null;
-		this._author = config && config.author ? config.author : getAuthorName();
+		const ignoreAuthorFullName: boolean = config && config.ignoreAuthorFullname;
+		this._author = config && config.author ? config.author : getAuthorName(ignoreAuthorFullName);
 		let vl: IVariableList = getMergedVariables(this._wsConfig);
 		if (vl) {
 			const el: IVariable = vl.find(function(element: [string, string]): boolean { return element[0] === k_.VAR_AUTHOR; });

@@ -3,7 +3,7 @@
 	"displayName": "psioniq File Header",
 	"description": "Configurable file header comment block and changes tracking.",
 	"icon": "img/psi-logo.png",
-	"version": "1.8.1",
+	"version": "1.8.2",
 	"publisher": "psioniq",
 	"license": "MIT",
 	"bugs": {
@@ -91,6 +91,11 @@
 						"initials": {
 							"type": "string",
 							"description": "Your initials"
+						},
+						"ignoreAuthorFullName": {
+							"type": "boolean",
+							"description": "If true, will not use fullname when determining author name.",
+							"default": false
 						}
 					}
 				},
@@ -370,6 +375,7 @@
 		"vscode": "^1.1.34"
 	},
 	"dependencies": {
+		"fullname": "^4.0.1",
 		"minimatch": "^3.0.4",
 		"moment": "^2.24.0",
 		"spdx-license-list": "^3.0.1",

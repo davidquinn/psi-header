@@ -4,8 +4,8 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Monday, 4th November 2019 7:59:08 pm
- * Modified By: David Quinn (info@psioniq.uk)
+ * Last Modified: Wednesday, 13th November 2019 10:57:06 am
+ * Modified By: David (info@psioniq.uk)
  * -----
  * MIT License
  *
@@ -52,6 +52,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as moment from 'moment';
 import * as username from 'username';
+const fullName = require("fullname");
+
+let authorFullName: string = undefined;
 
 /**
  * Retrieve the current configuration for this extension from the workspace settings.
@@ -71,6 +74,8 @@ export function getConfig(wsConfig: WorkspaceConfiguration, langConfig: ILangCon
 	def.blankLinesAfter = (def.blankLinesAfter === undefined) ? cfgBlankLinesAfter : def.blankLinesAfter;
 
 	def.license = cfg && cfg.license ? cfg.license : null;
+
+	def.ignoreAuthorFullname = cfg && cfg.ignoreAuthorFullname;
 
 	if (cfg.hasOwnProperty('author')) {
 		def.author = cfg.author;
@@ -288,7 +293,7 @@ export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEdito
 	variables.push([k_.VAR_FILE_RELATIVE_PATH, getRelativeFilePath(currentFile, langConfig.rootDirFileName)]);
 	variables.push([k_.VAR_PROJECT_PATH, getProjectRootPath(currentFile, langConfig.rootDirFileName)]);
 	variables.push([k_.VAR_COMPANY, config && config.company ? config.company : 'Your Company']);
-	variables.push([k_.VAR_AUTHOR, config && config.author ? config.author : getAuthorName()]);
+	variables.push([k_.VAR_AUTHOR, config && config.author ? config.author : getAuthorName(config && config.ignoreAuthorFullname)]);
 	variables.push([k_.VAR_AUTHOR_EMAIL, config && config.authorEmail ? config.authorEmail : 'you@you.you']);
 	variables.push([k_.VAR_PROJECT_NAME, getProjectName(currentFile, langConfig.rootDirFileName)]);
 	variables.push([k_.VAR_FILE_NAME, extractFileName(currentFile)]);
@@ -416,14 +421,20 @@ function getProjectVersion(filename: string, defaultVersion?: string): string {
  *
  * @returns {string}
  */
-export function getAuthorName(): string {
-	let name: string;
+export function getAuthorName(ignoreAuthorFullName: boolean): string {
+	let name: string = ignoreAuthorFullName ? null : authorFullName;
 	try {
-		name = username.sync();
-	} catch (error) {
-
-	}
+		name = name || username.sync();
+	} catch (error) {}
 	return name ? name : 'You';
+}
+
+export async function retrieveAuthorFullName(): Promise<void> {
+	try {
+		authorFullName = await fullName();
+	} catch (error) {
+		authorFullName = undefined;
+	}
 }
 
 /**

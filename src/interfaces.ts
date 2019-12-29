@@ -70,6 +70,7 @@ export interface IConfig {
 	company?: string;
 	copyrightHolder?: string;
 	initials?: string;
+	ignoreAuthorFullname?: boolean;
 }
 
 /**

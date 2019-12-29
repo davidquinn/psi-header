@@ -37,8 +37,11 @@ import { insertFileHeader } from './insertFileHeaderCommand';
 import { insertChangeLog } from './insertChangeLogCommand';
 import * as k_ from './constants';
 import {ChangesTrackingController} from './changesTrackingController';
+import { retrieveAuthorFullName } from './helper';
 
 export function activate(context: ExtensionContext) {
+	retrieveAuthorFullName();
+
     // the header generator command
 	let headerSubscription = commands.registerCommand(k_.FILE_HEADER_COMMAND, () => {
         insertFileHeader();
