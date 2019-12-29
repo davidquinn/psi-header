@@ -792,7 +792,7 @@ The file creation routines may return an invalid value under some specific circu
 
 On investigation, it would appear that it is a problem with lack of support for `birthtime` in earlier versions of Linux.  Support was added with the introduction of `statx()` in Linux Core in v4.11 in 2017, then to `glibc` in v2.28 in 2018.  NodeJS accesses this via `libuv` and support for `statx()` was added to `libuv` v1.27.0 (Stable) in March 2019 as part of [this PR](https://github.com/libuv/libuv/pull/2184).  NodeJS supports this in v10.16.0 and v12.*.
 
-Most annoyingly, affected Linux versions return an wrong date rather than nothing at all - if nothing was returned we could ascertain that there was a problem.  So there is not a practical way to resolve the problem in this extension, but hopefully the above will give you enough information to understand if this is a problem with your specific setup (by checking the Linux Core, `glibc` and `libuv` versions being used).
+Most annoyingly, affected Linux versions return a wrong date rather than nothing at all - if nothing was returned we could ascertain that there was a problem.  So there is not a practical way to resolve the problem in this extension, but hopefully the above will give you enough information to understand if this is a problem with your specific setup (by checking the Linux Core, `glibc` and `libuv` versions being used).
 
 [This link](https://joshuatz.com/posts/2019/unix-linux-file-creation-stamps-aka-birthtime-and-nodejs/) provides a good explanation of the problem.
 
