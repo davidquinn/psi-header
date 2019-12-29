@@ -28,6 +28,8 @@
 - [An Example Custom Configuration](#an-example-custom-configuration)
 - [Creating a Custom Template](#creating-a-custom-template)
 - [Known Issues](#known-issues)
+	- [Cleaning up SPDX License Text](#cleaning-up-spdx-license-text)
+	- [Determining File Creation Time on Linux](#determining-file-creation-time-on-linux)
 - [Credits](#credits)
 
 <!-- /TOC -->
@@ -160,7 +162,7 @@ The following _case-sensitive_ `system functions` are available for configurable
 |Function Name | Description |
 |---|---|
 | `dateformat(args)` | The current date or date part using format strings.  This function takes a single string argument which represents the moment.js compatible format string. |
-| `filecreated(args)` | The file created date and time using format strings.  This function takes a single string argument which represents the moment.js compatible format string (surrounded in single or double quotes).  It can also be called without arguments to use the current locale date format. If the file created date cannot be determined it will return the current date and time (usually because the file has not yet been saved to disk, or the operating system failed to return the creation date and time). |
+| `filecreated(args)` | The file created date and time using format strings.  This function takes a single string argument which represents the moment.js compatible format string (surrounded in single or double quotes).  It can also be called without arguments to use the current locale date format. If the file created date cannot be determined it will return the current date and time (usually because the file has not yet been saved to disk, or the operating system failed to return the creation date and time). Refer to [this known issue](#determining-file-creation-time-on-linux) for potential issues with some Linux setups. |
 
 `filecreated` can also return the current locale date string by passing no arguments.  BOth the following will work:
 ```javascript
@@ -780,9 +782,20 @@ The default (built in) template is:
 ```
 
 # Known Issues
-* Refer to [License Information](#-license-information) for the extension's limitations on cleaning up SPDX license text.
-
 To report bugs, issues, suggestions: email `info@psioniq.uk`
+
+## Cleaning up SPDX License Text
+Refer to [License Information](#-license-information) for the extension's limitations on cleaning up SPDX license text.
+
+## Determining File Creation Time on Linux
+The file creation routines may return an invalid value under some specific circumstances on Linux, and maddingly may depend on the filesystem where your VSCode project is stored.  Usually it will show as a date time that may be on or around 1 January 1970.  The problem relates to the filesystem's support of `birthtime`.
+
+On investigation, it would appear that it is a problem with lack of support for `birthtime` in earlier versions of Linux.  Support was added with the introduction of `statx()` in Linux Core in v4.11 in 2017, then to `glibc` in v2.28 in 2018.  NodeJS accesses this via `libuv` and support for `statx()` was added to `libuv` v1.27.0 (Stable) in March 2019 as part of [this PR](https://github.com/libuv/libuv/pull/2184).  NodeJS supports this in v10.16.0 and v12.*.
+
+Most annoyingly, affected Linux versions return an wrong date rather than nothing at all - if nothing was returned we could ascertain that there was a problem.  So there is not a practical way to resolve the problem in this extension, but hopefully the above will give you enough information to understand if this is a problem with your specific setup (by checking the Linux Core, `glibc` and `libuv` versions being used).
+
+[This link](https://joshuatz.com/posts/2019/unix-linux-file-creation-stamps-aka-birthtime-and-nodejs/) provides a good explanation of the problem.
+
 
 
 # Credits

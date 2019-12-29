@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 1.8.3 (29 December 2019)
+*__MAINT__*: Added Linux file creation time information to known issues (where Linux returns invalid creation date information).  There are no code changes.
+
 ## 1.8.2 (14 Nov 2019)
 *__NEW__*: Extended the `author` system variable to attempt to retrieve fullname from the OS when determining author name.  The order of precedence is: `psi-header.config.author` then `fullname` then `username`.
 
