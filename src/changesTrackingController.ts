@@ -4,8 +4,8 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Friday, 21st June 2019 8:50:01 pm
- * Modified By: David Quinn (info@psioniq.uk)
+ * Last Modified: Saturday, 4th January 2020 2:07:03 am
+ * Modified By: ornariece (you@you.you)
  * -----
  * MIT License
  *
@@ -157,6 +157,7 @@ export class ChangesTrackingController {
 				const date: string = mdf === 'date' ? new Date().toDateString() : moment().format(mdf);
 
 				let inComment: boolean = false;
+				let lastCommentLine: boolean = false;
 				let replacers: IRangeReplacerList = [];
 				const isCompact: boolean = isCompactMode(langConfig);
 				for (let i: number = 0; i < doc.lineCount; i++) {
@@ -166,18 +167,21 @@ export class ChangesTrackingController {
 						if (!range.isEmpty) {
 							if (inComment && ((isCompact && !txt.startsWith(langConfig.prefix)) ||  txt === langConfig.end)) {
 								// stop searching if we come to the end of the first comment block in the document
-								break;
+								inComment = false;
+								lastCommentLine = true;
+								// break;
 							}
-							if (!inComment && ((isCompact && txt.startsWith(langConfig.prefix)) || txt === langConfig.begin)) {
+							if (!inComment && !lastCommentLine && ((isCompact && txt.startsWith(langConfig.prefix)) || txt === langConfig.begin)) {
 								// we have come to the first comment block in the file, so start searching
 								inComment = true;
-							} else if (inComment) {
+							}
+							if (inComment || lastCommentLine) {
 								if (this._startsWith(txt, langConfig.prefix, modAuthor)) {
 									replacers.push({
 										range: range,
 										newString: addLineSuffix(
 											modAuthorTemplate && modAuthorTemplate !== modAuthorWithPrefix
-												? replacePlaceholders(modAuthorTemplate, variables)
+												? replacePlaceholders(modAuthorTemplate, variables, mainConfig.creationDateZero)
 												: modAuthorWithPrefix + (modAuthorWithPrefix.endsWith(' ') ? '' : ' ') + this._author,
 											langConfig.suffix,
 											langConfig.lineLength,
@@ -190,7 +194,7 @@ export class ChangesTrackingController {
 										range: range,
 										newString: addLineSuffix(
 											modDateTemplate && modDateTemplate !== modDateWithPrefix
-												? replacePlaceholders(modDateTemplate, variables)
+												? replacePlaceholders(modDateTemplate, variables, mainConfig.creationDateZero)
 												: modDateWithPrefix + (modDateWithPrefix.endsWith(' ') ? '' : ' ') + date,
 											langConfig.suffix,
 											langConfig.lineLength,
@@ -208,7 +212,7 @@ export class ChangesTrackingController {
 												replacers.push({
 													range: range,
 													newString: addLineSuffix(
-														replacePlaceholders(modReplaceTemplate, variables),
+														replacePlaceholders(modReplaceTemplate, variables, mainConfig.creationDateZero),
 														langConfig.suffix,
 														langConfig.lineLength,
 														<number> activeTextEditor.options.tabSize
@@ -217,6 +221,9 @@ export class ChangesTrackingController {
 											}
 										}
 									}
+								}
+								if (lastCommentLine) {
+									break;
 								}
 							}
 						}

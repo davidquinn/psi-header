@@ -3,7 +3,7 @@
 	"displayName": "psioniq File Header",
 	"description": "Configurable file header comment block and changes tracking.",
 	"icon": "img/psi-logo.png",
-	"version": "1.8.3",
+	"version": "1.9.0",
 	"publisher": "psioniq",
 	"license": "MIT",
 	"bugs": {
@@ -96,6 +96,16 @@
 							"type": "boolean",
 							"description": "If true, will not use fullname when determining author name.",
 							"default": false
+						},
+						"creationDateZero": {
+							"type": "string",
+							"enum": [
+								"asIs",
+								"blank",
+								"now"
+							],
+							"description": "How to treat file creation dates returned as Unix zero",
+							"default": "asIs"
 						}
 					}
 				},

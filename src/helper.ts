@@ -4,8 +4,8 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Wednesday, 13th November 2019 10:57:06 am
- * Modified By: David (info@psioniq.uk)
+ * Last Modified: Saturday, 4th January 2020 2:07:54 am
+ * Modified By: ornariece (you@you.you)
  * -----
  * MIT License
  *
@@ -46,7 +46,8 @@ import {
 	IVariable,
 	IVariableList,
 	IPlaceholderFunction,
-	IInspectableConfig
+	IInspectableConfig,
+	ZeroDate
 } from './interfaces';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -96,6 +97,8 @@ export function getConfig(wsConfig: WorkspaceConfiguration, langConfig: ILangCon
 	if (cfg.hasOwnProperty('initials')) {
 		def.initials = cfg.initials;
 	}
+
+	def.creationDateZero = cfg && cfg.creationDateZero ? cfg.creationDateZero : "asIs";
 
 	return def;
 }
@@ -283,7 +286,7 @@ function mapProperty(source: Object, target: Object, key: string): void {
 export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEditor, config: IConfig, langConfig: ILangConfig, ignoreLicence: boolean = false): IVariableList {
 	let variables: IVariableList = [];
 	const now: Date = new Date();
-	const fcreated: Date = getActiveFileCreationDate() || new Date();
+	const fcreated: Date = getActiveFileCreationDate(config.creationDateZero) || new Date();
 	const currentFile: string = editor.document.fileName;
 	// system variables
 	variables.push([k_.VAR_DATE, now.toDateString()]);
@@ -477,11 +480,11 @@ function getRelativeFilePath(fullpath: string, rootDirFileName?: string): string
  * Return the current editor file's creation date (birthtime)
  *
  */
-function getActiveFileCreationDate(): Date {
+function getActiveFileCreationDate(zeroDate: ZeroDate = 'asIs'): Date {
 	let result: Date = null;
 	const editor: TextEditor = window.activeTextEditor;
 	if (editor && editor.document) {
-		result = getFileCreationDate(editor.document.fileName);
+		result = getFileCreationDate(editor.document.fileName, zeroDate);
 	}
 	return result;
 }
@@ -491,19 +494,39 @@ function getActiveFileCreationDate(): Date {
  *
  * @param filename The name of the file to check.
  */
-export function getFileCreationDate(filename): Date {
+export function getFileCreationDate(filename: string, zeroDate: ZeroDate = 'asIs'): Date {
 	let result: Date = null;
 	try {
 		if (fs.existsSync(filename)) {
 			const stat: fs.Stats = fs.statSync(filename);
 			if (stat && stat.birthtime) {
-				result = stat.birthtime;
+				result = _modifyForDayZero(stat.birthtime, zeroDate);
 			}
 		}
 	} catch (error) {
 		result = null;
 	}
 	return result;
+}
+
+/**
+ * If the passed in date is Unix Epoch Zero then return the value defined by
+ * ifZero, otherwise just return the date.
+ *
+ * @param {Date} date
+ * @param {ZeroDate} [ifZero='asIs']
+ * @returns {Date}
+ */
+function _modifyForDayZero(date: Date, ifZero: ZeroDate = 'asIs'): Date {
+	let output: Date = new Date(date.valueOf());
+	if (output.valueOf() === 0) {
+		if (ifZero === 'blank') {
+			output = null;
+		} else if (ifZero === 'now') {
+			output = new Date();
+		}
+	}
+	return output;
 }
 
 /**
@@ -536,7 +559,7 @@ function addLicenseVariables(wsConfig: WorkspaceConfiguration, variables: IVaria
 			}
 		}
 	}
-	variables.push([k_.VAR_LICENSE_TEXT, replacePlaceholders(txt.join('\n'), variables)]);
+	variables.push([k_.VAR_LICENSE_TEXT, replacePlaceholders(txt.join('\n'), variables, config.creationDateZero)]);
 	if (spdx) {
 		variables.push([k_.VAR_LICENSE_NAME, spdx.name]);
 		variables.push([k_.VAR_LICENSE_URL, spdx.url]);
@@ -544,12 +567,12 @@ function addLicenseVariables(wsConfig: WorkspaceConfiguration, variables: IVaria
 	}
 }
 
-export function replaceTemplateVariables(template: Array<string>, linePrefix: string, variables: IVariableList): string {
+export function replaceTemplateVariables(template: Array<string>, linePrefix: string, variables: IVariableList, zeroDate: ZeroDate): string {
 	const body: Array<string> = [];
 	for (let i = 0; i < template.length; i++) {
 		body.push(linePrefix + template[i]);
 	}
-	return replacePlaceholders(body.join('\n'), variables);
+	return replacePlaceholders(body.join('\n'), variables, zeroDate);
 }
 
 /**
@@ -572,7 +595,7 @@ export function merge(template: Array<string>, langConfig: ILangConfig, variable
 		endSpace += '\n';
 	}
 
-	var body: string = replaceTemplateVariables(template, langConfig.prefix, variables);
+	var body: string = replaceTemplateVariables(template, langConfig.prefix, variables, config.creationDateZero);
 
 	if (langConfig.suffix.length > 0) {
 		const lines = body.split('\n');
@@ -617,7 +640,7 @@ function arrayToString(source: Array<string>): string {
  * @param {IVariableList} variables
  * @returns {string}
  */
-export function replacePlaceholders(source: string, variables: IVariableList): string {
+export function replacePlaceholders(source: string, variables: IVariableList, zeroDate: ZeroDate = 'asIs'): string {
 	let replaced: string = source;
 	for (let v of variables) {
 		if (v[1]) {
@@ -625,7 +648,7 @@ export function replacePlaceholders(source: string, variables: IVariableList): s
 			replaced = replaced.replace(regex, v[1]);
 		}
 	}
-	replaced = replaceFunctions(replaced);
+	replaced = replaceFunctions(replaced, zeroDate);
 	return replaced;
 }
 
@@ -671,7 +694,7 @@ export function addLineSuffix(line: string, suffix: string, wrapCol: number, tab
  *
  * @param source the templae text
  */
-function replaceFunctions(source: string): string {
+function replaceFunctions(source: string, zeroDate: ZeroDate): string {
 	let replaced: string = source;
 	let replacements: IVariableList = [];
 	// get date part placeholders
@@ -679,19 +702,21 @@ function replaceFunctions(source: string): string {
 		// remove the surrounding quotes
 		args = args.substring(1, args.length - 1);
 		return moment().format(args);
-	})
+	});
 
 	// get file creation date placeholders
 	constructFunctionReferences(replacements, source, k_.FUNC_FILE_CREATED, (args: string): string => {
 		// remove the surrounding quotes
 		args = args.substring(1, args.length - 1);
-		const fcreated: Date = getActiveFileCreationDate() || new Date();
-		if (args) {
+		const fcreated: Date = getActiveFileCreationDate(zeroDate);
+		if (!args) {
+			return "";
+		} else if (args) {
 			return moment(fcreated).format(args);
 		} else {
 			return fcreated.toDateString();
 		}
-	})
+	});
 
 	// perform placeholder substitution
 	for (let v of replacements) {

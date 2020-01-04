@@ -4,7 +4,7 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Monday, 15th July 2019 8:28:22 pm
+ * Last Modified: Thursday, 2nd January 2020 8:12:19 am
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -31,6 +31,11 @@
  */
 
 import {Range} from 'vscode';
+
+/**
+ * What to do with zero dates.
+ */
+export type ZeroDate = 'asIs' | 'blank' | 'now';
 
 /**
  * Interface for a template entry in the settings file.
@@ -71,6 +76,7 @@ export interface IConfig {
 	copyrightHolder?: string;
 	initials?: string;
 	ignoreAuthorFullname?: boolean;
+	creationDateZero?: ZeroDate;
 }
 
 /**

@@ -222,6 +222,7 @@ Options that affect the whole extension.  In some cases these defaults can be ov
 | `authorEmail` | Your email address - used by the `authoremail` system variable.  Optional with no default. |
 | `company` | Your Company's name - used by the `company` system variable.  Optional with no default. |
 | `copyrightHolder` | Your copyright name - used by the `copyrightholder` system variable.  Optional with no default. |
+| `creationDateZero` | What to do when the operating system returns Epoch Zero (1 Jan 1970) for the file creation time (e.g. when the source file is an NTFS-mounted file in Linux). Valid options are:<br>  - `'asIs'`: (default) just write the date provided by the OS;<br>  - `'blank'`: do not write a creation date;<br>  - `'now'`: write creation date as now. |
 
 ## Changes Tracking Configuration
 Options that affect changes tracking.
@@ -788,11 +789,13 @@ To report bugs, issues, suggestions: email `info@psioniq.uk`
 Refer to [License Information](#-license-information) for the extension's limitations on cleaning up SPDX license text.
 
 ## Determining File Creation Time on Linux
-The file creation routines may return an invalid value under some specific circumstances on Linux, and maddingly may depend on the filesystem where your VSCode project is stored.  Usually it will show as a date time that may be on or around 1 January 1970.  The problem relates to the filesystem's support of `birthtime`.
+> The problem that led to this issue was "resolved" in v1.9.0 by providing a configuration option to determine what to do when the OS returns Epoch Zero as the file creation date.
+
+The file creation routines may return an invalid value under some specific circumstances on Linux, and maddingly may depend on the filesystem where your VSCode project is stored (typically on an externally mounted NTFS partition).  Usually it will show as a date time that may be on or around 1 January 1970.  The problem relates to the filesystem's support of `birthtime`.
 
 On investigation, it would appear that it is a problem with lack of support for `birthtime` in earlier versions of Linux.  Support was added with the introduction of `statx()` in Linux Core in v4.11 in 2017, then to `glibc` in v2.28 in 2018.  NodeJS accesses this via `libuv` and support for `statx()` was added to `libuv` v1.27.0 (Stable) in March 2019 as part of [this PR](https://github.com/libuv/libuv/pull/2184).  NodeJS supports this in v10.16.0 and v12.*.
 
-Most annoyingly, affected Linux versions return a wrong date rather than nothing at all - if nothing was returned we could ascertain that there was a problem.  So there is not a practical way to resolve the problem in this extension, but hopefully the above will give you enough information to understand if this is a problem with your specific setup (by checking the Linux Core, `glibc` and `libuv` versions being used).
+Most annoyingly, affected Linux versions return a wrong date rather than nothing at all.  So there is not a practical way to __fix__ the creation date returned by the OS.  However, in v1.9.0 we added a new configuration option `creationDateZero` that allows you to define what to do if the OS returns Epoch Zero.  Refer to [Global Options](#global-options) for details.
 
 [This link](https://joshuatz.com/posts/2019/unix-linux-file-creation-stamps-aka-birthtime-and-nodejs/) provides a good explanation of the problem.
 

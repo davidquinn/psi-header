@@ -3,6 +3,10 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 1.9.0 (04 Jan 2020)
+*__NEW__*: New global configuration option `creationDateZero` to determine what to do where the OS returns Epoch Zero (1 Jan 1970) as file creation date.  Mainly affects Linux users who are editing files on an externally mounted NTFS partition.
+*__FIX__*: Fixed a bug where the first and last lines of a compact comment block were not updated on change tracking updates.
+
 ## 1.8.3 (29 December 2019)
 *__MAINT__*: Added Linux file creation time information to known issues (where Linux returns invalid creation date information).  There are no code changes.
 
