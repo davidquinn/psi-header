@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 1.9.1 (04 Jan 2020)
+*__NEW__*: New changes tracking option `updateLicenseVariables` which will process the license variables during a changes tracking save.  Turn this on if your configuration causes updates to header lines that include any license variables.  By default this is not active because it is a fairly expensive operation to process the SPDX license data.
+
 ## 1.9.0 (04 Jan 2020)
 *__NEW__*: New global configuration option `creationDateZero` to determine what to do where the OS returns Epoch Zero (1 Jan 1970) as file creation date.  Mainly affects Linux users who are editing files on an externally mounted NTFS partition.
 *__FIX__*: Fixed a bug where the first and last lines of a compact comment block were not updated on change tracking updates.

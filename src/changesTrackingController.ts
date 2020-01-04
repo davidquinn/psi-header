@@ -4,12 +4,12 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Saturday, 4th January 2020 2:07:03 am
- * Modified By: ornariece (you@you.you)
+ * Last Modified: Saturday, 4th January 2020 2:35:40 pm
+ * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
  *
- * Copyright 2016 - 2018 David Quinn (psioniq)
+ * Copyright 2016 - 2020 David Quinn (psioniq)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -128,7 +128,7 @@ export class ChangesTrackingController {
 				if (this._config.enforceHeader && this._docNeedsHeader(doc)) {
 					insertFileHeader();
 				}
-				const variables: IVariableList = getVariables(this._wsConfig, activeTextEditor, mainConfig, langConfig, true);
+				const variables: IVariableList = getVariables(this._wsConfig, activeTextEditor, mainConfig, langConfig, !this._config.updateLicenseVariables);
 				const template: Array<string> = getTemplateConfig(this._wsConfig, doc.languageId).template;
 
 				const modDate: string = langConfig.modDate || this._config.modDate;
@@ -309,7 +309,8 @@ export class ChangesTrackingController {
 			excludeGlob: [],
 			autoHeader: k_.AUTO_HEADER_OFF,
 			replace: [],
-			enforceHeader: false
+			enforceHeader: false,
+			updateLicenseVariables: false
 		};
 		let cfg: ITrackingConfig = this._wsConfig && this._wsConfig.has(k_.TRACKING_SETTINGS) ? this._wsConfig.get<ITrackingConfig>(k_.TRACKING_SETTINGS) : null;
 		if (cfg) {
@@ -324,6 +325,7 @@ export class ChangesTrackingController {
 			def.autoHeader = cfg.autoHeader ? cfg.autoHeader : k_.AUTO_HEADER_OFF;
 			def.replace = cfg.replace ? cfg.replace : def.replace;
 			def.enforceHeader = cfg.enforceHeader ? cfg.enforceHeader : false;
+			def.updateLicenseVariables = cfg.updateLicenseVariables ? cfg.updateLicenseVariables : false;
 		}
 		this._config = def;
 		// get author name

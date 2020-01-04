@@ -126,10 +126,10 @@ The following system variables are available for placeholder substitution in you
 | `ignoreAuthorFullName` | On some systems it can be expensive to attempt to get fullname from the OS, so this option ignores this when determining the above `author` value |
 | `initials` | Your initials (where you don't want the whole author name |
 | `authoremail` | The email address of the file author.  In this release it defaults to "you@you.you". |
-| `licensetext` | The full text of the license. This is determined automatically. |
+| `licensetext` | The full text of the license. This is only required if `psi-header.config.license` option is set to `"Custom"`. |
 | `copyrightholder` | Used in some licenses. If not provided it defaults to the same value as `company`. |
 | `licensename` | The name of the license. If not using a custom license, this is determined automatically. |
-| `licenseurl` | The url for the license. If using not using a license, this is determined automatically. |
+| `licenseurl` | The url for the license. If not using a license, this is determined automatically. |
 | `spdxid` | The SPDX License ID for the license. If not using a custom license, this is determined automatically. |
 
 You can also create your own custom variables (for example if you are using this extension within a team or you need project-specific variables in your template) by adding your own variables to `psi-header.variables` then referring to them within your template like the following example which adds a custom variable called `projectCreationYear`:
@@ -242,6 +242,7 @@ Options that affect changes tracking.
 | `autoHeader` | Determines whether the header should be added automatically to *_new_* files.  Refer to the [Auto Header](#auto-header) section for details. |
 | `enforceHeader` | Determines if the extension should automatically check the file and add a header whenever the file is saved if an existing header is not found.  This setting is independent of `autoHeader` and works best with `psi-header.config.forceToTop` set to `true`.  Refer to the [Enforce Header](#enforce-header) section for details and usage recommendations.  |
 | `replace` | An array of template line prefixes that define additional header lines to replace during a file save.  By way of example, you could use this to ensure that changes to file name or project name are always updated during save (it happens!). |
+| `updateLicenseVariables` | This option determines if license variables will be updated during a changes tracking save.  Set this to `true` if your configuration would cause updates to header lines that include any license variables.  Otherwise leave if off because it is a fairly expensive operation to process the SPDX license data every time a file is saved. |
 
 
 ## Variable Values
@@ -349,6 +350,8 @@ Therefore, placeholders that need to know the project root directory (`filerelat
 The `psi-header.config.license` setting expects either a valid [SPDX license ID](https://spdx.org/licenses/) or `"Custom"` if you are providing your own license text.  When set to Custom, you need to provide the license text via the `psi-header.license-text` setting.
 
 The extension does some clean up of the SPDX license text (mapping to variables, etc) but not everything is cleaned.  In particular, a number of licenses use a placeholder logic based on `<<var;...>>` that this extension does not try to convert at this stage - and some licenses have placeholder text like `<insert your slartibartfast here.  We wore an onion on our belt because that was the fashion of the day>`.  If you find hokey little anomolies that can be dealt with, let me know.  Otherwise, I suggest you copy the license text into your custom license settings and fix it there.
+
+By default, license variables are only processed on initial header creation.  This is because processing the SPDX license data is an expensive operation to do on every file save.  If you use changes tracking and if your license variables are not being correctly processed on file save, you will need to set the `psi-header.changes-tracking.updateLicenseVariables` option to `true`.
 
 # Changes Tracking
 This extension can optionally track changes to files during save by writing the last modified date and/or user to the header comment block.  It does this by looking for specific text (ignoring initial whitespace) at the start of individual lines within the header, and replacing the whole line.  It will only search the first multi-line comment block within each file.

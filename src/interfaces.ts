@@ -4,12 +4,12 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Thursday, 2nd January 2020 8:12:19 am
+ * Last Modified: Saturday, 4th January 2020 2:14:54 pm
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
  *
- * Copyright 2016 - 2018 David Quinn (psioniq)
+ * Copyright 2016 - 2020 David Quinn (psioniq)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -121,6 +121,7 @@ export interface ITrackingConfig {
 	autoHeader?: string;
 	replace?: string[];
 	enforceHeader?: boolean;
+	updateLicenseVariables?: boolean;
 }
 
 /**
