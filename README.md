@@ -131,8 +131,9 @@ The following system variables are available for placeholder substitution in you
 | `licensename` | The name of the license. If not using a custom license, this is determined automatically. |
 | `licenseurl` | The url for the license. If not using a license, this is determined automatically. |
 | `spdxid` | The SPDX License ID for the license. If not using a custom license, this is determined automatically. |
+| `hostname` | The value of the `psi-header.config.hostname` setting if set, otherwise the local machine's hostname as provided by the OS. |
 
-You can also create your own custom variables (for example if you are using this extension within a team or you need project-specific variables in your template) by adding your own variables to `psi-header.variables` then referring to them within your template like the following example which adds a custom variable called `projectCreationYear`:
+You can also create your own static custom variables (for example if you are using this extension within a team or you need project-specific variables in your template) by adding your own variables to `psi-header.variables` then referring to them within your template like the following example which adds a custom variable called `projectCreationYear`:
 ``` json
 	"psi-header.variables": [
 		["projectCreationYear", "2017"]
@@ -223,6 +224,7 @@ Options that affect the whole extension.  In some cases these defaults can be ov
 | `company` | Your Company's name - used by the `company` system variable.  Optional with no default. |
 | `copyrightHolder` | Your copyright name - used by the `copyrightholder` system variable.  Optional with no default. |
 | `creationDateZero` | What to do when the operating system returns Epoch Zero (1 Jan 1970) for the file creation time (e.g. when the source file is an NTFS-mounted file in Linux). Valid options are:<br>  - `'asIs'`: (default) just write the date provided by the OS;<br>  - `'blank'`: do not write a creation date;<br>  - `'now'`: write creation date as now. |
+| `hostname` | Overrides the local machine hostname returned by the OS with a custom value when using the `hostname` system variable. |
 
 ## Changes Tracking Configuration
 Options that affect changes tracking.

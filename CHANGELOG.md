@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 1.10.0 (08 April 2020)
+*__NEW__*: New `hostname` system variable to return the host name of the local machine. Uses os.hostname(), but the value can be overridden via the new `psi-header.config.hostname` setting.
+
 ## 1.9.1 (04 Jan 2020)
 *__NEW__*: New changes tracking option `updateLicenseVariables` which will process the license variables during a changes tracking save.  Turn this on if your configuration causes updates to header lines that include any license variables.  By default this is not active because it is a fairly expensive operation to process the SPDX license data.
 

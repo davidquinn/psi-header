@@ -4,8 +4,8 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Saturday, 4th January 2020 2:07:54 am
- * Modified By: ornariece (you@you.you)
+ * Last Modified: Wednesday, 8th April 2020 6:16:24 pm
+ * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
  *
@@ -53,6 +53,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as moment from 'moment';
 import * as username from 'username';
+import * as os from 'os';
 const fullName = require("fullname");
 
 let authorFullName: string = undefined;
@@ -99,6 +100,8 @@ export function getConfig(wsConfig: WorkspaceConfiguration, langConfig: ILangCon
 	}
 
 	def.creationDateZero = cfg && cfg.creationDateZero ? cfg.creationDateZero : "asIs";
+
+	def.hostname = cfg && cfg.hostname ? cfg.hostname : os.hostname();
 
 	return def;
 }
@@ -308,7 +311,7 @@ export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEdito
 	}
 	variables.push([k_.VAR_INITIALS, config && config.initials ? config.initials : 'ABC']);
 	variables.push([k_.VAR_PROJ_VERSION, getProjectVersion(currentFile)]);
-
+	variables.push([k_.VAR_HOSTNAME, config && config.hostname ? config.hostname : os.hostname()]);
 	// custom variables
 	let vl: IVariableList = getMergedVariables(wsConfig);
 	if (vl && vl.length > 0) {

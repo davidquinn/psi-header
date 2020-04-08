@@ -3,7 +3,7 @@
 	"displayName": "psioniq File Header",
 	"description": "Configurable file header comment block and changes tracking.",
 	"icon": "img/psi-logo.png",
-	"version": "1.9.1",
+	"version": "1.10.0",
 	"publisher": "psioniq",
 	"license": "MIT",
 	"bugs": {
@@ -106,6 +106,10 @@
 							],
 							"description": "How to treat file creation dates returned as Unix zero",
 							"default": "asIs"
+						},
+						"hostname": {
+							"type": "string",
+							"description": "Override the local machine's hostname for the <<hostname>> variable."
 						}
 					}
 				},

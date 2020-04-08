@@ -4,7 +4,7 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Saturday, 4th January 2020 2:14:54 pm
+ * Last Modified: Wednesday, 8th April 2020 6:01:09 pm
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -77,6 +77,7 @@ export interface IConfig {
 	initials?: string;
 	ignoreAuthorFullname?: boolean;
 	creationDateZero?: ZeroDate;
+	hostname?: string;
 }
 
 /**
