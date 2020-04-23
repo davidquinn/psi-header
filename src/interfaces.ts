@@ -4,7 +4,7 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Wednesday, 8th April 2020 6:01:09 pm
+ * Last Modified: Thursday, 23rd April 2020 8:51:12 pm
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -175,4 +175,9 @@ export interface IInspectableConfig<T extends any> {
 	globalValue?: T;
 	workspaceValue?: T;
 	workspaceFolderValue?: T;
+}
+
+export interface ILicenseReference {
+	uri?: string;
+	uriIsLocalFile?: boolean;
 }

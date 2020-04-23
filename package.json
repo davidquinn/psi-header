@@ -3,7 +3,7 @@
 	"displayName": "psioniq File Header",
 	"description": "Configurable file header comment block and changes tracking.",
 	"icon": "img/psi-logo.png",
-	"version": "1.10.0",
+	"version": "1.11.0",
 	"publisher": "psioniq",
 	"license": "MIT",
 	"bugs": {
@@ -69,7 +69,7 @@
 						},
 						"license": {
 							"type": "string",
-							"description": "Identifies which license to use.  this should be either a SPDX license (refer to https://spdx.org/licenses/) or \"Custom\".",
+							"description": "Identifies which license to use.  this should be either a SPDX license (refer to https://spdx.org/licenses/) or \"Custom\" or \"CustomUri\".",
 							"default": "MIT"
 						},
 						"author": {
@@ -205,6 +205,22 @@
 					"default": [],
 					"items": {
 						"type": "string"
+					}
+				},
+				"psi-header.license-reference": {
+					"type": "object",
+					"description": "Custom license uri used where psi-header.config.license = CustomUri",
+					"properties": {
+						"uri": {
+							"type": "string",
+							"description": "The basename of a local file on the same path as the edited file, or a fully qualified local file name or a url.",
+							"default": null
+						},
+						"uriIsLocalFile": {
+							"type": "boolean",
+							"description": "If true, will assume the uri is to a local file, else will assume a fully qualified web URL.",
+							"default": false
+						}
 					}
 				},
 				"psi-header.variables": {

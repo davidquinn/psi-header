@@ -13,10 +13,14 @@
 	- [Language Configuration](#language-configuration)
 	- [Templates](#templates)
 	- [Licence Text](#licence-text)
+	- [License Reference](#license-reference)
 - [Compact Mode](#compact-mode)
 - [Block-Style Comment Headers](#block-style-comment-headers)
 - [A Note about Project Paths](#a-note-about-project-paths)
 - [License Information](#license-information)
+	- ["Custom"](#custom)
+	- ["CustomUri"](#customuri)
+	- [SPDX](#spdx)
 - [Changes Tracking](#changes-tracking)
 	- [Option 1 Simple Replacement](#option-1-simple-replacement)
 	- [Option 2 Template Substitution](#option-2-template-substitution)
@@ -96,7 +100,7 @@ Refer to [Configuration](#configuration) for the various extension settings deta
 * Allows the overriding of system variable values with static global values within the configuration.
 * Create an unlimited number of custom static variables for use throughout your custom templates.
 * Header insertion can be run manually via the key shortcut `ctrl+alt+H` then `ctrl+alt+H`.
-* Can automatically insert license text based on SPDX license IDs.
+* Can automatically insert license text based on SPDX license IDs or local text.
 * Allows changes logging for recording a history of changes to the file.
 
 # Commands
@@ -207,6 +211,7 @@ The configuration settings are organised into the following areas described belo
   * `lang-config`: an array of language-specific (and general) settings (comment styles, etc);
   * `templates`: an array of language-specific (and general) header templates;
   * `licence-text`: an array of strings that defines custom licence text.
+  * `license-reference`: options for reading the license from a local file or a web link.
 
 ## Global Options
 Options that affect the whole extension.  In some cases these defaults can be overridden within specific language configurations.
@@ -217,7 +222,7 @@ Options that affect the whole extension.  In some cases these defaults can be ov
 |---|---|
 | `forceToTop` | If true, it will ignore the current cursor position and insert the header at the top of the document. If false (the default), the header will be inserted at the current cursor position. Can be overridden for specific languages (via *_psi-header.lang-config_*). |
 | `blankLinesAfter` | Specify how many blank lines to insert after the header comment block.  Default is 0 (zero). |
-| `license` | The SPDX License ID of the license to insert into the header (or `"Custom"` if providing your own license text). Refer to [License Information](#license-information) for details. |
+| `license` | The SPDX License ID of the license to insert into the header (or `"Custom"` or `"CustomUri"` if providing your own license text). Refer to [License Information](#license-information) for details. |
 | `author` | Your name - used by the `author` system variable.  Optional with no default. |
 | `initials` | Your initials - used by the `initials` system variable.  Optional with no default. |
 | `authorEmail` | Your email address - used by the `authoremail` system variable.  Optional with no default. |
@@ -301,6 +306,16 @@ An optional array of strings for defining custom licence text.  Used where *_psi
 
 *_Configuration Section:_* `psi-header.licence-text`
 
+## License Reference
+Options for reading the license text from a local file or for setting the license URL. Requires `psi-header.config.license` to be set to `"CustomUri"`. Refer to [License Information](#license-information) for details.
+
+*_Configuration Section:_* `psi-header.license-reference`
+
+| Option | Description |
+|---|---|
+| `uri` | Either (a) a fully qualified file name including absolote path information, or (b) a filename with no path or (c) a URL. |
+| `uriIsLocalFile` | If true, the contents of the file at the `uri` will be added to the <<licensetext>> variable in the header. Otherwise the `uri` will be treated as a web link and assumed to be complete. |
+
 # Compact Mode
 The header can be created in `"compact mode"` - that is, without begin and end lines on the comment block. To activate this, you *must* set both the `lang-config.begin` *and* `lang-config.end` configuration values to an empty string for any language where you want this behaviour.  You can do this on the default language configuration (`lang-config.language = "*"`) to apply to all languages.  Obviously this will cause the header to work like a series of single line comments, so you must also make sure that the `lang-config.prefix` property is set to a valid single line comment prefix.
 
@@ -349,8 +364,20 @@ When this extension was originally written VSCode only supported opening a singl
 Therefore, placeholders that need to know the project root directory (`filerelativepath`, `projectpath` and `projectname`) try to work it out by iterating up the directory structure (starting at the current editor file location) until they come to a package.json file or a filename set in the `psi-header.lang-config.rootDirFileName` configuration setting.  If either one is found then its location is assumed to be the root - otherwise it just assumes the same directory as the edited file.
 
 # License Information
-The `psi-header.config.license` setting expects either a valid [SPDX license ID](https://spdx.org/licenses/) or `"Custom"` if you are providing your own license text.  When set to Custom, you need to provide the license text via the `psi-header.license-text` setting.
+The `psi-header.config.license` setting expects either a valid [SPDX license ID](https://spdx.org/licenses/) or `"Custom"` or `"CustomUri"` if you are providing your own license text.
 
+## "Custom"
+When set to `"Custom"`, you need to provide the license text via the `psi-header.license-text` setting.
+
+## "CustomUri"
+When set to `"CustomUri"` you need to provide further details in the `psi-header.licence-reference` section. The License reference setting `uri` should be either:
+1. a local filename including an absolute path to point to a file in a specific location; or
+2. a filename without a path where the file exists somewhere on the directory structure of the file being edited. The extension will search from the edit file location up the directory structure until it finds a file with the correct name; or
+3. a URL - the extension will not check the validity of the entered URL.
+
+If `uriIsLocalFile` is false, it will just use the `uri` to populate the <<licenseurl>> system variable. Otherwise, the extension will first test if the `uri` is valid as an absolute path (in which case option 1 is used) and if not it will ignore any path information in the `uri` and just use the basename with option 2.
+
+## SPDX
 The extension does some clean up of the SPDX license text (mapping to variables, etc) but not everything is cleaned.  In particular, a number of licenses use a placeholder logic based on `<<var;...>>` that this extension does not try to convert at this stage - and some licenses have placeholder text like `<insert your slartibartfast here.  We wore an onion on our belt because that was the fashion of the day>`.  If you find hokey little anomolies that can be dealt with, let me know.  Otherwise, I suggest you copy the license text into your custom license settings and fix it there.
 
 By default, license variables are only processed on initial header creation.  This is because processing the SPDX license data is an expensive operation to do on every file save.  If you use changes tracking and if your license variables are not being correctly processed on file save, you will need to set the `psi-header.changes-tracking.updateLicenseVariables` option to `true`.

@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 1.11.0 (23 April 2020)
+*__NEW__*: Added new configuration section `psi-header.license-reference` with options to add license text from a local file or add a link to an online license. These options are activated by setting the `psi-header.config.license` option to `CustomUri`.
+
 ## 1.10.0 (08 April 2020)
 *__NEW__*: New `hostname` system variable to return the host name of the local machine. Uses os.hostname(), but the value can be overridden via the new `psi-header.config.hostname` setting.
 

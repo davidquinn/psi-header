@@ -4,7 +4,7 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Wednesday, 8th April 2020 6:16:24 pm
+ * Last Modified: Thursday, 23rd April 2020 9:01:39 pm
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -47,7 +47,8 @@ import {
 	IVariableList,
 	IPlaceholderFunction,
 	IInspectableConfig,
-	ZeroDate
+	ZeroDate,
+	ILicenseReference
 } from './interfaces';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -283,10 +284,10 @@ function mapProperty(source: Object, target: Object, key: string): void {
  * @param {TextEditor} editor
  * @param {IConfig} config
  * @param {ILangConfig} langConfig
- * @param {boolean} ignoreLicence
+ * @param {boolean} ignoreLicense
  * @returns {IVariableList}
  */
-export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEditor, config: IConfig, langConfig: ILangConfig, ignoreLicence: boolean = false): IVariableList {
+export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEditor, config: IConfig, langConfig: ILangConfig, ignoreLicense: boolean = false): IVariableList {
 	let variables: IVariableList = [];
 	const now: Date = new Date();
 	const fcreated: Date = getActiveFileCreationDate(config.creationDateZero) || new Date();
@@ -338,8 +339,8 @@ export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEdito
 	}
 
 	// license variables
-	if (!ignoreLicence) {
-		addLicenseVariables(wsConfig, variables, config, langConfig);
+	if (!ignoreLicense) {
+		addLicenseVariables(wsConfig, variables, config, langConfig, currentFile);
 	}
 	return variables;
 }
@@ -540,13 +541,43 @@ function _modifyForDayZero(date: Date, ifZero: ZeroDate = 'asIs'): Date {
  * @param {IConfig} config
  * @param {ILangConfig} langConfig
  */
-function addLicenseVariables(wsConfig: WorkspaceConfiguration, variables: IVariableList, config: IConfig, langConfig: ILangConfig): void {
+function addLicenseVariables(wsConfig: WorkspaceConfiguration, variables: IVariableList, config: IConfig, langConfig: ILangConfig, editedFile: string): void {
 	const spdxList = require('spdx-license-list/full');
+	let uri: string = null;
 	let txt: Array<string> = [];
 	let spdx;
 	if (config && config.license) {
-		if (config.license === 'Custom') {
+		if (config.license.toLowerCase() === 'custom') {
 			txt = wsConfig.has(k_.LICENSE_SETTINGS) ? wsConfig.get<Array<string>>(k_.LICENSE_SETTINGS).slice() : [];
+		} else if (config.license.toLowerCase() === 'customuri') {
+			const licenseRef = wsConfig.has(k_.LICENSE_REFERENCE) ? wsConfig.get<ILicenseReference>(k_.LICENSE_REFERENCE) : null;
+			if (licenseRef) {
+				if (licenseRef.uri) {
+					if (licenseRef.uriIsLocalFile) {
+						if (path.isAbsolute(licenseRef.uri)) {
+							uri = licenseRef.uri;
+						} else {
+							const fn: string = path.basename(licenseRef.uri);
+							const rootPath = getProjectRootPath(editedFile, fn);
+							uri = path.join(rootPath, fn);
+							if (!fs.existsSync(uri)) {
+								uri = null;
+							}
+						}
+						try {
+							if (fs.existsSync(uri)) {
+								txt = fs.readFileSync(uri).toString().replace(/\r\n/g,'\n').split("\n");
+							}
+						} catch (error) {
+							console.log(error);
+						}
+						uri = null;
+					} else { // licenseRef.uriIsLocalFile === false
+						// process as external url and assume it is correct
+						uri = licenseRef.uri;
+					}
+				}
+			}
 		} else if (config.license.length > 0) {
 			spdx = spdxList[config.license];
 			if (spdx) {
@@ -567,6 +598,8 @@ function addLicenseVariables(wsConfig: WorkspaceConfiguration, variables: IVaria
 		variables.push([k_.VAR_LICENSE_NAME, spdx.name]);
 		variables.push([k_.VAR_LICENSE_URL, spdx.url]);
 		variables.push([k_.VAR_SPDX_ID, config.license]);
+	} else if (uri) {
+		variables.push([k_.VAR_LICENSE_URL, uri]);
 	}
 }
 

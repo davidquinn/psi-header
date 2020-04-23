@@ -4,7 +4,7 @@
  * File Created: Friday, 6th October 2017 10:23:19 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Wednesday, 8th April 2020 5:57:30 pm
+ * Last Modified: Thursday, 23rd April 2020 9:11:48 am
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -39,6 +39,7 @@ export const CONFIG_SETTINGS: string = 'config';
 export const LANG_CONFIG_SETTINGS: string = 'lang-config';
 export const TEMPLATE_SETTINGS: string = 'templates';
 export const LICENSE_SETTINGS: string = 'license-text';
+export const LICENSE_REFERENCE: string = 'license-reference';
 export const TRACKING_SETTINGS: string = 'changes-tracking';
 
 export const FILE_HEADER_COMMAND = BASE_SETTINGS + '.insertFileHeader';
