@@ -21,6 +21,7 @@
 	- ["Custom"](#custom)
 	- ["CustomUri"](#customuri)
 	- [SPDX](#spdx)
+	- [Refreshing the License Text System Variable](#refreshing-the-license-text-system-variable)
 - [Changes Tracking](#changes-tracking)
 	- [Option 1 Simple Replacement](#option-1-simple-replacement)
 	- [Option 2 Template Substitution](#option-2-template-substitution)
@@ -100,7 +101,7 @@ Refer to [Configuration](#configuration) for the various extension settings deta
 * Allows the overriding of system variable values with static global values within the configuration.
 * Create an unlimited number of custom static variables for use throughout your custom templates.
 * Header insertion can be run manually via the key shortcut `ctrl+alt+H` then `ctrl+alt+H`.
-* Can automatically insert license text based on SPDX license IDs or local text.
+* Can automatically insert license text based on SPDX license IDs or from a local text file.
 * Allows changes logging for recording a history of changes to the file.
 
 # Commands
@@ -313,7 +314,7 @@ Options for reading the license text from a local file or for setting the licens
 
 | Option | Description |
 |---|---|
-| `uri` | Either (a) a fully qualified file name including absolote path information, or (b) a filename with no path or (c) a URL. |
+| `uri` | Either (a) a fully qualified file name including absolute path information, or (b) a filename with no path or (c) a URL. |
 | `uriIsLocalFile` | If true, the contents of the file at the `uri` will be added to the <<licensetext>> variable in the header. Otherwise the `uri` will be treated as a web link and assumed to be complete. |
 
 # Compact Mode
@@ -364,23 +365,32 @@ When this extension was originally written VSCode only supported opening a singl
 Therefore, placeholders that need to know the project root directory (`filerelativepath`, `projectpath` and `projectname`) try to work it out by iterating up the directory structure (starting at the current editor file location) until they come to a package.json file or a filename set in the `psi-header.lang-config.rootDirFileName` configuration setting.  If either one is found then its location is assumed to be the root - otherwise it just assumes the same directory as the edited file.
 
 # License Information
-The `psi-header.config.license` setting expects either a valid [SPDX license ID](https://spdx.org/licenses/) or `"Custom"` or `"CustomUri"` if you are providing your own license text.
+The `psi-header.config.license` setting expects either a valid [SPDX license ID](https://spdx.org/licenses/) or one of `"Custom"` or `"CustomUri"` if you are providing your own license text. The settings are used to populate the following system variables: `<<licensetext>>`, `<<licensename>>`, `<<licenseurl>>` and `<<spdixid>>`.
 
 ## "Custom"
-When set to `"Custom"`, you need to provide the license text via the `psi-header.license-text` setting.
+When set to `"Custom"`, you need to provide the license text via the `psi-header.license-text` setting. This will populate the `<<licensetext>>` system variable.
 
 ## "CustomUri"
 When set to `"CustomUri"` you need to provide further details in the `psi-header.licence-reference` section. The License reference setting `uri` should be either:
 1. a local filename including an absolute path to point to a file in a specific location; or
-2. a filename without a path where the file exists somewhere on the directory structure of the file being edited. The extension will search from the edit file location up the directory structure until it finds a file with the correct name; or
-3. a URL - the extension will not check the validity of the entered URL.
+2. a filename without a path where the file exists somewhere on the same directory branch as the file being edited. The extension will search from the edit file location up the directory structure until it finds a file with the correct name; or
+3. a URL - note that the extension will not check the validity of the entered URL.
 
-If `uriIsLocalFile` is false, it will just use the `uri` to populate the <<licenseurl>> system variable. Otherwise, the extension will first test if the `uri` is valid as an absolute path (in which case option 1 is used) and if not it will ignore any path information in the `uri` and just use the basename with option 2.
+If `uriIsLocalFile` is false, it will just use the `uri` to populate the <<licenseurl>> system variable.
+
+If `uriIsLocalFile` is true, the extension will first test if the `uri` is valid as an absolute path (in which case option 1 is used) and if not it will ignore any path information in the `uri` and just use the basename with option 2. Assuming it finda a valid text file, it will attempt to copy the contents into the `<<licensetext>>` system variable in your template.
 
 ## SPDX
-The extension does some clean up of the SPDX license text (mapping to variables, etc) but not everything is cleaned.  In particular, a number of licenses use a placeholder logic based on `<<var;...>>` that this extension does not try to convert at this stage - and some licenses have placeholder text like `<insert your slartibartfast here.  We wore an onion on our belt because that was the fashion of the day>`.  If you find hokey little anomolies that can be dealt with, let me know.  Otherwise, I suggest you copy the license text into your custom license settings and fix it there.
+Assuming you provide a valid SPDX ID, you can populate the following system variables in your template:
+* `<<spdxid>>` system variable wil ladd the SPDX ID to your header.
+* `<<licensename>>` is the name of the license provided by SPDX.
+* `<<licenseurl>>` is the URL for the license provided by SPDX.
+* `<<licensetext>>` is the license text provided by SPDX.
 
-By default, license variables are only processed on initial header creation.  This is because processing the SPDX license data is an expensive operation to do on every file save.  If you use changes tracking and if your license variables are not being correctly processed on file save, you will need to set the `psi-header.changes-tracking.updateLicenseVariables` option to `true`.
+The extension does some clean up of the SPDX license text (mapping to variables, etc) but not everything is cleaned. In particular, a number of licenses use a placeholder logic based on `<<var;...>>` that this extension does not try to convert - and some licenses have placeholder text like `<insert your slartibartfast here.  We wore an onion on our belt because that was the fashion of the day>`.  If you find hokey little anomolies that can be dealt with, let me know.  Otherwise, I suggest you copy the license text into your custom license settings or local text file and fix it there.
+
+## Refreshing the License Text System Variable
+By default, license variables are only processed on initial header creation. This is because processing the SPDX license data is an expensive operation to do on every file save. If you use changes tracking and if your license variables are not being correctly processed on file save, you will need to set the `psi-header.changes-tracking.updateLicenseVariables` option to `true` to have the text refreshed on every save.
 
 # Changes Tracking
 This extension can optionally track changes to files during save by writing the last modified date and/or user to the header comment block.  It does this by looking for specific text (ignoring initial whitespace) at the start of individual lines within the header, and replacing the whole line.  It will only search the first multi-line comment block within each file.

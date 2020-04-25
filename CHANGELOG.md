@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 1.11.1 (25 April 2020)
+No new or changed functionality, just a couple of fixes for typos in the documentation.
+
 ## 1.11.0 (23 April 2020)
 *__NEW__*: Added new configuration section `psi-header.license-reference` with options to add license text from a local file or add a link to an online license. These options are activated by setting the `psi-header.config.license` option to `CustomUri`.
 
