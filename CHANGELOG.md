@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 1.12.0 (18 July 2020)
+*__NEW__*: The before and after areas of the header (defined for a specific language via `psi-header.lang`) can now contain system varibles. Note however though that this only works when first adding the header and they are not reprocessed on subsequent file saves.
+
 ## 1.11.1 (25 April 2020)
 No new or changed functionality, just a couple of fixes for typos in the documentation.
 

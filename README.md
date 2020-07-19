@@ -161,6 +161,7 @@ You can also create your own static custom variables (for example if you are usi
 	]
 ```
 
+NOTE: You can include system variables in the `beforeHeader` and `afterHeader` properties of your language configurations. However, they will only be processed when the header is first added to your file and *_will not be updated on subsequent file saves_*. Why? Because the extension has no idea what may have changed or been edited outside of the template since it was added to the file, and possibly the worst thing that the extension could do is delete or mess up your carefully crafted source code by assuming that the structure of the before and after blocks in your language template exactly matches the structure that existed at the time the header was added.
 
 # System Functions
 The following _case-sensitive_ `system functions` are available for configurable placeholder value substitution.  These are similar to [System Variables](#system-variables) but they take arguments.
@@ -189,6 +190,9 @@ And the following would both generate something like `Friday, April 14th 2017, 8
 ```
 
 These functions use Moment.js and can use all [Moment.js format string options](http://momentjs.com/docs/#/displaying/format/).
+
+As with `system variables` the functions can appear in the `beforeHeader` and `afterHeader` properties of your language configuration, with the same constraints around updating.
+
 
 # Configuration
 It is quite possible to use this extension without making any changes to your VSCode's settings (although you probably want to set up a couple of variable values like author and company at least).  Extensive configuration options are available should you wish to get your hands dirty.
@@ -275,8 +279,8 @@ An array of objects that allow language-specific adjustments to be made to the c
 | `end` |  Optional - defaults to `" */"`. Determines the comment block closing text.  This will be inserted after the last line of the template.  Refer to [Compact Mode](#-compact-mode) for information on headings with no begin and end lines. |
 | `forceToTop` | Optional. Same as *_psi-header.config.forceToTop_* but just for this language.  If set, this overrides the global setting. |
 | `blankLinesAfter` | Optional. Same as *_psi-header.config.blankLinesAfter_* but just for this language.  If set, this overrides the global setting. |
-| `beforeHeader` | Optional.  Allows multiple lines of text to be inserted before the beginning of the header comment block (e.g. pre-processor commands).  NOTE: The extenion will not add comment prefixes to this text, so you will need to include them in your text if necessary. |
-| `afterHeader` | Optional.  Allows multiple lines of text to be inserted after the end of the header comment block (e.g. pre-processor commands).  This will appear after any configured `blankLinesAfter`.  NOTE: The extenion will not add comment prefixes to this text, so you will need to include them in your text if necessary. |
+| `beforeHeader` | Optional.  Allows multiple lines of text to be inserted before the beginning of the header comment block (e.g. pre-processor commands).  NOTE: The extenion will not add comment prefixes to this text, so you will need to include them in your text if necessary. You can add system variables to this section that are processed on initial header creation (but not re-processed on subsequent saves). |
+| `afterHeader` | Optional.  Allows multiple lines of text to be inserted after the end of the header comment block (e.g. pre-processor commands).  This will appear after any configured `blankLinesAfter`.  NOTE: The extenion will not add comment prefixes to this text, so you will need to include them in your text if necessary. You can add system variables to this section that are processed on initial header creation (but not re-processed on subsequent saves). |
 | `rootDirFileName` | Optional.  By default this extension looks for a file called `package.json` to determine the project's root path.  This allows you to also search for an additional file name that should exist in the root path.  The contents of the file are irrelevant (it can be a blank file).  Only really needed if you can't have a package.json file in your root path. |
 | `modAuthor` | Optional. Overrides the [changes-tracking.modAuthor](##-changes-tracking-configuration) setting for this language.  Identifies the label used on the comment line where the _modified by_ value is shown.  There is no default value as by default the changes tracking setting will be used. |
 | `modDate` | Optional. Overrides the [changes-tracking.modDate](##-changes-tracking-configuration) setting for this language.  Identifies the label used on the comment line where the _date modified_ value is shown.    There is no default value as by default the changes tracking setting will be used. |
@@ -835,9 +839,9 @@ Refer to [License Information](#-license-information) for the extension's limita
 
 The file creation routines may return an invalid value under some specific circumstances on Linux, and maddingly may depend on the filesystem where your VSCode project is stored (typically on an externally mounted NTFS partition).  Usually it will show as a date time that may be on or around 1 January 1970.  The problem relates to the filesystem's support of `birthtime`.
 
-On investigation, it would appear that it is a problem with lack of support for `birthtime` in earlier versions of Linux.  Support was added with the introduction of `statx()` in Linux Core in v4.11 in 2017, then to `glibc` in v2.28 in 2018.  NodeJS accesses this via `libuv` and support for `statx()` was added to `libuv` v1.27.0 (Stable) in March 2019 as part of [this PR](https://github.com/libuv/libuv/pull/2184).  NodeJS supports this in v10.16.0 and v12.*.
+On investigation, it would appear that it is a problem with lack of support for `birthtime` in earlier versions of Linux. Support was added with the introduction of `statx()` in Linux Core in v4.11 in 2017, then to `glibc` in v2.28 in 2018. NodeJS accesses this via `libuv` and support for `statx()` was added to `libuv` v1.27.0 (Stable) in March 2019 as part of [this PR](https://github.com/libuv/libuv/pull/2184). NodeJS supports this in v10.16.0 and v12.*.
 
-Most annoyingly, affected Linux versions return a wrong date rather than nothing at all.  So there is not a practical way to __fix__ the creation date returned by the OS.  However, in v1.9.0 we added a new configuration option `creationDateZero` that allows you to define what to do if the OS returns Epoch Zero.  Refer to [Global Options](#global-options) for details.
+Most annoyingly, affected Linux versions return a wrong date rather than nothing at all. So there is not a practical way to __fix__ the creation date returned by the OS. However, in v1.9.0 we added a new configuration option `creationDateZero` that allows you to define what to do if the OS returns Epoch Zero. Refer to [Global Options](#global-options) for details.
 
 [This link](https://joshuatz.com/posts/2019/unix-linux-file-creation-stamps-aka-birthtime-and-nodejs/) provides a good explanation of the problem.
 

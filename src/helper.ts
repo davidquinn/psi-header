@@ -4,7 +4,7 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Thursday, 23rd April 2020 9:01:39 pm
+ * Last Modified: Saturday, 18th July 2020 2:29:42 pm
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -621,8 +621,14 @@ export function replaceTemplateVariables(template: Array<string>, linePrefix: st
  * @returns {string}
  */
 export function merge(template: Array<string>, langConfig: ILangConfig, variables: IVariableList, config: IConfig, editor: TextEditor): string {
-	const beforeText: string = arrayToString(langConfig.hasOwnProperty('beforeHeader') ? langConfig.beforeHeader : null);
-	const afterText: string = arrayToString(langConfig.hasOwnProperty('afterHeader') ? langConfig.afterHeader : null);
+	const beforeText: string = replacePlaceholders(
+		arrayToString(langConfig.hasOwnProperty('beforeHeader') ? langConfig.beforeHeader : null),
+		variables
+	);
+	const afterText: string = replacePlaceholders(
+		arrayToString(langConfig.hasOwnProperty('afterHeader') ? langConfig.afterHeader : null),
+		variables
+	);
 	const isCompact: boolean = isCompactMode(langConfig);
 	const commentBegin: string = isCompact ? '' : `${langConfig.begin}\n`;
 	const commentEnd: string = isCompact ? '' : `${langConfig.end}\n`;

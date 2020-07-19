@@ -3,7 +3,7 @@
 	"displayName": "psioniq File Header",
 	"description": "Configurable file header comment block and changes tracking.",
 	"icon": "img/psi-logo.png",
-	"version": "1.11.1",
+	"version": "1.12.0",
 	"publisher": "psioniq",
 	"license": "MIT",
 	"bugs": {
