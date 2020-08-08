@@ -2,6 +2,8 @@
 All notable changes to the "psi-header" extension will be documented in this file.
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
+## 1.13.1 (08 August 2020)
+*__FIX__*: Got rid of recalcitrant console.log entry...oops!
 
 ## 1.13.0 (08 August 2020)
 *__NEW__*: New system function `yeartoyear(from, to)` to generate year text for copyright message.
