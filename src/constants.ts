@@ -4,7 +4,7 @@
  * File Created: Friday, 6th October 2017 10:23:19 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Thursday, 23rd April 2020 9:11:48 am
+ * Last Modified: Saturday, 8th August 2020 1:03:47 pm
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -69,11 +69,13 @@ export const VAR_INITIALS: string = 'initials';
 export const VAR_PROJ_VERSION: string = 'projectversion';
 export const VAR_HOSTNAME = 'hostname';
 
+
 /**
  * System functions
  */
 export const FUNC_DATE_FMT: string = 'dateformat';
 export const FUNC_FILE_CREATED: string = 'filecreated';
+export const FUNC_YEAR_TO_YEAR: string = 'yeartoyear';
 
 
 /**

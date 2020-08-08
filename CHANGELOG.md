@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 1.13.0 (08 August 2020)
+*__NEW__*: New system function `yeartoyear(from, to)` to generate year text for copyright message.
+
 ## 1.12.0 (18 July 2020)
 *__NEW__*: The before and after areas of the header (defined for a specific language via `psi-header.lang`) can now contain system varibles. Note however though that this only works when first adding the header and they are not reprocessed on subsequent file saves.
 

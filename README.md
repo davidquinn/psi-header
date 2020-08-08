@@ -6,6 +6,8 @@
 - [Commands](#commands)
 - [System Variables](#system-variables)
 - [System Functions](#system-functions)
+	- [Date Formats in System Functions](#date-formats-in-system-functions)
+	- [yeartoyear](#yeartoyear)
 - [Configuration](#configuration)
 	- [Global Options](#global-options)
 	- [Changes Tracking Configuration](#changes-tracking-configuration)
@@ -168,10 +170,14 @@ The following _case-sensitive_ `system functions` are available for configurable
 
 |Function Name | Description |
 |---|---|
-| `dateformat(args)` | The current date or date part using format strings.  This function takes a single string argument which represents the moment.js compatible format string. |
-| `filecreated(args)` | The file created date and time using format strings.  This function takes a single string argument which represents the moment.js compatible format string (surrounded in single or double quotes).  It can also be called without arguments to use the current locale date format. If the file created date cannot be determined it will return the current date and time (usually because the file has not yet been saved to disk, or the operating system failed to return the creation date and time). Refer to [this known issue](#determining-file-creation-time-on-linux) for potential issues with some Linux setups. |
+| `dateformat(format)` | The current date or date part using format strings.  This function takes a single string argument which represents the moment.js compatible format string. |
+| `filecreated(format)` | The file created date and time using format strings.  This function takes a single string argument which represents the moment.js compatible format string (surrounded in single or double quotes).  It can also be called without arguments to use the current locale date format. If the file created date cannot be determined it will return the current date and time (usually because the file has not yet been saved to disk, or the operating system failed to return the creation date and time). Refer to [this known issue](#determining-file-creation-time-on-linux) for potential issues with some Linux setups. |
+| `yeartoyear(from, to)` | Generates a string in the form `"YYYY - YYYY"` or just `"YYYY"` of both dates evaluate to the same year. Useful for copyright messages. Refer to [year to year](#yeartoyear) for details. |
 
-`filecreated` can also return the current locale date string by passing no arguments.  BOth the following will work:
+As with `system variables` the functions can appear in the `beforeHeader` and `afterHeader` properties of your language configuration, with the same constraints around updating.
+
+## Date Formats in System Functions
+`filecreated` can also return the current locale date string by passing no arguments.  Both the following will work:
 ```javascript
 	<<filecreated()>>
 	<<filecreated>>
@@ -191,8 +197,33 @@ And the following would both generate something like `Friday, April 14th 2017, 8
 
 These functions use Moment.js and can use all [Moment.js format string options](http://momentjs.com/docs/#/displaying/format/).
 
-As with `system variables` the functions can appear in the `beforeHeader` and `afterHeader` properties of your language configuration, with the same constraints around updating.
+## yeartoyear
+Generates a string in the form `"YYYY - YYYY"` or just `"YYYY"` if both dates evaluate to the same year. Useful for copyright messages.
 
+This function takes 2 arguments: `from` determines the first date and `to` determines the second date. Possible values for each argument are shown in the following table. If both evaluate to the same year only a single string (`"YYYY"`) is returned.
+
+| Property Value | Description |
+| --- | --- |
+| `fc` | The file creation date. This is the default for the`from` date. Not case-sensitive. |
+| `now` | The current year. This is the default for the `to` date. Not case sensitive. |
+| `var:name` | Use a [static variable](#variable-values) where `name` is the name of the static variable. |
+| any other string | String written as is. Useful for setting a static year. Do not include any commas in the string. |
+
+If only one argument is passed in, it is assumed to be the `from` date and `to` will use its default. If no arguments are passed then in both will use their default values. If no arguments are passed in it will work even without the function brackets. The arguments can optionally include double or single quote qualifiers, but will alsp work without any qualifiers.
+
+Valid examples:
+```javascript
+<<yeartoyear>>
+<<yeartoyear()>>
+<<yeartoyear(2020)>>
+<<yeartoyear(2020, 2021)>>
+<<yeartoyear(1976,now)>>
+<<yeartoyear(fc,2020)>>
+<<yeartoyear(fc,now)>>
+<<yeartoyear("fc","now")>>
+<<yeartoyear('fc','now')>>
+<<yeartoyear(i am a rabbit, 2020)>>
+```
 
 # Configuration
 It is quite possible to use this extension without making any changes to your VSCode's settings (although you probably want to set up a couple of variable values like author and company at least).  Extensive configuration options are available should you wish to get your hands dirty.

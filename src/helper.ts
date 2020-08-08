@@ -4,7 +4,7 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Saturday, 18th July 2020 2:29:42 pm
+ * Last Modified: Saturday, 8th August 2020 5:22:21 pm
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -307,6 +307,7 @@ export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEdito
 	variables.push([k_.VAR_FILE_NAME_BASE, extractFileName(currentFile, true)]);
 	// using filecreated function without arguments treats it like a variable.
 	variables.push([k_.FUNC_FILE_CREATED, fcreated.toDateString()]);
+	variables.push([k_.FUNC_YEAR_TO_YEAR, `${y2yYear('fc', config.creationDateZero)} - ${y2yYear('now')}`]);
 	if (config && config.copyrightHolder) {
 		variables.push([k_.VAR_COPYRIGHT_HOLDER, config.copyrightHolder]);
 	}
@@ -739,6 +740,7 @@ export function addLineSuffix(line: string, suffix: string, wrapCol: number, tab
 function replaceFunctions(source: string, zeroDate: ZeroDate): string {
 	let replaced: string = source;
 	let replacements: IVariableList = [];
+
 	// get date part placeholders
 	constructFunctionReferences(replacements, source, k_.FUNC_DATE_FMT, (args: string): string => {
 		// remove the surrounding quotes
@@ -760,6 +762,18 @@ function replaceFunctions(source: string, zeroDate: ZeroDate): string {
 		}
 	});
 
+	// get the year to year placeholders
+	constructFunctionReferences(replacements, source, k_.FUNC_YEAR_TO_YEAR, (args: string) => {
+		const argsArray: string[] =
+			args && args.length > 0
+			? args.split(',').map(arg => arg.trim().replace(/('|")/g, ''))
+			: [];
+		console.log(args, argsArray);
+		const fromArg: string = y2yYear(argsArray.length > 0 ? argsArray[0] : 'fc', zeroDate);
+		const toArg: string = y2yYear(argsArray.length > 1 ? argsArray[1] : 'now', zeroDate);
+		return fromArg === toArg ? fromArg : `${fromArg} - ${toArg}`;
+	});
+
 	// perform placeholder substitution
 	for (let v of replacements) {
 		let regex = new RegExp(escapeRegExp(v[0]), 'g');
@@ -767,6 +781,18 @@ function replaceFunctions(source: string, zeroDate: ZeroDate): string {
 	}
 	return replaced;
 }
+
+function y2yYear(arg: string, zeroDate: ZeroDate = "asIs"): string {
+	if (!arg) {
+		return '';
+	} else if (arg.toLowerCase() === 'fc') {
+		return getActiveFileCreationDate(zeroDate).getFullYear().toString();
+	} else if (arg.toLowerCase() === 'now') {
+		return new Date().getFullYear().toString();
+	}
+	return arg;
+}
+
 
 /**
  * Construct a placeholder variable list for a specified function based on the template text content.
