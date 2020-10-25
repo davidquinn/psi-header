@@ -2,6 +2,14 @@
 All notable changes to the "psi-header" extension will be documented in this file.
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
+
+## 1.14.1 (19 September 2020)
+Just some extra documentation around 1.14.0.
+
+## 1.14.0 (19 September 2020)
+*__NEW__*: Template and Language Configurations can now be defined by file extension.
+*__NEW__*: Variable substitution text can be forced to upper or lowercase.
+
 ## 1.13.1 (08 August 2020)
 *__FIX__*: Got rid of recalcitrant console.log entry...oops!
 

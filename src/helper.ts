@@ -4,7 +4,7 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Saturday, 8th August 2020 5:48:30 pm
+ * Last Modified: Saturday, 19th September 2020 11:38:45 am
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -48,7 +48,8 @@ import {
 	IPlaceholderFunction,
 	IInspectableConfig,
 	ZeroDate,
-	ILicenseReference
+	ILicenseReference,
+	IMappableLanguage
 } from './interfaces';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -108,40 +109,61 @@ export function getConfig(wsConfig: WorkspaceConfiguration, langConfig: ILangCon
 }
 
 /**
+ * Find the correct template or language config record.
+ *
+ *  Returns the config record where the language matches either the `fileXtn` or
+ * `langId` (in that order). Will honour the `mapTo` of the matched record if
+ * given.
+ *
+ * If no matching record is found, it will attempt to return the default record.
+ *
+ * @template T The type of record - template or language config.
+ * @param {Array<T>} list The list of record to search
+ * @param {string} langId The VSC language mode value of the target file
+ * @param {string} filename The name of the target file.
+ * @returns {T} A matching record or undefined.
+ */
+function getMappableRecord<T extends IMappableLanguage>(list: Array<T>, langId: string, filename: string): T {
+	let def: T;
+	const fileXtn: string = !!filename ? path.extname(filename) : '';
+	if (fileXtn && fileXtn.length > 0) {
+		def = list.find(item => item.language.toLowerCase() === fileXtn.toLowerCase());
+	}
+	if (!def) {
+		def = list.find(item => item.language.toLowerCase() === langId.toLowerCase());
+	}
+	if (def && def.hasOwnProperty('mapTo')) {
+		def = list.find(item => item.language.toLowerCase() === def.mapTo.toLowerCase());
+	}
+	if (!def) {
+		def = list.find(item => item.language === k_.DEFAULT);
+	}
+	return def;
+}
+
+/**
  * Retrieve the desired template.  Will use the first of these that exists:
  *   - language-specific template from workspace settings; else
  *   - default template from workspace settings; else
  *   - the default template as defined by this extension.
  *
+ * The language is typically based on the VSC Language Mode, but can also be the
+ * file extension where the template's `language` starts with a period.
+ *
  * @param {WorkspaceConfiguration} wsConfig
  * @param {string} langId
+ * @param {string} filename The name of the target file.
  * @returns {Array<string>}
  */
-export function getTemplateConfig(wsConfig: WorkspaceConfiguration, langId: string): ITemplateConfig {
-	let def: ITemplateConfig;
+export function getTemplateConfig(wsConfig: WorkspaceConfiguration, langId: string, filename: string): ITemplateConfig {
 	const templates: ITemplateConfigList = getMergedTemplates(wsConfig);
-
-	if (templates) {
-		def = templates.find(function(item: ITemplateConfig): boolean {
-			return item.language === langId;
-		});
-		if (def && def.hasOwnProperty('mapTo')) {
-			const mapTo = def.mapTo;
-			def = templates.find(function(item: ITemplateConfig): boolean {
-				return item.language === mapTo;
-			});
-		}
-		if (def == null || !def.template) {
-			def = templates.find(function(item: ITemplateConfig): boolean {
-				return item.language === k_.DEFAULT;
-			});
-		}
-	}
-
+	let def: ITemplateConfig = getMappableRecord<ITemplateConfig>(templates, langId, filename);
 	if (!def || !def.template) {
-		def = { language: k_.DEFAULT, template: k_.DEFAULT_TEMPLATE, changeLogHeaderLineCount: 0 };
+		def = templates.find(item => item.language === k_.DEFAULT);
+		if (!def || !def.template) {
+			def = { language: k_.DEFAULT, template: k_.DEFAULT_TEMPLATE, changeLogHeaderLineCount: 0 };
+		}
 	}
-
 	return def;
 }
 
@@ -159,31 +181,13 @@ export function getTemplateConfig(wsConfig: WorkspaceConfiguration, langId: stri
  *
  * @param {WorkspaceConfiguration} wsConfig
  * @param {string} langId
+ * @param {string} filename The name of the target file.
  * @returns {ILangConfig}
  */
-export function getLanguageConfig(wsConfig: WorkspaceConfiguration, langId: string): ILangConfig {
+export function getLanguageConfig(wsConfig: WorkspaceConfiguration, langId: string, filename: string): ILangConfig {
 	let base: ILangConfig = baseLangConfig(langId);
-	let cfg: ILangConfig;
 	let configs: ILangConfigList = getMergedLangConfig(wsConfig);
-
-	if (configs) {
-		cfg = configs.find(function(item: ILangConfig): boolean {
-			return item.language === langId;
-		});
-		if (cfg && cfg.hasOwnProperty('mapTo')) {
-			const mapTo = cfg.mapTo;
-			// I'm only doing this once!!  You won't make me run around in circles!!
-			cfg = configs.find(function(item: ILangConfig): boolean {
-				return item.language === mapTo;
-			});
-		}
-		if (cfg == null) {
-			cfg = configs.find(function(item: ILangConfig): boolean {
-				return item.language === k_.DEFAULT;
-			});
-		}
-	}
-
+	let cfg: ILangConfig = getMappableRecord<ILangConfig>(configs, langId, filename);
 	mapLangConfig(cfg, base);
 	return base;
 }
@@ -689,6 +693,10 @@ export function replacePlaceholders(source: string, variables: IVariableList, ze
 		if (v[1]) {
 			let regex = new RegExp(k_.VAR_PREFIX + v[0] + k_.VAR_SUFFIX, 'gi');
 			replaced = replaced.replace(regex, v[1]);
+			regex = new RegExp(k_.VAR_PREFIX + v[0] + k_.VAR_ARG_UPPER + k_.VAR_SUFFIX, 'gi');
+			replaced = replaced.replace(regex, v[1].toLocaleUpperCase());
+			regex = new RegExp(k_.VAR_PREFIX + v[0] + k_.VAR_ARG_LOWER + k_.VAR_SUFFIX, 'gi');
+			replaced = replaced.replace(regex, v[1].toLocaleLowerCase());
 		}
 	}
 	replaced = replaceFunctions(replaced, zeroDate);

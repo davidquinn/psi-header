@@ -4,7 +4,7 @@
  * File Created: Friday, 6th October 2017 10:23:19 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Saturday, 8th August 2020 1:03:47 pm
+ * Last Modified: Saturday, 19th September 2020 10:22:39 am
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -87,6 +87,16 @@ export const VAR_PREFIX: string = '<<';
  * The variable placeholder suffix.
  */
 export const VAR_SUFFIX: string = '>>';
+
+/**
+ * The variable uppercase conversion argument.
+ */
+export const VAR_ARG_UPPER: string = '!U';
+
+/**
+ * The variable uppercase conversion argument.
+ */
+export const VAR_ARG_LOWER: string = '!L';
 
 /**
  * The key text for a default language config or template.

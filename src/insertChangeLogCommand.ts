@@ -1,10 +1,10 @@
 /*
- * File: insertChangeLogCommand.ts
+ * File: insertFileHeaderCommand.ts
  * Project: psioniq File Header
  * File Created: Wednesday, 11th July 2018 6:31:17 am
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Friday, 3rd January 2020 7:43:43 am
+ * Last Modified: Saturday, 19th September 2020 10:09:08 am
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -43,8 +43,8 @@ export function insertChangeLog() {
 	}
 
 	const wsConfig: WorkspaceConfiguration = workspace.getConfiguration(helper.BASE_SETTINGS);
-	const langConfig: helper.ILangConfig = helper.getLanguageConfig(wsConfig, editor.document.languageId);
-	const templateConfig: ITemplateConfig = helper.getTemplateConfig(wsConfig, editor.document.languageId);
+	const langConfig: helper.ILangConfig = helper.getLanguageConfig(wsConfig, editor.document.languageId, editor.document.fileName);
+	const templateConfig: ITemplateConfig = helper.getTemplateConfig(wsConfig, editor.document.languageId, editor.document.fileName);
 	const naturalOrder: boolean = templateConfig.changeLogNaturalOrder || false;
 
 	if (!templateConfig.changeLogCaption && !naturalOrder) {

@@ -4,7 +4,7 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Saturday, 4th January 2020 2:35:40 pm
+ * Last Modified: Saturday, 19th September 2020 10:06:49 am
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -123,13 +123,13 @@ export class ChangesTrackingController {
 			}
 			const doc: TextDocument = e.document;
 			if (doc && doc.isDirty && this._want(doc.languageId, doc.fileName)) {
-				const langConfig: ILangConfig = getLanguageConfig(this._wsConfig, doc.languageId);
+				const langConfig: ILangConfig = getLanguageConfig(this._wsConfig, doc.languageId, doc.fileName);
 				const mainConfig: IConfig = getConfig(this._wsConfig, langConfig);
 				if (this._config.enforceHeader && this._docNeedsHeader(doc)) {
 					insertFileHeader();
 				}
 				const variables: IVariableList = getVariables(this._wsConfig, activeTextEditor, mainConfig, langConfig, !this._config.updateLicenseVariables);
-				const template: Array<string> = getTemplateConfig(this._wsConfig, doc.languageId).template;
+				const template: Array<string> = getTemplateConfig(this._wsConfig, doc.languageId, doc.fileName).template;
 
 				const modDate: string = langConfig.modDate || this._config.modDate;
 				const modDateWithPrefix: string = langConfig.prefix + modDate;
@@ -405,7 +405,7 @@ export class ChangesTrackingController {
 		let result: boolean = doc.lineCount <= 1;
 		if (!result) {
 			result = true;
-			const lang: ILangConfig = getLanguageConfig(this._wsConfig, doc.languageId);
+			const lang: ILangConfig = getLanguageConfig(this._wsConfig, doc.languageId, doc.fileName);
 			const mainConfig: IConfig = getConfig(this._wsConfig, lang);
 			let skip: number = lang.beforeHeader ? lang.beforeHeader.length : 0;
 			for (let i: number = 0; i < doc.lineCount; i++) {

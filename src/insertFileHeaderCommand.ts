@@ -4,7 +4,7 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Monday, 31st December 2018 1:00:01 pm
+ * Last Modified: Saturday, 19th September 2020 10:08:56 am
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -46,9 +46,8 @@ export function insertFileHeader() {
 		return;
 	}
 	const wsConfig: WorkspaceConfiguration = workspace.getConfiguration(BASE_SETTINGS);
-	const langId: string = editor.document.languageId;
-	const langConfig: ILangConfig = getLanguageConfig(wsConfig, langId);
-	const template: Array<string> = getTemplateConfig(wsConfig, langId).template;
+	const langConfig: ILangConfig = getLanguageConfig(wsConfig, editor.document.languageId, editor.document.fileName);
+	const template: Array<string> = getTemplateConfig(wsConfig, editor.document.languageId, editor.document.fileName).template;
 	const config: IConfig = getConfig(wsConfig, langConfig);
 	const variables: IVariableList = getVariables(wsConfig, editor, config, langConfig);
 

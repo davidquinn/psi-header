@@ -114,7 +114,7 @@ This extension adds the following commands to VSCode:
 | Header Change Log Insert | ctrl-alt-C ctrl-alt-C | Inserts a new [change log entry](#change-log) into an existing header |
 
 # System Variables
-The following system variables are available for placeholder substitution in your templates.  They are case-insensitive.
+The following system variables are available for placeholder substitution in your templates.  The variable names are case-insensitive.
 
 |Variable Name | Description |
 |---|---|
@@ -139,6 +139,8 @@ The following system variables are available for placeholder substitution in you
 | `licenseurl` | The url for the license. If not using a license, this is determined automatically. |
 | `spdxid` | The SPDX License ID for the license. If not using a custom license, this is determined automatically. |
 | `hostname` | The value of the `psi-header.config.hostname` setting if set, otherwise the local machine's hostname as provided by the OS. |
+
+Within your template, surround the variable names with two sets of chevrons (e.g. ``<<filepath>>`. Also, you can modify the text case of the output for any of the system variables by appending `!U` or `!L` to the end of the variable name (e.g. `<<filepath!U>>` to render the file path in uppercase or `<<filepath!L>>` for lower case).
 
 You can also create your own static custom variables (for example if you are using this extension within a team or you need project-specific variables in your template) by adding your own variables to `psi-header.variables` then referring to them within your template like the following example which adds a custom variable called `projectCreationYear`:
 ``` json
@@ -166,7 +168,7 @@ You can also create your own static custom variables (for example if you are usi
 NOTE: You can include system variables in the `beforeHeader` and `afterHeader` properties of your language configurations. However, they will only be processed when the header is first added to your file and *_will not be updated on subsequent file saves_*. Why? Because the extension has no idea what may have changed or been edited outside of the template since it was added to the file, and possibly the worst thing that the extension could do is delete or mess up your carefully crafted source code by assuming that the structure of the before and after blocks in your language template exactly matches the structure that existed at the time the header was added.
 
 # System Functions
-The following _case-sensitive_ `system functions` are available for configurable placeholder value substitution.  These are similar to [System Variables](#system-variables) but they take arguments.
+The following _case-sensitive_ `system functions` are available for configurable placeholder value substitution.  These are similar to [System Variables](#system-variables) but they take arguments and they do not support the text case modifiers.
 
 |Function Name | Description |
 |---|---|
@@ -301,7 +303,7 @@ An array of objects that allow language-specific adjustments to be made to the c
 
 | Option | Description |
 |---|---|
-| `language` | Mandatory. Either the VSCode language ID or '*' for global settings. |
+| `language` | Mandatory. Either a file extension including the leading period; the VSCode Language ID; or '*' for global settings. |
 | `mapTo` | Optional.  If provided, this language will use the specified language's configuration (and the settings below will be ignored).  The value is a VSCode language ID.  You can not `mapTo` a language that itself has the `mapTo` value set.  Ignored if language = "*". |
 | `begin` | Optional - defaults to `"/*"`. Determines the comment block opening text.  This will be inserted as a line before the first line of the template.  Refer to [Compact Mode](#-compact-mode) for information on headings with no begin and end lines. |
 | `prefix` | Optional - defaults to `" * "`. Determines a prefix for each body line of the header. |
@@ -326,7 +328,7 @@ An array of template definitions.  Each definition must include either *_mapTo_*
 
 | Option | Description |
 |---|---|
-| `language` | Mandatory. Either the VSCode language ID or '*' for the global template. |
+| `language` | Mandatory. Either a file extension including the leading period; the VSCode Language ID; or '*' for global settings. |
 | `mapTo` | Optional.  If provided, this language will use the specified language's template (and will ignore the following *_template_* value).  The value is a VSCode language ID.  You can not `mapTo` a language that itself has the `mapTo` value set.  Ignored if *_language = "*"_*. |
 | `template` | This must be provided if *_mapTo_* is not declared.  Includes an array of strings that represent the body of the header.  No need to include the comment block syntax. |
 | `changeLogCaption` | Used by the [Change Log](#change-log) feature.  Defines the caption for the change log that must also appear in the main header template.  The extension uses this caption to work out where to place a new change log entry. Ignored if `changeLogNaturalOrder` is `true`. |

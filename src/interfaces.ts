@@ -4,7 +4,7 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Thursday, 23rd April 2020 8:51:12 pm
+ * Last Modified: Saturday, 19th September 2020 7:47:21 am
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -37,6 +37,11 @@ import {Range} from 'vscode';
  */
 export type ZeroDate = 'asIs' | 'blank' | 'now';
 
+export interface IMappableLanguage {
+    language: string;
+    mapTo?: string;
+}
+
 /**
  * Interface for a template entry in the settings file.
  * Each entry will have either a template or mapTo property.
@@ -44,9 +49,7 @@ export type ZeroDate = 'asIs' | 'blank' | 'now';
  *
  * @interface ITemplate
  */
-export interface ITemplateConfig {
-    language: string,
-    mapTo?: string;
+export interface ITemplateConfig extends IMappableLanguage {
 	template?: Array<string>;
 	changeLogCaption?: string;
 	changeLogHeaderLineCount?: number;
@@ -87,9 +90,7 @@ export interface IConfig {
  *
  * @interface ILangConfig
  */
-export interface ILangConfig {
-    language: string;
-    mapTo?: string;
+export interface ILangConfig extends IMappableLanguage {
     begin?: string;
 	prefix?: string;
 	suffix?: string;
