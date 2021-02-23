@@ -14,7 +14,7 @@
 	- [Variable Values](#variable-values)
 	- [Language Configuration](#language-configuration)
 	- [Templates](#templates)
-	- [Licence Text](#licence-text)
+	- [License Text](#license-text)
 	- [License Reference](#license-reference)
 - [Compact Mode](#compact-mode)
 - [Block-Style Comment Headers](#block-style-comment-headers)
@@ -248,7 +248,7 @@ The configuration settings are organised into the following areas described belo
   * `variables`: an array of key/value pairs for variable substitution values;
   * `lang-config`: an array of language-specific (and general) settings (comment styles, etc);
   * `templates`: an array of language-specific (and general) header templates;
-  * `licence-text`: an array of strings that defines custom licence text.
+  * `license-text`: an array of strings that defines custom license text.
   * `license-reference`: options for reading the license from a local file or a web link.
 
 ## Global Options
@@ -339,10 +339,10 @@ An array of template definitions.  Each definition must include either *_mapTo_*
 
 *_NOTE:_*   Also, `mapTo` is ignored if the language value is set to "*".
 
-## Licence Text
-An optional array of strings for defining custom licence text.  Used where *_psi-header.config.license = "Custom"_*.
+## License Text
+An optional array of strings for defining custom license text.  Used where *_psi-header.config.license = "Custom"_*.
 
-*_Configuration Section:_* `psi-header.licence-text`
+*_Configuration Section:_* `psi-header.license-text`
 
 ## License Reference
 Options for reading the license text from a local file or for setting the license URL. Requires `psi-header.config.license` to be set to `"CustomUri"`. Refer to [License Information](#license-information) for details.
@@ -408,7 +408,7 @@ The `psi-header.config.license` setting expects either a valid [SPDX license ID]
 When set to `"Custom"`, you need to provide the license text via the `psi-header.license-text` setting. This will populate the `<<licensetext>>` system variable.
 
 ## "CustomUri"
-When set to `"CustomUri"` you need to provide further details in the `psi-header.licence-reference` section. The License reference setting `uri` should be either:
+When set to `"CustomUri"` you need to provide further details in the `psi-header.license-reference` section. The License reference setting `uri` should be either:
 1. a local filename including an absolute path to point to a file in a specific location; or
 2. a filename without a path where the file exists somewhere on the same directory branch as the file being edited. The extension will search from the edit file location up the directory structure until it finds a file with the correct name; or
 3. a URL - note that the extension will not check the validity of the entered URL.

@@ -3,6 +3,10 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 To report bugs, issues, suggestions: email `info@psioniq.uk`
 
+## 1.15.0
+* Moved source to GitHub.
+* Added explicit LICENSE.txt file.
+
 ## 1.14.1 (19 September 2020)
 Just some extra documentation around 1.14.0.
 
