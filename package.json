@@ -5,12 +5,16 @@
 	"icon": "img/psi-logo.png",
 	"version": "1.15.0",
 	"publisher": "psioniq",
-	"license": "MIT",
+	"license": "SEE LICENSE IN LICENSE.txt",
 	"bugs": {
-		"url": "http://www.psioniq.uk/index.html",
+		"url": "https://github.com/davidquinn/psi-header/issues",
 		"email": "info@psioniq.uk"
 	},
-	"homepage": "http://www.psioniq.uk/index.html",
+	"homepage": "https://github.com/davidquinn/psi-header/blob/main/README.md",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/davidquinn/psi-header"
+	},
 	"engines": {
 		"vscode": "^1.6.0"
 	},
