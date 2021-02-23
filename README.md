@@ -2,41 +2,46 @@
 <!-- TOC -->
 
 - [Overview](#overview)
-	- [Summary of Features](#summary-of-features)
+    - [Summary of Features](#summary-of-features)
 - [Commands](#commands)
 - [System Variables](#system-variables)
 - [System Functions](#system-functions)
-	- [Date Formats in System Functions](#date-formats-in-system-functions)
-	- [yeartoyear](#yeartoyear)
+    - [Date Formats in System Functions](#date-formats-in-system-functions)
+    - [yeartoyear](#yeartoyear)
 - [Configuration](#configuration)
-	- [Global Options](#global-options)
-	- [Changes Tracking Configuration](#changes-tracking-configuration)
-	- [Variable Values](#variable-values)
-	- [Language Configuration](#language-configuration)
-	- [Templates](#templates)
-	- [License Text](#license-text)
-	- [License Reference](#license-reference)
+    - [Global Options](#global-options)
+    - [Changes Tracking Configuration](#changes-tracking-configuration)
+    - [Variable Values](#variable-values)
+    - [Language Configuration](#language-configuration)
+    - [Templates](#templates)
+    - [License Text](#license-text)
+    - [License Reference](#license-reference)
 - [Compact Mode](#compact-mode)
 - [Block-Style Comment Headers](#block-style-comment-headers)
 - [A Note about Project Paths](#a-note-about-project-paths)
 - [License Information](#license-information)
-	- ["Custom"](#custom)
-	- ["CustomUri"](#customuri)
-	- [SPDX](#spdx)
-	- [Refreshing the License Text System Variable](#refreshing-the-license-text-system-variable)
+    - ["Custom"](#custom)
+    - ["CustomUri"](#customuri)
+    - [SPDX](#spdx)
+    - [Refreshing the License Text System Variable](#refreshing-the-license-text-system-variable)
 - [Changes Tracking](#changes-tracking)
-	- [Option 1 Simple Replacement](#option-1-simple-replacement)
-	- [Option 2 Template Substitution](#option-2-template-substitution)
+    - [Option 1 Simple Replacement](#option-1-simple-replacement)
+    - [Option 2 Template Substitution](#option-2-template-substitution)
 - [Auto Header](#auto-header)
 - [Enforce Header](#enforce-header)
 - [Change Log](#change-log)
-	- [Configuring Change Logging](#configuring-change-logging)
-	- [Questions about Change Logs](#questions-about-change-logs)
+    - [Configuring Change Logging](#configuring-change-logging)
+    - [Questions about Change Logs](#questions-about-change-logs)
+        - [7.2.1. Can this be configured to not have a caption line?](#721-can-this-be-configured-to-not-have-a-caption-line)
+        - [7.2.2. Can it be configured to automatically add a log entry?](#722-can-it-be-configured-to-automatically-add-a-log-entry)
+        - [7.2.3. Can I have comments on a separate line?](#723-can-i-have-comments-on-a-separate-line)
+        - [7.2.4. Why do I have to manually add the comment?](#724-why-do-i-have-to-manually-add-the-comment)
+        - [7.2.5. What if I need longer comments?](#725-what-if-i-need-longer-comments)
 - [An Example Custom Configuration](#an-example-custom-configuration)
 - [Creating a Custom Template](#creating-a-custom-template)
 - [Known Issues](#known-issues)
-	- [Cleaning up SPDX License Text](#cleaning-up-spdx-license-text)
-	- [Determining File Creation Time on Linux](#determining-file-creation-time-on-linux)
+    - [Cleaning up SPDX License Text](#cleaning-up-spdx-license-text)
+    - [Determining File Creation Time on Linux](#determining-file-creation-time-on-linux)
 - [Credits](#credits)
 
 <!-- /TOC -->
@@ -50,7 +55,7 @@ It is also possible to add templated comment blocks to the header to record for 
 
 There are a veritable plethora of configuration options to cover your innermost headular cravings.
 
-To report bugs, issues, suggestions: email `info@psioniq.uk`
+To report bugs, issues, suggestions use the [github repository](https://github.com/davidquinn/psi-header).
 
 Here is a sample output:
 
@@ -715,7 +720,7 @@ In the following example:
 * Javascript and Typescript files will both use the custom template and configuration where `language = "javascript"`.
 * Lua will use it's own custom configuration (`language="lua"`), but will use the global custom template (`language = "*"`).
 * All other languages will use the global custom template (`language = "*"`) and the built in configuration settings because there is no custom global `psi-header.lang-config` defined.
-* changes tracking is turned on, but will skip Markdown and JSON files.
+* changes tracking is turned on, but will skip Markdown, JSON and `JSON with Comments` files.
 * auto header creation is active, but will not save the file after inserting the heading.
 
 ```json
@@ -733,7 +738,8 @@ In the following example:
 		"include": [],
 		"exclude": [
 			"markdown",
-			"json"
+			"json",
+			"jsonc"
 		],
 		"excludeGlob": [
 			"out/**",
@@ -862,7 +868,7 @@ The default (built in) template is:
 ```
 
 # Known Issues
-To report bugs, issues, suggestions: email `info@psioniq.uk`
+To report bugs, issues, suggestions use the [github repository](https://github.com/davidquinn/psi-header).
 
 ## Cleaning up SPDX License Text
 Refer to [License Information](#-license-information) for the extension's limitations on cleaning up SPDX license text.
