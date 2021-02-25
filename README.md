@@ -233,7 +233,116 @@ Valid examples:
 ```
 
 # Configuration
-It is quite possible to use this extension without making any changes to your VSCode's settings (although you probably want to set up a couple of variable values like author and company at least).  Extensive configuration options are available should you wish to get your hands dirty.
+It is quite possible to use this extension without making any changes to your VSCode's settings (although you probably want to set up a couple of variable values like author and company at least).  Extensive configuration options are available should you wish to get your hands dirty. 
+
+Following is an example settings file with every conceivable psi-header option (the rest of this section provides the detail for each of the settings). 
+
+> WARNING: Do not just paste this example into your settings.json file because there will be conflicting values - the example is just provided to show how the settings file entries are structured.
+
+```json
+{
+	"psi-header.config": {
+		"forceToTop": true,
+		"blankLinesAfter": 1,
+		"license": "MIT",
+		"author": "Arthur Bodkin",
+		"initials": "AB",
+		"authorEmail": "arthur@bodkin-enterprises.com",
+		"company": "Bodkin World Domination Enterprises",
+		"copyrightHolder": "Bodkin & Bodkin Ltd",
+		"creationDateZero": "asIs",
+		"hostname": "myhostname"
+	},
+	"psi-header.changes-tracking": {
+		"isActive": true,
+		"modAuthor": "Modified By:",
+		"modDate": "Last Modified:",
+		"modDateFormat": "dd/MM/yyyy hh:nn:ss",
+		"include": [],
+		"includeGlob": [],
+		"exclude": ["markdown", "json", "jsonc", "shellscript"],
+		"excludeGlob": ["./**/*/ignoreme.*"],
+		"autoHeader": "autoSave",
+		"enforceHeader": true,
+		"replace": [
+			"Filename:",
+			"Project"
+		],
+		"updateLicenseVariables": false
+	},
+	"psi-header.variables": [
+		"manager": "Old Mother Bodkin",
+		"projectCreationYear": "2019"
+	],
+	"psi-header.lang-config": [
+		{
+			"language": "javascript",
+			"begin": "/*",
+			"prefix": " * ",
+			"suffix": " *",
+			"lineLength": 80,
+			"end": " */",
+			"forceToTop": true,
+			"blankLinesAfter": 3,
+			"beforeHeader": [],
+			"afterHeader": [],
+			"rootDirFileName": "package.json",
+			"modAuthor": "Modified By:",
+			"modDate": "Last Modified:",
+			"modDateFormat": "dd/MM/yyyy hh:nn:ss",
+			"replace": [
+				"Filename:",
+				"Project"
+			],
+			"ignoreLines": []
+		},
+		{
+			"language": "typescript",
+			"mapTo": "javascript"
+		}
+	],
+	"psi-header.templates": [
+		{
+			"language": "javascript",
+			"template": [
+				"File: <<filename>>",
+ 				"Project: <<projectname>>",
+				"Created Date: <<filecreated('dd MMM yyyy')>>",
+				"Author: <<author>",
+				"-----",
+				"Last Modified: <<date>>",
+				"Modified By: <<author>>",
+				"-----",
+				"Copyright (c) <<yeartoyear(fc, now)>> <<company>>",
+				"-----",
+				"HISTORY:",
+				"Date      \tBy\tComments",
+				"----------\t---\t---------------------------------------------------------"
+			],
+			"changeLogCaption": "HISTORY",
+			"changeLogHeaderLineCount": 2,
+			"changeLogEntryTemplate": [
+				"",
+				"<<dateformat(DD-MM-YYYY)>>\t<<initials>>\t"
+			],
+			"changeLogNaturalOrder": false,
+			"changeLogFooterLineCount": 0
+		},
+		{
+			"language": "typescript",
+			"mapTo": "javascript"
+		}
+	],
+	"psi-header.license-text": [
+		"This will never show because it is only relevant if",
+		"psi-header.config.license equals Custom"
+	],
+	"psi-header.license-reference": {
+		"uri": "path/to/license.file",
+		"uriIsLocalFile": true
+	}
+}
+```
 
 There are some specific settings that you must setup if you want to use the [Change Log](#change-log) feature.
 
