@@ -4,8 +4,8 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Saturday, 19th September 2020 11:38:45 am
- * Modified By: David Quinn (info@psioniq.uk)
+ * Last Modified: Saturday, 15th May 2021 4:35:34 pm
+ * Modified By: Andrew Schepler (aschepler@gmail.com)
  * -----
  * MIT License
  *
@@ -46,6 +46,7 @@ import {
 	IVariable,
 	IVariableList,
 	IPlaceholderFunction,
+	IPlaceholderFromOldFunction,
 	IInspectableConfig,
 	ZeroDate,
 	ILicenseReference,
@@ -598,7 +599,7 @@ function addLicenseVariables(wsConfig: WorkspaceConfiguration, variables: IVaria
 			}
 		}
 	}
-	variables.push([k_.VAR_LICENSE_TEXT, replacePlaceholders(txt.join('\n'), variables, config.creationDateZero)]);
+	variables.push([k_.VAR_LICENSE_TEXT, replacePlaceholders(txt.join('\n'), variables, '', config.creationDateZero)]);
 	if (spdx) {
 		variables.push([k_.VAR_LICENSE_NAME, spdx.name]);
 		variables.push([k_.VAR_LICENSE_URL, spdx.url]);
@@ -613,7 +614,7 @@ export function replaceTemplateVariables(template: Array<string>, linePrefix: st
 	for (let i = 0; i < template.length; i++) {
 		body.push(linePrefix + template[i]);
 	}
-	return replacePlaceholders(body.join('\n'), variables, zeroDate);
+	return replacePlaceholders(body.join('\n'), variables, '', zeroDate);
 }
 
 /**
@@ -687,7 +688,7 @@ function arrayToString(source: Array<string>): string {
  * @param {IVariableList} variables
  * @returns {string}
  */
-export function replacePlaceholders(source: string, variables: IVariableList, zeroDate: ZeroDate = 'asIs'): string {
+export function replacePlaceholders(source: string, variables: IVariableList, oldLine: string = '', zeroDate: ZeroDate = 'asIs') : string {
 	let replaced: string = source;
 	for (let v of variables) {
 		if (v[1]) {
@@ -699,7 +700,7 @@ export function replacePlaceholders(source: string, variables: IVariableList, ze
 			replaced = replaced.replace(regex, v[1].toLocaleLowerCase());
 		}
 	}
-	replaced = replaceFunctions(replaced, zeroDate);
+	replaced = replaceFunctions(replaced, oldLine, zeroDate);
 	return replaced;
 }
 
@@ -745,7 +746,7 @@ export function addLineSuffix(line: string, suffix: string, wrapCol: number, tab
  *
  * @param source the templae text
  */
-function replaceFunctions(source: string, zeroDate: ZeroDate): string {
+function replaceFunctions(source: string, oldLine: string, zeroDate: ZeroDate) : string {
 	let replaced: string = source;
 	let replacements: IVariableList = [];
 
@@ -771,12 +772,23 @@ function replaceFunctions(source: string, zeroDate: ZeroDate): string {
 	});
 
 	// get the year to year placeholders
-	constructFunctionReferences(replacements, source, k_.FUNC_YEAR_TO_YEAR, (args: string) => {
-		const argsArray: string[] =
+	constructFunctionReferencesWithOld(replacements, source, k_.FUNC_YEAR_TO_YEAR, oldLine, (args: string, oldText: string) => {
+		let argsArray: string[] =
 			args && args.length > 0
 			? args.split(',').map(arg => arg.trim().replace(/('|")/g, ''))
 			: [];
-		const fromArg: string = y2yYear(argsArray.length > 0 ? argsArray[0] : 'fc', zeroDate);
+		let oldYear: string | null = null;
+		if (argsArray.length > 0 && argsArray[0].startsWith('*')) {
+			argsArray[0] = argsArray[0].substr(1);
+			const yearMatch = oldText.match(/^\d+/);
+			if (yearMatch) {
+				oldYear = yearMatch[0];
+			}
+		}
+		const fromArg: string =
+			oldYear != null
+			? oldYear
+			: y2yYear(argsArray.length > 0 ? argsArray[0] : 'fc', zeroDate);
 		const toArg: string = y2yYear(argsArray.length > 1 ? argsArray[1] : 'now', zeroDate);
 		return fromArg === toArg ? fromArg : `${fromArg} - ${toArg}`;
 	});
@@ -819,6 +831,46 @@ function constructFunctionReferences(references: IVariableList, source: string, 
 			let args: string = source.substring(start + funcNeedle.length, end);
 			let key: string = `${funcNeedle}${args})${k_.VAR_SUFFIX}`;
 			let value: string = cb ? cb(args) : '';
+			references.push([key, value]);
+		}
+	}
+}
+
+/**
+ * Construct a placeholder variable list for a specified function based on the template text content and the existing content.
+ */
+function constructFunctionReferencesWithOld(references: IVariableList, source: string, functionName: string, oldLine: string, cb: IPlaceholderFromOldFunction) {
+	const funcNeedle: string = `${k_.VAR_PREFIX}${functionName}(`;
+	let indices: Array<number> = getIndicesOf(funcNeedle, source, false);
+	for (let i = 0; i < indices.length; i++) {
+		let start = indices[i];
+		let end: number = source.indexOf(`)`, start);
+		if (end > -1) {
+			let oldMatcher = '^';
+			let srcPos = 0;
+			while (srcPos < start) {
+				let prefixPos = source.indexOf(k_.VAR_PREFIX, srcPos);
+				let suffixPos = -1;
+				if (prefixPos > -1 && prefixPos < start) {
+					suffixPos = source.indexOf(k_.VAR_SUFFIX, prefixPos + k_.VAR_PREFIX.length);
+				}
+				if (suffixPos > -1 && suffixPos < start) {
+					oldMatcher += escapeRegExp(source.substring(srcPos, prefixPos));
+					oldMatcher += '.+?';
+					srcPos = suffixPos + k_.VAR_SUFFIX.length;
+				}
+				else
+				{
+					oldMatcher += escapeRegExp(source.substring(srcPos, start));
+					srcPos = start;
+				}
+			}
+			const oldMatch = oldLine.match(oldMatcher);
+			const oldValue: string = oldMatch ? oldLine.substr(oldMatch[0].length) : '';
+
+			let args: string = source.substring(start + funcNeedle.length, end);
+			let key: string = `${funcNeedle}${args})${k_.VAR_SUFFIX}`;
+			let value: string = cb ? cb(args, oldValue) : '';
 			references.push([key, value]);
 		}
 	}

@@ -66,8 +66,8 @@ Here is a sample output:
  * Created Date: Saturday December 31 2016
  * Author: Arthur Bodkin, esq
  * -----
- * Last Modified: Sunday January 01 2017
- * Modified By: Tammy Bodkin
+ * Last Modified: Saturday, 15th May 2021 5:12:41 pm
+ * Modified By: Andrew Schepler (aschepler@gmail.com)
  * -----
  * Copyright (c) 2016 psioniq Global Enterprises, Inc
  */
@@ -207,11 +207,15 @@ These functions use Moment.js and can use all [Moment.js format string options](
 ## yeartoyear
 Generates a string in the form `"YYYY - YYYY"` or just `"YYYY"` if both dates evaluate to the same year. Useful for copyright messages.
 
-This function takes 2 arguments: `from` determines the first date and `to` determines the second date. Possible values for each argument are shown in the following table. If both evaluate to the same year only a single string (`"YYYY"`) is returned.
+This function takes 2 arguments: `from` determines the first date and `to` determines the second date.
+
+If the `from` argument begins with a `"*"` and [Changes Tracking](#changes-tracking) is updating an existing header, the function will attempt to reuse the existing `from` year. When writing a new header, or when the existing year is not found, the `from` argument after the initial `"*"` is used as described below.
+
+Possible values for the `from` and `to` arguments are shown in the following table.
 
 | Property Value | Description |
 | --- | --- |
-| `fc` | The file creation date. This is the default for the`from` date. Not case-sensitive. |
+| `fc` | The file creation date. This is the default for the `from` date. Not case-sensitive. |
 | `now` | The current year. This is the default for the `to` date. Not case sensitive. |
 | `var:name` | Use a [static variable](#variable-values) where `name` is the name of the static variable. |
 | any other string | String written as is. Useful for setting a static year. Do not include any commas in the string. |
@@ -223,12 +227,14 @@ Valid examples:
 <<yeartoyear>>
 <<yeartoyear()>>
 <<yeartoyear(2020)>>
-<<yeartoyear(2020, 2021)>>
+<<yeartoyear(*fc)>>
+<<yeartoyear(*2020, 2021)>>
 <<yeartoyear(1976,now)>>
 <<yeartoyear(fc,2020)>>
 <<yeartoyear(fc,now)>>
 <<yeartoyear("fc","now")>>
 <<yeartoyear('fc','now')>>
+<<yeartoyear(*fc,now)>>
 <<yeartoyear(i am a rabbit, 2020)>>
 ```
 
@@ -620,7 +626,7 @@ You can also use this method to update other lines from the template via the `ps
 
 Note that the `psi-header.changes-tracking.modDateFormat` configuration setting is ignored when using this option.
 
-So, modifying the `"Last Modified:"` and `"Modified By:"` lines in the template from the earlier example in _Option 1_,
+So, modifying the `"Last Modified:"`, `"Modified By:"`, and `Copyright` lines in the template from the earlier example in _Option 1_,
 
 ```json
 "psi-header.templates": [
@@ -635,13 +641,15 @@ So, modifying the `"Last Modified:"` and `"Modified By:"` lines in the template 
 			"Last Modified: <<filecreated('dddd MMMM Do YYYY h:mm:ss a')>>",
 			"Modified By: the developer formerly known as <<author>> at <<<authoremail>>>",
 			"-----",
-			"Copyright (c) <<year>> <<company>>"
-		]
+			"Copyright (c) <<yeartoyear(*fc,now)>> <<company>>"
+		],
+		"replace": [ "Copyright" ]
 	},
 ]
 ```
 
-Because there is now text after the labels on these lines, the extra text is used to generate the following output:
+Because there is now text after the labels on the `"Last Modified:"` and `"Modified By:"` lines, the extra text is used to generate their output. The `replace` array specifies replacing the `"Copyright"` line, and the `"*"` in the argument to the [yeartoyear function](yeartoyear) specifies to preserve the initial year of the range.
+
 ```javascript
 /*
  * File: \Users\me\Development\psioniq\myProject\src\myPrecious.js
@@ -652,7 +660,7 @@ Because there is now text after the labels on these lines, the extra text is use
  * Last Modified: Tuesday January 03 2017 09:37:28 am
  * Modified By: the developer formerly known as Uncle Jack Bodkin at <uncle.jack@psioniq.net>
  * -----
- * Copyright (c) 2016 psioniq Global Enterprises, Inc
+ * Copyright (c) 2016 - 2017 psioniq Global Enterprises, Inc
  */
 ```
 
