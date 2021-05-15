@@ -66,7 +66,7 @@ Here is a sample output:
  * Created Date: Saturday December 31 2016
  * Author: Arthur Bodkin, esq
  * -----
- * Last Modified: Saturday, 15th May 2021 5:12:41 pm
+ * Last Modified: Saturday, 15th May 2021 5:30:15 pm
  * Modified By: Andrew Schepler (aschepler@gmail.com)
  * -----
  * Copyright (c) 2016 psioniq Global Enterprises, Inc
@@ -648,7 +648,7 @@ So, modifying the `"Last Modified:"`, `"Modified By:"`, and `Copyright` lines in
 ]
 ```
 
-Because there is now text after the labels on the `"Last Modified:"` and `"Modified By:"` lines, the extra text is used to generate their output. The `replace` array specifies replacing the `"Copyright"` line, and the `"*"` in the argument to the [yeartoyear function](yeartoyear) specifies to preserve the initial year of the range.
+Because there is now text after the labels on the `"Last Modified:"` and `"Modified By:"` lines, the extra text is used to generate their output. The `replace` array specifies replacing the `"Copyright"` line, and the `"*"` in the argument to the [yeartoyear function](#yeartoyear) specifies to preserve the initial year of the range.
 
 ```javascript
 /*
