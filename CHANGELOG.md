@@ -1,7 +1,10 @@
 # Change Log
 All notable changes to the "psi-header" extension will be documented in this file.
 
-To report bugs, issues, suggestions: email `info@psioniq.uk`
+Report bugs, issues, suggestions at https://github.com/davidquinn/psi-header
+
+## 1.15.2 (16 May 2021)
+*__FIX__*: Fix for github Issue #12. When using the `yeartoyear` function as a variable (i.e. without brackets), it was not returning a single year where the from and to years were the same.
 
 ## 1.15.1 (25 February 2021)
 No changes to functionality
