@@ -4,8 +4,8 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Saturday, 19th September 2020 7:47:21 am
- * Modified By: David Quinn (info@psioniq.uk)
+ * Last Modified: Saturday, 15th May 2021 1:38:19 pm
+ * Modified By: Andrew Schepler (aschepler@gmail.com)
  * -----
  * MIT License
  *
@@ -149,6 +149,16 @@ export type IVariableList = Array<IVariable>;
  */
 export interface IPlaceholderFunction {
 	(arg: string): string;
+}
+
+/**
+ * Delegate for function using old text and returning a placeholder value
+ * 
+ * @export
+ * @interface IPlaceholderFromOldFunction
+ */
+export interface IPlaceholderFromOldFunction {
+	(arg: string, oldText: string): string;
 }
 
 /**
