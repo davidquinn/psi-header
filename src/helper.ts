@@ -4,7 +4,7 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Saturday, 15th May 2021 4:35:34 pm
+ * Last Modified: Sunday, 16th May 2021 6:39:05 am
  * Modified By: Andrew Schepler (aschepler@gmail.com)
  * -----
  * MIT License
@@ -838,6 +838,15 @@ function constructFunctionReferences(references: IVariableList, source: string, 
 
 /**
  * Construct a placeholder variable list for a specified function based on the template text content and the existing content.
+ * 
+ * The second argument to @a cb will be the part of @a oldLine from the matched position to the end,
+ * or an empty string if not replacing text or the replaced text could not be determined.
+ * 
+ * @param {string} source the template text
+ * @param {string} functionName the name of the template function
+ * @param {string} oldLine the existing line being replaced, or empty string if creating a new header
+ * @param {IPlaceholderFunction} cb the method to run to retrieve the value based on the function arguments and old text
+ * @returns {IVariableList}
  */
 function constructFunctionReferencesWithOld(references: IVariableList, source: string, functionName: string, oldLine: string, cb: IPlaceholderFromOldFunction) {
 	const funcNeedle: string = `${k_.VAR_PREFIX}${functionName}(`;
