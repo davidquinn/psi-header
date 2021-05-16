@@ -309,9 +309,10 @@ export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEdito
 	variables.push([k_.VAR_PROJECT_NAME, getProjectName(currentFile, langConfig.rootDirFileName)]);
 	variables.push([k_.VAR_FILE_NAME, extractFileName(currentFile)]);
 	variables.push([k_.VAR_FILE_NAME_BASE, extractFileName(currentFile, true)]);
-	// using filecreated function without arguments treats it like a variable.
+	// using filecreated or yeartoyear functions without arguments treat them like a variable.
 	variables.push([k_.FUNC_FILE_CREATED, fcreated.toDateString()]);
-	variables.push([k_.FUNC_YEAR_TO_YEAR, `${y2yYear('fc', config.creationDateZero)} - ${y2yYear('now')}`]);
+	variables.push([k_.FUNC_YEAR_TO_YEAR, y2y('fc', 'now', config.creationDateZero)]);
+
 	if (config && config.copyrightHolder) {
 		variables.push([k_.VAR_COPYRIGHT_HOLDER, config.copyrightHolder]);
 	}
@@ -776,9 +777,7 @@ function replaceFunctions(source: string, zeroDate: ZeroDate): string {
 			args && args.length > 0
 			? args.split(',').map(arg => arg.trim().replace(/('|")/g, ''))
 			: [];
-		const fromArg: string = y2yYear(argsArray.length > 0 ? argsArray[0] : 'fc', zeroDate);
-		const toArg: string = y2yYear(argsArray.length > 1 ? argsArray[1] : 'now', zeroDate);
-		return fromArg === toArg ? fromArg : `${fromArg} - ${toArg}`;
+		return y2y((argsArray.length > 0 ? argsArray[0] : 'fc'), (argsArray.length > 1 ? argsArray[1] : 'now'), zeroDate);
 	});
 
 	// perform placeholder substitution
@@ -800,6 +799,12 @@ function y2yYear(arg: string, zeroDate: ZeroDate = "asIs"): string {
 	return arg;
 }
 
+// Returns a year to year string from the passed in from and to year parameters
+function y2y(fromYear: string, toYear: string, zeroDate: ZeroDate = "asIs"): string {
+	const fromArg: string = y2yYear(fromYear, zeroDate);
+	const toArg: string = y2yYear(toYear, zeroDate);
+	return fromArg === toArg ? fromArg : `${fromArg} - ${toArg}`;
+}
 
 /**
  * Construct a placeholder variable list for a specified function based on the template text content.
