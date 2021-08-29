@@ -113,6 +113,7 @@ Refer to [Configuration](#configuration) for the various extension settings deta
 
 # Commands
 This extension adds the following commands to VSCode:
+
 | Command name | Keyboard Shortcut | Description |
 |---|---|---|
 | Header Insert | ctrl-alt-H ctrl-alt-H | Inserts a new file header |
