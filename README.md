@@ -66,7 +66,7 @@ Here is a sample output:
  * Created Date: Saturday December 31 2016
  * Author: Arthur Bodkin, esq
  * -----
- * Last Modified: Saturday, 15th May 2021 5:30:15 pm
+ * Last Modified: Sunday, 10th October 2021 10:10:39 am
  * Modified By: Andrew Schepler (aschepler@gmail.com)
  * -----
  * Copyright (c) 2016 psioniq Global Enterprises, Inc
@@ -209,8 +209,6 @@ Generates a string in the form `"YYYY - YYYY"` or just `"YYYY"` if both dates ev
 
 This function takes 2 arguments: `from` determines the first date and `to` determines the second date.
 
-If the `from` argument begins with a `"*"` and [Changes Tracking](#changes-tracking) is updating an existing header, the function will attempt to reuse the existing `from` year. When writing a new header, or when the existing year is not found, the `from` argument after the initial `"*"` is used as described below.
-
 Possible values for the `from` and `to` arguments are shown in the following table.
 
 | Property Value | Description |
@@ -220,21 +218,24 @@ Possible values for the `from` and `to` arguments are shown in the following tab
 | `var:name` | Use a [static variable](#variable-values) where `name` is the name of the static variable. |
 | any other string | String written as is. Useful for setting a static year. Do not include any commas in the string. |
 
-If only one argument is passed in, it is assumed to be the `from` date and `to` will use its default. If no arguments are passed then in both will use their default values. If no arguments are passed in it will work even without the function brackets. The arguments can optionally include double or single quote qualifiers, but will alsp work without any qualifiers.
+Additionally, the flag `"!P"` can be appended to an argument above to request reuse of the previous year value in an existing header. When `"!P"` is specified and [Changes Tracking](#changes-tracking) is updating an existing header, the function will attempt to reuse the existing `from` or `to` year. The function looks at the position of the `yeartoyear` call in the line being replaced for format `YYYY - YYYY` (spaces optional) or else `YYYY`. When writing a new header, or when a replacement line is not found or the required year format is not matched, the `"!P"` flag is ignored. A particularly useful case is `yeartoyear(fc!P, now)` to use file creation date for a new header, and then always keep the same `from` date no matter how the file migrates filesystems, version control systems, etc.
+
+If only one argument is passed in, it is assumed to be the `from` date and `to` will use its default. If no arguments are passed then in both will use their default values. If no arguments are passed in it will work even without the function brackets. The arguments can optionally include double or single quote qualifiers, but will also work without any qualifiers.
 
 Valid examples:
 ```javascript
 <<yeartoyear>>
 <<yeartoyear()>>
 <<yeartoyear(2020)>>
-<<yeartoyear(*fc)>>
-<<yeartoyear(*2020, 2021)>>
+<<yeartoyear(fc)>>
+<<yeartoyear(fc!P)>>
+<<yeartoyear(2020, 2021)>>
 <<yeartoyear(1976,now)>>
 <<yeartoyear(fc,2020)>>
 <<yeartoyear(fc,now)>>
 <<yeartoyear("fc","now")>>
-<<yeartoyear('fc','now')>>
-<<yeartoyear(*fc,now)>>
+<<yeartoyear('fc!P','9999!P')>>
+<<yeartoyear(fc!P,now)>>
 <<yeartoyear(i am a rabbit, 2020)>>
 ```
 

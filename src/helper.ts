@@ -4,7 +4,7 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Sunday, 16th May 2021 6:39:05 am
+ * Last Modified: Sunday, 10th October 2021 10:02:09 am
  * Modified By: Andrew Schepler (aschepler@gmail.com)
  * -----
  * MIT License
@@ -744,7 +744,10 @@ export function addLineSuffix(line: string, suffix: string, wrapCol: number, tab
 /**
  * Process template function placeholders
  *
- * @param source the templae text
+ * @param source the template text
+ * @param oldLine the replaced line, or empty if not replacing
+ * @param zeroDate specifies behavior if "fc" is used and file creation date
+ *                 cannot be determined
  */
 function replaceFunctions(source: string, oldLine: string, zeroDate: ZeroDate) : string {
 	let replaced: string = source;
@@ -777,19 +780,43 @@ function replaceFunctions(source: string, oldLine: string, zeroDate: ZeroDate) :
 			args && args.length > 0
 			? args.split(',').map(arg => arg.trim().replace(/('|")/g, ''))
 			: [];
-		let oldYear: string | null = null;
-		if (argsArray.length > 0 && argsArray[0].startsWith('*')) {
-			argsArray[0] = argsArray[0].substr(1);
-			const yearMatch = oldText.match(/^\d+/);
-			if (yearMatch) {
-				oldYear = yearMatch[0];
+
+		// check for the "!P" flag on each argument
+		let fromArg: string = argsArray.length > 0 ? argsArray[0] : 'fc';
+		let usePrevFrom: boolean = false;
+		if (fromArg.endsWith("!P")) {
+			fromArg = fromArg.substr(0, fromArg.length - 2);
+			usePrevFrom = true;
+		}
+		let toArg: string = argsArray.length > 1 ? argsArray[1] : 'now';
+		let usePrevTo: boolean = false;
+		if (toArg.endsWith("!P")) {
+			toArg = toArg.substr(0, toArg.length - 2);
+			usePrevTo = true;
+		}
+
+		// if a !P flag requested, parse oldText
+		let prevFrom: string | null = null;
+		let prevTo: string | null = null;
+		if (usePrevFrom || usePrevTo)
+		{
+			const y2yMatch = oldText.match(/^(\d{4}) ?- ?(\d{4})(?!\d)/);
+			if (y2yMatch) {
+				prevFrom = y2yMatch[1];
+				prevTo = y2yMatch[2];
+			} else {
+				const yearMatch = oldText.match(/^\d{4}(?!\d)/);
+				if (yearMatch) {
+					prevFrom = prevTo = yearMatch[0];
+				} else {
+					// old year(s) not found, so use the y2yYear(arg)
+					usePrevFrom = usePrevTo = false;
+				}
 			}
 		}
-		const fromArg: string =
-			oldYear != null
-			? oldYear
-			: y2yYear(argsArray.length > 0 ? argsArray[0] : 'fc', zeroDate);
-		const toArg: string = y2yYear(argsArray.length > 1 ? argsArray[1] : 'now', zeroDate);
+
+		fromArg = usePrevFrom ? prevFrom : y2yYear(fromArg, zeroDate);
+		toArg = usePrevTo ? prevTo : y2yYear(toArg, zeroDate);
 		return fromArg === toArg ? fromArg : `${fromArg} - ${toArg}`;
 	});
 
@@ -801,6 +828,13 @@ function replaceFunctions(source: string, oldLine: string, zeroDate: ZeroDate) :
 	return replaced;
 }
 
+/**
+ * Process a year argument, which might be the special string "fc" or "now".
+ * 
+ * @param arg  The argument year, or special value "fc" or "now"
+ * @param zeroDate  Behavior if file creation date cannot be determined
+ * @returns The year text output
+ */
 function y2yYear(arg: string, zeroDate: ZeroDate = "asIs"): string {
 	if (!arg) {
 		return '';
@@ -811,7 +845,6 @@ function y2yYear(arg: string, zeroDate: ZeroDate = "asIs"): string {
 	}
 	return arg;
 }
-
 
 /**
  * Construct a placeholder variable list for a specified function based on the template text content.
