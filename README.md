@@ -66,8 +66,8 @@ Here is a sample output:
  * Created Date: Saturday December 31 2016
  * Author: Arthur Bodkin, esq
  * -----
- * Last Modified: Sunday, 10th October 2021 10:10:39 am
- * Modified By: Andrew Schepler (aschepler@gmail.com)
+ * Last Modified: Sunday January 01 2017
+ * Modified By: Tammy Bodkin
  * -----
  * Copyright (c) 2016 psioniq Global Enterprises, Inc
  */
@@ -113,6 +113,7 @@ Refer to [Configuration](#configuration) for the various extension settings deta
 
 # Commands
 This extension adds the following commands to VSCode:
+
 | Command name | Keyboard Shortcut | Description |
 |---|---|---|
 | Header Insert | ctrl-alt-H ctrl-alt-H | Inserts a new file header |
@@ -207,9 +208,7 @@ These functions use Moment.js and can use all [Moment.js format string options](
 ## yeartoyear
 Generates a string in the form `"YYYY - YYYY"` or just `"YYYY"` if both dates evaluate to the same year. Useful for copyright messages.
 
-This function takes 2 arguments: `from` determines the first date and `to` determines the second date.
-
-Possible values for the `from` and `to` arguments are shown in the following table.
+This function takes 2 arguments: `from` determines the first date and `to` determines the second date. Possible values for each argument are shown in the following table. If both evaluate to the same year only a single string (`"YYYY"`) is returned.
 
 | Property Value | Description |
 | --- | --- |
@@ -627,7 +626,7 @@ You can also use this method to update other lines from the template via the `ps
 
 Note that the `psi-header.changes-tracking.modDateFormat` configuration setting is ignored when using this option.
 
-So, modifying the `"Last Modified:"`, `"Modified By:"`, and `Copyright` lines in the template from the earlier example in _Option 1_,
+So, modifying the `"Last Modified:"`, `"Modified By:"`, and `"Copyright"` lines in the template from the earlier example in _Option 1_,
 
 ```json
 "psi-header.templates": [
@@ -642,14 +641,14 @@ So, modifying the `"Last Modified:"`, `"Modified By:"`, and `Copyright` lines in
 			"Last Modified: <<filecreated('dddd MMMM Do YYYY h:mm:ss a')>>",
 			"Modified By: the developer formerly known as <<author>> at <<<authoremail>>>",
 			"-----",
-			"Copyright (c) <<yeartoyear(*fc,now)>> <<company>>"
+			"Copyright (c) <<yeartoyear(fc!P,now)>> <<company>>"
 		],
 		"replace": [ "Copyright" ]
 	},
 ]
 ```
 
-Because there is now text after the labels on the `"Last Modified:"` and `"Modified By:"` lines, the extra text is used to generate their output. The `replace` array specifies replacing the `"Copyright"` line, and the `"*"` in the argument to the [yeartoyear function](#yeartoyear) specifies to preserve the initial year of the range.
+Because there is now text after the labels on the `"Last Modified:"` and `"Modified By:"` lines, the extra text is used to generate their output. The `replace` array specifies replacing the `"Copyright"` line, and the `"!P"` in the argument to the [yeartoyear function](#yeartoyear) specifies to preserve the initial year of the range.
 
 ```javascript
 /*
