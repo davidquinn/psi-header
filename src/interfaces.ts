@@ -155,10 +155,10 @@ export interface IPlaceholderFunction {
  * Delegate for function using old text and returning a placeholder value
  * 
  * @export
- * @interface IPlaceholderFromOldFunction
+ * @interface IPlaceholderFromPrevFunction
  */
-export interface IPlaceholderFromOldFunction {
-	(arg: string, oldText: string): string;
+export interface IPlaceholderFromPrevFunction {
+	(arg: string, prevText: string | null): string;
 }
 
 /**

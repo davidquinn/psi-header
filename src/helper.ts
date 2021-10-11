@@ -46,7 +46,7 @@ import {
 	IVariable,
 	IVariableList,
 	IPlaceholderFunction,
-	IPlaceholderFromOldFunction,
+	IPlaceholderFromPrevFunction,
 	IInspectableConfig,
 	ZeroDate,
 	ILicenseReference,
@@ -312,7 +312,7 @@ export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEdito
 	variables.push([k_.VAR_FILE_NAME_BASE, extractFileName(currentFile, true)]);
 	// using filecreated or yeartoyear functions without arguments treat them like a variable.
 	variables.push([k_.FUNC_FILE_CREATED, fcreated.toDateString()]);
-	variables.push([k_.FUNC_YEAR_TO_YEAR, y2y('fc', 'now', config.creationDateZero)]);
+	variables.push([k_.FUNC_YEAR_TO_YEAR, y2y('fc', 'now', null, config.creationDateZero)]);
 
 	if (config && config.copyrightHolder) {
 		variables.push([k_.VAR_COPYRIGHT_HOLDER, config.copyrightHolder]);
@@ -687,9 +687,10 @@ function arrayToString(source: Array<string>): string {
  *
  * @param {string} source
  * @param {IVariableList} variables
+ * @param {string} prevLine
  * @returns {string}
  */
-export function replacePlaceholders(source: string, variables: IVariableList, prevLine: string = '', zeroDate: ZeroDate = 'asIs') : string {
+export function replacePlaceholders(source: string, variables: IVariableList, prevLine: string | null = null, zeroDate: ZeroDate = 'asIs') : string {
 	let replaced: string = source;
 	for (let v of variables) {
 		if (v[1]) {
@@ -746,11 +747,11 @@ export function addLineSuffix(line: string, suffix: string, wrapCol: number, tab
  * Process template function placeholders
  *
  * @param source the template text
- * @param prevLine the replaced line, or empty if not replacing
+ * @param prevLine the replaced line, or null if not replacing
  * @param zeroDate specifies behavior if "fc" is used and file creation date
  *                 cannot be determined
  */
-function replaceFunctions(source: string, prevLine: string, zeroDate: ZeroDate) : string {
+function replaceFunctions(source: string, prevLine: string | null, zeroDate: ZeroDate) : string {
 	let replaced: string = source;
 	let replacements: IVariableList = [];
 
@@ -776,7 +777,7 @@ function replaceFunctions(source: string, prevLine: string, zeroDate: ZeroDate) 
 	});
 
 	// get the year to year placeholders
-	constructFunctionReferencesWithPrev(replacements, source, k_.FUNC_YEAR_TO_YEAR, prevLine, (args: string, prevText: string) => {
+	constructFunctionReferencesWithPrev(replacements, source, k_.FUNC_YEAR_TO_YEAR, prevLine, (args: string, prevText: string | null) => {
 		let argsArray: string[] =
 			args && args.length > 0
 			? args.split(',').map(arg => arg.trim().replace(/('|")/g, ''))
@@ -819,7 +820,7 @@ function y2yYear(arg: string, zeroDate: ZeroDate = "asIs"): string {
  * @param zeroDate Behavior if file creation date cannot be determined
  * @returns The yeartoyear() result replacement text
  */
-function y2y(fromArg: string, toArg: string, prevText: string, zeroDate: ZeroDate = "asIs"): string {
+function y2y(fromArg: string, toArg: string, prevText: string | null, zeroDate: ZeroDate = "asIs"): string {
 	// check for the "!P" flag on each argument
 	let usePrevFrom: boolean = false;
 	if (fromArg.endsWith("!P")) {
@@ -832,10 +833,13 @@ function y2y(fromArg: string, toArg: string, prevText: string, zeroDate: ZeroDat
 		usePrevTo = true;
 	}
 
-	// if a !P flag requested, parse prevText
+	// if have a prevText and a !P flag requested
 	let prevFrom: string | null = null;
 	let prevTo: string | null = null;
-	if (usePrevFrom || usePrevTo)
+	if (!prevText) {
+		usePrevFrom = usePrevTo = false;
+	}
+	else if (usePrevFrom || usePrevTo)
 	{
 		const y2yMatch = prevText.match(/^(\d{4}) ?- ?(\d{4})(?!\d)/);
 		if (y2yMatch) {
@@ -888,11 +892,11 @@ function constructFunctionReferences(references: IVariableList, source: string, 
  * 
  * @param {string} source the template text
  * @param {string} functionName the name of the template function
- * @param {string} prevLine the existing line being replaced, or empty string if creating a new header
+ * @param {string} prevLine the existing line being replaced, or null if creating a new header
  * @param {IPlaceholderFunction} cb the method to run to retrieve the value based on the function arguments and previous file text
  * @returns {IVariableList}
  */
-function constructFunctionReferencesWithPrev(references: IVariableList, source: string, functionName: string, prevLine: string, cb: IPlaceholderFromOldFunction) {
+function constructFunctionReferencesWithPrev(references: IVariableList, source: string, functionName: string, prevLine: string | null, cb: IPlaceholderFromPrevFunction) {
 	const funcNeedle: string = `${k_.VAR_PREFIX}${functionName}(`;
 	let indices: Array<number> = getIndicesOf(funcNeedle, source, false);
 	for (let i = 0; i < indices.length; i++) {
@@ -918,8 +922,8 @@ function constructFunctionReferencesWithPrev(references: IVariableList, source: 
 					srcPos = start;
 				}
 			}
-			const prevMatch = prevLine.match(prevMatcher);
-			const prevValue: string = prevMatch ? prevLine.substr(prevMatch[0].length) : '';
+			const prevMatch = prevLine ? prevLine.match(prevMatcher) : null;
+			const prevValue: string = prevMatch ? prevLine.substr(prevMatch[0].length) : null;
 
 			let args: string = source.substring(start + funcNeedle.length, end);
 			let key: string = `${funcNeedle}${args})${k_.VAR_SUFFIX}`;
