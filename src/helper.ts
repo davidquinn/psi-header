@@ -4,8 +4,8 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Sunday, 10th October 2021 6:27:13 pm
- * Modified By: Andrew Schepler (aschepler@gmail.com)
+ * Last Modified: Monday, 27th December 2021 9:14:27 am
+ * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
  *
@@ -824,12 +824,12 @@ function y2y(fromArg: string, toArg: string, prevText: string | null, zeroDate: 
 	// check for the "!P" flag on each argument
 	let usePrevFrom: boolean = false;
 	if (fromArg.endsWith("!P")) {
-		fromArg = fromArg.substr(0, fromArg.length - 2);
+		fromArg = fromArg.substring(0, fromArg.length - 2);
 		usePrevFrom = true;
 	}
 	let usePrevTo: boolean = false;
 	if (toArg.endsWith("!P")) {
-		toArg = toArg.substr(0, toArg.length - 2);
+		toArg = toArg.substring(0, toArg.length - 2);
 		usePrevTo = true;
 	}
 
@@ -923,7 +923,7 @@ function constructFunctionReferencesWithPrev(references: IVariableList, source: 
 				}
 			}
 			const prevMatch = prevLine ? prevLine.match(prevMatcher) : null;
-			const prevValue: string = prevMatch ? prevLine.substr(prevMatch[0].length) : null;
+			const prevValue: string = prevMatch ? prevLine.substring(prevMatch[0].length) : null;
 
 			let args: string = source.substring(start + funcNeedle.length, end);
 			let key: string = `${funcNeedle}${args})${k_.VAR_SUFFIX}`;
