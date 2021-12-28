@@ -4,7 +4,7 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Saturday, 19th September 2020 11:38:45 am
+ * Last Modified: Monday, 27th December 2021 9:14:27 am
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -46,6 +46,7 @@ import {
 	IVariable,
 	IVariableList,
 	IPlaceholderFunction,
+	IPlaceholderFromPrevFunction,
 	IInspectableConfig,
 	ZeroDate,
 	ILicenseReference,
@@ -311,7 +312,7 @@ export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEdito
 	variables.push([k_.VAR_FILE_NAME_BASE, extractFileName(currentFile, true)]);
 	// using filecreated or yeartoyear functions without arguments treat them like a variable.
 	variables.push([k_.FUNC_FILE_CREATED, fcreated.toDateString()]);
-	variables.push([k_.FUNC_YEAR_TO_YEAR, y2y('fc', 'now', config.creationDateZero)]);
+	variables.push([k_.FUNC_YEAR_TO_YEAR, y2y('fc', 'now', null, config.creationDateZero)]);
 
 	if (config && config.copyrightHolder) {
 		variables.push([k_.VAR_COPYRIGHT_HOLDER, config.copyrightHolder]);
@@ -599,7 +600,7 @@ function addLicenseVariables(wsConfig: WorkspaceConfiguration, variables: IVaria
 			}
 		}
 	}
-	variables.push([k_.VAR_LICENSE_TEXT, replacePlaceholders(txt.join('\n'), variables, config.creationDateZero)]);
+	variables.push([k_.VAR_LICENSE_TEXT, replacePlaceholders(txt.join('\n'), variables, '', config.creationDateZero)]);
 	if (spdx) {
 		variables.push([k_.VAR_LICENSE_NAME, spdx.name]);
 		variables.push([k_.VAR_LICENSE_URL, spdx.url]);
@@ -614,7 +615,7 @@ export function replaceTemplateVariables(template: Array<string>, linePrefix: st
 	for (let i = 0; i < template.length; i++) {
 		body.push(linePrefix + template[i]);
 	}
-	return replacePlaceholders(body.join('\n'), variables, zeroDate);
+	return replacePlaceholders(body.join('\n'), variables, '', zeroDate);
 }
 
 /**
@@ -686,9 +687,10 @@ function arrayToString(source: Array<string>): string {
  *
  * @param {string} source
  * @param {IVariableList} variables
+ * @param {string} prevLine
  * @returns {string}
  */
-export function replacePlaceholders(source: string, variables: IVariableList, zeroDate: ZeroDate = 'asIs'): string {
+export function replacePlaceholders(source: string, variables: IVariableList, prevLine: string | null = null, zeroDate: ZeroDate = 'asIs') : string {
 	let replaced: string = source;
 	for (let v of variables) {
 		if (v[1]) {
@@ -700,7 +702,7 @@ export function replacePlaceholders(source: string, variables: IVariableList, ze
 			replaced = replaced.replace(regex, v[1].toLocaleLowerCase());
 		}
 	}
-	replaced = replaceFunctions(replaced, zeroDate);
+	replaced = replaceFunctions(replaced, prevLine, zeroDate);
 	return replaced;
 }
 
@@ -744,9 +746,12 @@ export function addLineSuffix(line: string, suffix: string, wrapCol: number, tab
 /**
  * Process template function placeholders
  *
- * @param source the templae text
+ * @param source the template text
+ * @param prevLine the replaced line, or null if not replacing
+ * @param zeroDate specifies behavior if "fc" is used and file creation date
+ *                 cannot be determined
  */
-function replaceFunctions(source: string, zeroDate: ZeroDate): string {
+function replaceFunctions(source: string, prevLine: string | null, zeroDate: ZeroDate) : string {
 	let replaced: string = source;
 	let replacements: IVariableList = [];
 
@@ -772,12 +777,12 @@ function replaceFunctions(source: string, zeroDate: ZeroDate): string {
 	});
 
 	// get the year to year placeholders
-	constructFunctionReferences(replacements, source, k_.FUNC_YEAR_TO_YEAR, (args: string) => {
-		const argsArray: string[] =
+	constructFunctionReferencesWithPrev(replacements, source, k_.FUNC_YEAR_TO_YEAR, prevLine, (args: string, prevText: string | null) => {
+		let argsArray: string[] =
 			args && args.length > 0
 			? args.split(',').map(arg => arg.trim().replace(/('|")/g, ''))
 			: [];
-		return y2y((argsArray.length > 0 ? argsArray[0] : 'fc'), (argsArray.length > 1 ? argsArray[1] : 'now'), zeroDate);
+		return y2y((argsArray.length > 0 ? argsArray[0] : 'fc'), (argsArray.length > 1 ? argsArray[1] : 'now'), prevText, zeroDate);
 	});
 
 	// perform placeholder substitution
@@ -788,6 +793,13 @@ function replaceFunctions(source: string, zeroDate: ZeroDate): string {
 	return replaced;
 }
 
+/**
+ * Process a year argument, which might be the special string "fc" or "now".
+ * 
+ * @param arg  The argument year, or special value "fc" or "now"
+ * @param zeroDate  Behavior if file creation date cannot be determined
+ * @returns The year text output
+ */
 function y2yYear(arg: string, zeroDate: ZeroDate = "asIs"): string {
 	if (!arg) {
 		return '';
@@ -799,10 +811,53 @@ function y2yYear(arg: string, zeroDate: ZeroDate = "asIs"): string {
 	return arg;
 }
 
-// Returns a year to year string from the passed in from and to year parameters
-function y2y(fromYear: string, toYear: string, zeroDate: ZeroDate = "asIs"): string {
-	const fromArg: string = y2yYear(fromYear, zeroDate);
-	const toArg: string = y2yYear(toYear, zeroDate);
+/**
+ * Returns a year to year string from the passed in from and to year parameters
+ * 
+ * @param fromArg First yeartoyear() argument text
+ * @param toArg   Second yeartoyear() argument text
+ * @param prevText Text from existing header at the yeartoyear() call, if any
+ * @param zeroDate Behavior if file creation date cannot be determined
+ * @returns The yeartoyear() result replacement text
+ */
+function y2y(fromArg: string, toArg: string, prevText: string | null, zeroDate: ZeroDate = "asIs"): string {
+	// check for the "!P" flag on each argument
+	let usePrevFrom: boolean = false;
+	if (fromArg.endsWith("!P")) {
+		fromArg = fromArg.substring(0, fromArg.length - 2);
+		usePrevFrom = true;
+	}
+	let usePrevTo: boolean = false;
+	if (toArg.endsWith("!P")) {
+		toArg = toArg.substring(0, toArg.length - 2);
+		usePrevTo = true;
+	}
+
+	// if have a prevText and a !P flag requested
+	let prevFrom: string | null = null;
+	let prevTo: string | null = null;
+	if (!prevText) {
+		usePrevFrom = usePrevTo = false;
+	}
+	else if (usePrevFrom || usePrevTo)
+	{
+		const y2yMatch = prevText.match(/^(\d{4}) ?- ?(\d{4})(?!\d)/);
+		if (y2yMatch) {
+			prevFrom = y2yMatch[1];
+			prevTo = y2yMatch[2];
+		} else {
+			const yearMatch = prevText.match(/^\d{4}(?!\d)/);
+			if (yearMatch) {
+				prevFrom = prevTo = yearMatch[0];
+			} else {
+				// year(s) not found in previous text, so use the y2yYear(arg)
+				usePrevFrom = usePrevTo = false;
+			}
+		}
+	}
+
+	fromArg = usePrevFrom ? prevFrom : y2yYear(fromArg, zeroDate);
+	toArg = usePrevTo ? prevTo : y2yYear(toArg, zeroDate);
 	return fromArg === toArg ? fromArg : `${fromArg} - ${toArg}`;
 }
 
@@ -824,6 +879,55 @@ function constructFunctionReferences(references: IVariableList, source: string, 
 			let args: string = source.substring(start + funcNeedle.length, end);
 			let key: string = `${funcNeedle}${args})${k_.VAR_SUFFIX}`;
 			let value: string = cb ? cb(args) : '';
+			references.push([key, value]);
+		}
+	}
+}
+
+/**
+ * Construct a placeholder variable list for a specified function based on the template text content and the existing content.
+ * 
+ * The second argument to @a cb will be the part of @a prevLine from the matched position to the end,
+ * or an empty string if not replacing text or the replaced text could not be determined.
+ * 
+ * @param {string} source the template text
+ * @param {string} functionName the name of the template function
+ * @param {string} prevLine the existing line being replaced, or null if creating a new header
+ * @param {IPlaceholderFunction} cb the method to run to retrieve the value based on the function arguments and previous file text
+ * @returns {IVariableList}
+ */
+function constructFunctionReferencesWithPrev(references: IVariableList, source: string, functionName: string, prevLine: string | null, cb: IPlaceholderFromPrevFunction) {
+	const funcNeedle: string = `${k_.VAR_PREFIX}${functionName}(`;
+	let indices: Array<number> = getIndicesOf(funcNeedle, source, false);
+	for (let i = 0; i < indices.length; i++) {
+		let start = indices[i];
+		let end: number = source.indexOf(`)`, start);
+		if (end > -1) {
+			let prevMatcher = '^';
+			let srcPos = 0;
+			while (srcPos < start) {
+				let prefixPos = source.indexOf(k_.VAR_PREFIX, srcPos);
+				let suffixPos = -1;
+				if (prefixPos > -1 && prefixPos < start) {
+					suffixPos = source.indexOf(k_.VAR_SUFFIX, prefixPos + k_.VAR_PREFIX.length);
+				}
+				if (suffixPos > -1 && suffixPos < start) {
+					prevMatcher += escapeRegExp(source.substring(srcPos, prefixPos));
+					prevMatcher += '.+?';
+					srcPos = suffixPos + k_.VAR_SUFFIX.length;
+				}
+				else
+				{
+					prevMatcher += escapeRegExp(source.substring(srcPos, start));
+					srcPos = start;
+				}
+			}
+			const prevMatch = prevLine ? prevLine.match(prevMatcher) : null;
+			const prevValue: string = prevMatch ? prevLine.substring(prevMatch[0].length) : null;
+
+			let args: string = source.substring(start + funcNeedle.length, end);
+			let key: string = `${funcNeedle}${args})${k_.VAR_SUFFIX}`;
+			let value: string = cb ? cb(args, prevValue) : '';
 			references.push([key, value]);
 		}
 	}

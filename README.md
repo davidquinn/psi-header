@@ -212,24 +212,29 @@ This function takes 2 arguments: `from` determines the first date and `to` deter
 
 | Property Value | Description |
 | --- | --- |
-| `fc` | The file creation date. This is the default for the`from` date. Not case-sensitive. |
+| `fc` | The file creation date. This is the default for the `from` date. Not case-sensitive. |
 | `now` | The current year. This is the default for the `to` date. Not case sensitive. |
 | `var:name` | Use a [static variable](#variable-values) where `name` is the name of the static variable. |
 | any other string | String written as is. Useful for setting a static year. Do not include any commas in the string. |
 
-If only one argument is passed in, it is assumed to be the `from` date and `to` will use its default. If no arguments are passed then in both will use their default values. If no arguments are passed in it will work even without the function brackets. The arguments can optionally include double or single quote qualifiers, but will alsp work without any qualifiers.
+Additionally, the flag `"!P"` can be appended to an argument above to request reuse of the previous year value in an existing header. When `"!P"` is specified and [Changes Tracking](#changes-tracking) is updating an existing header, the function will attempt to reuse the existing `from` or `to` year. The function looks at the position of the `yeartoyear` call in the line being replaced for format `YYYY - YYYY` (spaces optional) or else `YYYY`. When writing a new header, or when the required year format is not matched, the `"!P"` flag is ignored. A particularly useful case is `yeartoyear(fc!P, now)` to use file creation date for a new header, and then always keep the same `from` date no matter how the file migrates filesystems, version control systems, etc.
+
+If only one argument is passed in, it is assumed to be the `from` date and `to` will use its default. If no arguments are passed then in both will use their default values. If no arguments are passed in it will work even without the function brackets. The arguments can optionally include double or single quote qualifiers, but will also work without any qualifiers.
 
 Valid examples:
 ```javascript
 <<yeartoyear>>
 <<yeartoyear()>>
 <<yeartoyear(2020)>>
+<<yeartoyear(fc)>>
+<<yeartoyear(fc!P)>>
 <<yeartoyear(2020, 2021)>>
 <<yeartoyear(1976,now)>>
 <<yeartoyear(fc,2020)>>
 <<yeartoyear(fc,now)>>
 <<yeartoyear("fc","now")>>
-<<yeartoyear('fc','now')>>
+<<yeartoyear('fc!P','9999!P')>>
+<<yeartoyear(fc!P,now)>>
 <<yeartoyear(i am a rabbit, 2020)>>
 ```
 
@@ -621,7 +626,7 @@ You can also use this method to update other lines from the template via the `ps
 
 Note that the `psi-header.changes-tracking.modDateFormat` configuration setting is ignored when using this option.
 
-So, modifying the `"Last Modified:"` and `"Modified By:"` lines in the template from the earlier example in _Option 1_,
+So, modifying the `"Last Modified:"`, `"Modified By:"`, and `"Copyright"` lines in the template from the earlier example in _Option 1_,
 
 ```json
 "psi-header.templates": [
@@ -636,13 +641,15 @@ So, modifying the `"Last Modified:"` and `"Modified By:"` lines in the template 
 			"Last Modified: <<filecreated('dddd MMMM Do YYYY h:mm:ss a')>>",
 			"Modified By: the developer formerly known as <<author>> at <<<authoremail>>>",
 			"-----",
-			"Copyright (c) <<year>> <<company>>"
-		]
+			"Copyright (c) <<yeartoyear(fc!P,now)>> <<company>>"
+		],
+		"replace": [ "Copyright" ]
 	},
 ]
 ```
 
-Because there is now text after the labels on these lines, the extra text is used to generate the following output:
+Because there is now text after the labels on the `"Last Modified:"` and `"Modified By:"` lines, the extra text is used to generate their output. The `replace` array specifies replacing the `"Copyright"` line, and the `"!P"` in the argument to the [yeartoyear function](#yeartoyear) specifies to preserve the initial year of the range.
+
 ```javascript
 /*
  * File: \Users\me\Development\psioniq\myProject\src\myPrecious.js
@@ -653,7 +660,7 @@ Because there is now text after the labels on these lines, the extra text is use
  * Last Modified: Tuesday January 03 2017 09:37:28 am
  * Modified By: the developer formerly known as Uncle Jack Bodkin at <uncle.jack@psioniq.net>
  * -----
- * Copyright (c) 2016 psioniq Global Enterprises, Inc
+ * Copyright (c) 2016 - 2017 psioniq Global Enterprises, Inc
  */
 ```
 

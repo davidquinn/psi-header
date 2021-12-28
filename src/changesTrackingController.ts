@@ -4,8 +4,8 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Saturday, 19th September 2020 10:06:49 am
- * Modified By: David Quinn (info@psioniq.uk)
+ * Last Modified: Saturday, 15th May 2021 3:14:46 pm
+ * Modified By: Andrew Schepler (aschepler@gmail.com)
  * -----
  * MIT License
  *
@@ -181,7 +181,7 @@ export class ChangesTrackingController {
 										range: range,
 										newString: addLineSuffix(
 											modAuthorTemplate && modAuthorTemplate !== modAuthorWithPrefix
-												? replacePlaceholders(modAuthorTemplate, variables, mainConfig.creationDateZero)
+												? replacePlaceholders(modAuthorTemplate, variables, txt, mainConfig.creationDateZero)
 												: modAuthorWithPrefix + (modAuthorWithPrefix.endsWith(' ') ? '' : ' ') + this._author,
 											langConfig.suffix,
 											langConfig.lineLength,
@@ -194,7 +194,7 @@ export class ChangesTrackingController {
 										range: range,
 										newString: addLineSuffix(
 											modDateTemplate && modDateTemplate !== modDateWithPrefix
-												? replacePlaceholders(modDateTemplate, variables, mainConfig.creationDateZero)
+												? replacePlaceholders(modDateTemplate, variables, txt, mainConfig.creationDateZero)
 												: modDateWithPrefix + (modDateWithPrefix.endsWith(' ') ? '' : ' ') + date,
 											langConfig.suffix,
 											langConfig.lineLength,
@@ -212,7 +212,7 @@ export class ChangesTrackingController {
 												replacers.push({
 													range: range,
 													newString: addLineSuffix(
-														replacePlaceholders(modReplaceTemplate, variables, mainConfig.creationDateZero),
+														replacePlaceholders(modReplaceTemplate, variables, txt, mainConfig.creationDateZero),
 														langConfig.suffix,
 														langConfig.lineLength,
 														<number> activeTextEditor.options.tabSize

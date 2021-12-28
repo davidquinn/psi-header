@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 Report bugs, issues, suggestions at https://github.com/davidquinn/psi-header
 
+## 1.16.0 (28 Dec 2021)
+*__NEW__*: "!P" suffix on `yeartoyear` function parameters causes the changes tracker to not update the value in existing header. Thanks to Andrew Schepler for the idea and work on this.
+
 ## 1.15.2 (16 May 2021)
 *__FIX__*: Fix for github Issue #12. When using the `yeartoyear` function as a variable (i.e. without brackets), it was not returning a single year where the from and to years were the same.
 
