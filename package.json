@@ -3,7 +3,7 @@
 	"displayName": "psioniq File Header",
 	"description": "Configurable file header and changes tracking.",
 	"icon": "img/psi-logo.png",
-	"version": "1.16.0",
+	"version": "1.17.0",
 	"publisher": "psioniq",
 	"license": "SEE LICENSE IN LICENSE.txt",
 	"bugs": {
@@ -29,7 +29,8 @@
 	],
 	"activationEvents": [
 		"onCommand:psi-header.insertFileHeader",
-		"*"
+		"onCommand:psi-header.insertChangeLog",
+		"onStartupFinished"
 	],
 	"main": "./out/src/extension",
 	"contributes": {

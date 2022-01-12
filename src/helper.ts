@@ -4,7 +4,7 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Monday, 27th December 2021 9:14:27 am
+ * Last Modified: Wednesday, 12th January 2022 10:48:12 am
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -766,7 +766,7 @@ function replaceFunctions(source: string, prevLine: string | null, zeroDate: Zer
 	constructFunctionReferences(replacements, source, k_.FUNC_FILE_CREATED, (args: string): string => {
 		// remove the surrounding quotes
 		args = args.substring(1, args.length - 1);
-		const fcreated: Date = getActiveFileCreationDate(zeroDate);
+		const fcreated: Date = getActiveFileCreationDate(zeroDate) || new Date();
 		if (!args) {
 			return "";
 		} else if (args) {
@@ -804,7 +804,7 @@ function y2yYear(arg: string, zeroDate: ZeroDate = "asIs"): string {
 	if (!arg) {
 		return '';
 	} else if (arg.toLowerCase() === 'fc') {
-		return getActiveFileCreationDate(zeroDate).getFullYear().toString();
+		return (getActiveFileCreationDate(zeroDate) || new Date()).getFullYear().toString();
 	} else if (arg.toLowerCase() === 'now') {
 		return new Date().getFullYear().toString();
 	}
