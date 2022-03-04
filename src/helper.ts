@@ -78,6 +78,9 @@ export function getConfig(wsConfig: WorkspaceConfiguration, langConfig: ILangCon
 	const cfgBlankLinesAfter: number = cfg && cfg.hasOwnProperty('blankLinesAfter') ? cfg.blankLinesAfter : 0;
 	def.blankLinesAfter = (def.blankLinesAfter === undefined) ? cfgBlankLinesAfter : def.blankLinesAfter;
 
+	// defaults to true if undefined for backwards compatibility
+	def.spacesBetweenYears = (cfg && cfg.spacesBetweenYears === false) ? false : true;
+
 	def.license = cfg && cfg.license ? cfg.license : null;
 
 	def.ignoreAuthorFullname = cfg && cfg.ignoreAuthorFullname;
@@ -858,7 +861,12 @@ function y2y(fromArg: string, toArg: string, prevText: string | null, zeroDate: 
 
 	fromArg = usePrevFrom ? prevFrom : y2yYear(fromArg, zeroDate);
 	toArg = usePrevTo ? prevTo : y2yYear(toArg, zeroDate);
-	return fromArg === toArg ? fromArg : `${fromArg} - ${toArg}`;
+
+	const config = workspace.getConfiguration(`${k_.BASE_SETTINGS}.${k_.CONFIG_SETTINGS}`)
+	const spacesBetweenYears = config.get<boolean>('spacesBetweenYears', true);
+	const sp = spacesBetweenYears ? " " : "";
+
+	return fromArg === toArg ? fromArg : `${fromArg}${sp}-${sp}${toArg}`;
 }
 
 /**

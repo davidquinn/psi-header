@@ -250,6 +250,7 @@ Following is an example settings file with every conceivable psi-header option (
 	"psi-header.config": {
 		"forceToTop": true,
 		"blankLinesAfter": 1,
+		"spacesBetweenYears": false,
 		"license": "MIT",
 		"author": "Arthur Bodkin",
 		"initials": "AB",
@@ -380,6 +381,7 @@ Options that affect the whole extension.  In some cases these defaults can be ov
 |---|---|
 | `forceToTop` | If true, it will ignore the current cursor position and insert the header at the top of the document. If false (the default), the header will be inserted at the current cursor position. Can be overridden for specific languages (via *_psi-header.lang-config_*). |
 | `blankLinesAfter` | Specify how many blank lines to insert after the header comment block.  Default is 0 (zero). |
+| `spacesBetweenYears` | If true, include spaces between years ("YYYY - YYYY"), otherwise omit them ("YYYY-YYYY").  Default is true. |
 | `license` | The SPDX License ID of the license to insert into the header (or `"Custom"` or `"CustomUri"` if providing your own license text). Refer to [License Information](#license-information) for details. |
 | `author` | Your name - used by the `author` system variable.  Optional with no default. |
 | `initials` | Your initials - used by the `initials` system variable.  Optional with no default. |
