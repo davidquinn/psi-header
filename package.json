@@ -72,6 +72,11 @@
 							"description": "The number of blank lines to insert after the header comment.",
 							"default": 0
 						},
+						"spacesBetweenYears": {
+							"type": "boolean",
+							"description": "If true, include spaces between years (\"YYYY - YYYY\"), otherwise omit spaces (\"YYYY-YYYY\")",
+							"default": true
+						},
 						"license": {
 							"type": "string",
 							"description": "Identifies which license to use.  this should be either a SPDX license (refer to https://spdx.org/licenses/) or \"Custom\" or \"CustomUri\".",

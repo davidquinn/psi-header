@@ -72,6 +72,7 @@ export type ITemplateConfigList = Array<ITemplateConfig>;
 export interface IConfig {
     forceToTop?: boolean;
     blankLinesAfter?: number;
+	spacesBetweenYears?: boolean;
 	license?: string;
 	author?: string;
 	authorEmail?: string;
