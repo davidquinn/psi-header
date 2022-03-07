@@ -3,7 +3,7 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 Report bugs, issues, suggestions at https://github.com/davidquinn/psi-header
 
-## Unreleased
+## 1.18.0 (07 March 2022)
 *__NEW__*: Added `"spacesBetweenYears"` config option.
 
 ## 1.17.0 (12 January 2022)
