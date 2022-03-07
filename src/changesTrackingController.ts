@@ -128,7 +128,7 @@ export class ChangesTrackingController {
 				if (this._config.enforceHeader && this._docNeedsHeader(doc)) {
 					insertFileHeader();
 				}
-				const variables: IVariableList = getVariables(this._wsConfig, activeTextEditor, mainConfig, langConfig, !this._config.updateLicenseVariables);
+				const variables: IVariableList = getVariables(this._wsConfig, doc, mainConfig, langConfig, !this._config.updateLicenseVariables);
 				const template: Array<string> = getTemplateConfig(this._wsConfig, doc.languageId, doc.fileName).template;
 
 				const modDate: string = langConfig.modDate || this._config.modDate;
@@ -175,6 +175,13 @@ export class ChangesTrackingController {
 								// we have come to the first comment block in the file, so start searching
 								inComment = true;
 							}
+							
+							// FIXME: The file being saved may not be the same file as active editor.
+							// This should be doc.tabSize, but there currently is no API to get this.
+							// So we just hope that the file being saved has the same tab size as the
+							// active editor and fall back to 4 as a default if there is no active editor.
+							const tabSize = activeTextEditor ? <number> activeTextEditor.options.tabSize : 4;
+
 							if (inComment || lastCommentLine) {
 								if (this._startsWith(txt, langConfig.prefix, modAuthor)) {
 									replacers.push({
@@ -185,7 +192,7 @@ export class ChangesTrackingController {
 												: modAuthorWithPrefix + (modAuthorWithPrefix.endsWith(' ') ? '' : ' ') + this._author,
 											langConfig.suffix,
 											langConfig.lineLength,
-											<number> activeTextEditor.options.tabSize
+											tabSize
 										)
 									});
 								}
@@ -198,7 +205,7 @@ export class ChangesTrackingController {
 												: modDateWithPrefix + (modDateWithPrefix.endsWith(' ') ? '' : ' ') + date,
 											langConfig.suffix,
 											langConfig.lineLength,
-											<number> activeTextEditor.options.tabSize
+											tabSize
 										)
 									});
 								} else if (replaceList && replaceList.length > 0) {
@@ -215,7 +222,7 @@ export class ChangesTrackingController {
 														replacePlaceholders(modReplaceTemplate, variables, txt, mainConfig.creationDateZero),
 														langConfig.suffix,
 														langConfig.lineLength,
-														<number> activeTextEditor.options.tabSize
+														tabSize
 													)
 												});
 											}

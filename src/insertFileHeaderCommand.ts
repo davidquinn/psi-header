@@ -49,7 +49,7 @@ export function insertFileHeader() {
 	const langConfig: ILangConfig = getLanguageConfig(wsConfig, editor.document.languageId, editor.document.fileName);
 	const template: Array<string> = getTemplateConfig(wsConfig, editor.document.languageId, editor.document.fileName).template;
 	const config: IConfig = getConfig(wsConfig, langConfig);
-	const variables: IVariableList = getVariables(wsConfig, editor, config, langConfig);
+	const variables: IVariableList = getVariables(wsConfig, editor.document, config, langConfig);
 
 	// console.log(`insertFileHeader into ${editor.document.fileName}`);
 
