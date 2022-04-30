@@ -3,7 +3,10 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 Report bugs, issues, suggestions at https://github.com/davidquinn/psi-header
 
-## Unreleased
+## 1.19.0 (30 April 2022)
+*__FIX__*: Fixed an issue where information for the wrong file could be applied to the header when saving a file that was not the active document. Relates to [Issue 21](https://github.com/davidquinn/psi-header/issues/21).
+
+## 1.18.0 (07 March 2022)
 *__NEW__*: Added `"spacesBetweenYears"` config option.
 
 ## 1.17.0 (12 January 2022)
