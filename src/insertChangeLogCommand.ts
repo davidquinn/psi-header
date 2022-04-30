@@ -62,7 +62,7 @@ export function insertChangeLog() {
 
 	const tpl: Array<string> = templateConfig.changeLogEntryTemplate || k_.CHANGE_LOG_ENTRY_TEMPLATE;
 	const config: helper.IConfig = helper.getConfig(wsConfig, langConfig);
-	const variables: helper.IVariableList = helper.getVariables(wsConfig, editor, config, langConfig);
+	const variables: helper.IVariableList = helper.getVariables(wsConfig, editor.document, config, langConfig);
 	const mergedChangeLog: Array<string> = helper.replaceTemplateVariables(tpl, langConfig.prefix, variables, config.creationDateZero).split('\n');
 	const row: number = captionRow + (naturalOrder ? (-1 * (templateConfig.changeLogFooterLineCount || 0)) : (templateConfig.changeLogHeaderLineCount || 0));
 	const col: number =  editor.document.lineAt(row).text.length;

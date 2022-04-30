@@ -34,7 +34,8 @@ import {
 	workspace,
 	window,
 	TextEditor,
-	WorkspaceConfiguration
+	WorkspaceConfiguration,
+	TextDocument
 } from 'vscode';
 import * as k_ from './constants';
 import {
@@ -295,11 +296,11 @@ function mapProperty(source: Object, target: Object, key: string): void {
  * @param {boolean} ignoreLicense
  * @returns {IVariableList}
  */
-export function getVariables(wsConfig: WorkspaceConfiguration, editor: TextEditor, config: IConfig, langConfig: ILangConfig, ignoreLicense: boolean = false): IVariableList {
+export function getVariables(wsConfig: WorkspaceConfiguration, document: TextDocument, config: IConfig, langConfig: ILangConfig, ignoreLicense: boolean = false): IVariableList {
 	let variables: IVariableList = [];
 	const now: Date = new Date();
 	const fcreated: Date = getActiveFileCreationDate(config.creationDateZero) || new Date();
-	const currentFile: string = editor.document.fileName;
+	const currentFile: string = document.fileName;
 	// system variables
 	variables.push([k_.VAR_DATE, now.toDateString()]);
 	variables.push([k_.VAR_TIME, now.toLocaleTimeString()]);
