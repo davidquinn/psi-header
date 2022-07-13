@@ -4,7 +4,7 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Wednesday, 12th January 2022 10:48:12 am
+ * Last Modified: Wednesday, 13th July 2022 8:28:54 am
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -58,6 +58,7 @@ import * as path from 'path';
 import * as moment from 'moment';
 import * as username from 'username';
 import * as os from 'os';
+import { isNullOrUndefined } from 'util';
 const fullName = require("fullname");
 
 let authorFullName: string = undefined;
@@ -306,6 +307,8 @@ export function getVariables(wsConfig: WorkspaceConfiguration, document: TextDoc
 	variables.push([k_.VAR_TIME, now.toLocaleTimeString()]);
 	variables.push([k_.VAR_YEAR, now.getFullYear().toString()]);
 	variables.push([k_.VAR_FILE_PATH, currentFile]);
+	variables.push([k_.VAR_FULL_PATH, getFullPathWithoutFilename(currentFile)]);
+	variables.push([k_.VAR_RELATIVE_PATH, getRelativePathWithoutFilename(currentFile, langConfig.rootDirFileName)]);
 	variables.push([k_.VAR_FILE_RELATIVE_PATH, getRelativeFilePath(currentFile, langConfig.rootDirFileName)]);
 	variables.push([k_.VAR_PROJECT_PATH, getProjectRootPath(currentFile, langConfig.rootDirFileName)]);
 	variables.push([k_.VAR_COMPANY, config && config.company ? config.company : 'Your Company']);
@@ -489,6 +492,20 @@ function getRelativeFilePath(fullpath: string, rootDirFileName?: string): string
 	} catch (error) {
 		return null;
 	}
+}
+
+function getRelativePathWithoutFilename(fullpath: string, rootDirFileName?: string): string {
+	const p: string = getRelativeFilePath(fullpath, rootDirFileName);
+	if (isNullOrUndefined(p)) {
+		return null;
+	}
+	const parsed = path.parse(p);
+	return parsed ? parsed.dir : null;
+}
+
+function getFullPathWithoutFilename(fullpath: string) {
+	const parsed = path.parse(fullpath);
+	return parsed ? parsed.dir : null;
 }
 
 /**

@@ -2,46 +2,46 @@
 <!-- TOC -->
 
 - [Overview](#overview)
-    - [Summary of Features](#summary-of-features)
+	- [Summary of Features](#summary-of-features)
 - [Commands](#commands)
 - [System Variables](#system-variables)
 - [System Functions](#system-functions)
-    - [Date Formats in System Functions](#date-formats-in-system-functions)
-    - [yeartoyear](#yeartoyear)
+	- [Date Formats in System Functions](#date-formats-in-system-functions)
+	- [yeartoyear](#yeartoyear)
 - [Configuration](#configuration)
-    - [Global Options](#global-options)
-    - [Changes Tracking Configuration](#changes-tracking-configuration)
-    - [Variable Values](#variable-values)
-    - [Language Configuration](#language-configuration)
-    - [Templates](#templates)
-    - [License Text](#license-text)
-    - [License Reference](#license-reference)
+	- [Global Options](#global-options)
+	- [Changes Tracking Configuration](#changes-tracking-configuration)
+	- [Variable Values](#variable-values)
+	- [Language Configuration](#language-configuration)
+	- [Templates](#templates)
+	- [License Text](#license-text)
+	- [License Reference](#license-reference)
 - [Compact Mode](#compact-mode)
 - [Block-Style Comment Headers](#block-style-comment-headers)
 - [A Note about Project Paths](#a-note-about-project-paths)
 - [License Information](#license-information)
-    - ["Custom"](#custom)
-    - ["CustomUri"](#customuri)
-    - [SPDX](#spdx)
-    - [Refreshing the License Text System Variable](#refreshing-the-license-text-system-variable)
+	- ["Custom"](#custom)
+	- ["CustomUri"](#customuri)
+	- [SPDX](#spdx)
+	- [Refreshing the License Text System Variable](#refreshing-the-license-text-system-variable)
 - [Changes Tracking](#changes-tracking)
-    - [Option 1 Simple Replacement](#option-1-simple-replacement)
-    - [Option 2 Template Substitution](#option-2-template-substitution)
+	- [Option 1 Simple Replacement](#option-1-simple-replacement)
+	- [Option 2 Template Substitution](#option-2-template-substitution)
 - [Auto Header](#auto-header)
 - [Enforce Header](#enforce-header)
 - [Change Log](#change-log)
-    - [Configuring Change Logging](#configuring-change-logging)
-    - [Questions about Change Logs](#questions-about-change-logs)
-        - [7.2.1. Can this be configured to not have a caption line?](#721-can-this-be-configured-to-not-have-a-caption-line)
-        - [7.2.2. Can it be configured to automatically add a log entry?](#722-can-it-be-configured-to-automatically-add-a-log-entry)
-        - [7.2.3. Can I have comments on a separate line?](#723-can-i-have-comments-on-a-separate-line)
-        - [7.2.4. Why do I have to manually add the comment?](#724-why-do-i-have-to-manually-add-the-comment)
-        - [7.2.5. What if I need longer comments?](#725-what-if-i-need-longer-comments)
+	- [Configuring Change Logging](#configuring-change-logging)
+	- [Questions about Change Logs](#questions-about-change-logs)
+		- [7.2.1. Can this be configured to not have a caption line?](#721-can-this-be-configured-to-not-have-a-caption-line)
+		- [7.2.2. Can it be configured to automatically add a log entry?](#722-can-it-be-configured-to-automatically-add-a-log-entry)
+		- [7.2.3. Can I have comments on a separate line?](#723-can-i-have-comments-on-a-separate-line)
+		- [7.2.4. Why do I have to manually add the comment?](#724-why-do-i-have-to-manually-add-the-comment)
+		- [7.2.5. What if I need longer comments?](#725-what-if-i-need-longer-comments)
 - [An Example Custom Configuration](#an-example-custom-configuration)
 - [Creating a Custom Template](#creating-a-custom-template)
 - [Known Issues](#known-issues)
-    - [Cleaning up SPDX License Text](#cleaning-up-spdx-license-text)
-    - [Determining File Creation Time on Linux](#determining-file-creation-time-on-linux)
+	- [Cleaning up SPDX License Text](#cleaning-up-spdx-license-text)
+	- [Determining File Creation Time on Linux](#determining-file-creation-time-on-linux)
 - [Credits](#credits)
 
 <!-- /TOC -->
@@ -128,7 +128,9 @@ The following system variables are available for placeholder substitution in you
 | `time` | The current time using the current locale. |
 | `year` | The current year. |
 | `filepath` | The fully-qualified name of the file. |
+| `fullpath` | The fully-qualified path to the file (excludes the filename). |
 | `filerelativepath` | The file name including the relative path within the project. |
+| `relativepath` | The relative path to the file within the project (excludes the filename). |
 | `filename` | Just the file name without the path details. |
 | `filenamebase` | Just the file name without the path details or extension. |
 | `projectpath` | The fully-qualified path to the root directory of the project. |
@@ -136,7 +138,6 @@ The following system variables are available for placeholder substitution in you
 | `projectversion` | Attempts to read package.json (in the current or any parent directory) for a `version` property. |
 | `company` | The name of your company.  In this release it defaults to "Your Company". |
 | `author` | Will attempt to get the name of the current user.  The options are coalesced in the following order: `psi-header.config.author` then `fullname from the OS` then `username from the OS`.  If none of these return a value, it defaults to "You". |
-| `ignoreAuthorFullName` | On some systems it can be expensive to attempt to get fullname from the OS, so this option ignores this when determining the above `author` value |
 | `initials` | Your initials (where you don't want the whole author name |
 | `authoremail` | The email address of the file author.  In this release it defaults to "you@you.you". |
 | `licensetext` | The full text of the license. This is only required if `psi-header.config.license` option is set to `"Custom"`. |
@@ -390,6 +391,8 @@ Options that affect the whole extension.  In some cases these defaults can be ov
 | `copyrightHolder` | Your copyright name - used by the `copyrightholder` system variable.  Optional with no default. |
 | `creationDateZero` | What to do when the operating system returns Epoch Zero (1 Jan 1970) for the file creation time (e.g. when the source file is an NTFS-mounted file in Linux). Valid options are:<br>  - `'asIs'`: (default) just write the date provided by the OS;<br>  - `'blank'`: do not write a creation date;<br>  - `'now'`: write creation date as now. |
 | `hostname` | Overrides the local machine hostname returned by the OS with a custom value when using the `hostname` system variable. |
+| `ignoreAuthorFullName` | On some systems it can be expensive to attempt to get fullname from the OS, so this option ignores this when determining the `author` variable value |
+
 
 ## Changes Tracking Configuration
 Options that affect changes tracking.

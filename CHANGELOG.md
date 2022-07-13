@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 Report bugs, issues, suggestions at https://github.com/davidquinn/psi-header
 
+## 1.19.1 (13 July 2022)
+*__NEW__*: Added new system variables `fullpath` and `relativepath` to return the (full or relative) path without filename. `relativepath` is relative to the project base (which will usually be the `project.json` file or the file name identified via the `psi-header.lang-config.rootDirFileName` configuration setting).
+
 ## 1.19.0 (30 April 2022)
 *__FIX__*: Fixed an issue where information for the wrong file could be applied to the header when saving a file that was not the active document. Relates to [Issue 21](https://github.com/davidquinn/psi-header/issues/21).
 

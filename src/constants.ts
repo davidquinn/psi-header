@@ -4,7 +4,7 @@
  * File Created: Friday, 6th October 2017 10:23:19 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Saturday, 19th September 2020 10:22:39 am
+ * Last Modified: Wednesday, 13th July 2022 8:06:48 am
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -68,6 +68,8 @@ export const VAR_SPDX_ID: string = 'spdxid';
 export const VAR_INITIALS: string = 'initials';
 export const VAR_PROJ_VERSION: string = 'projectversion';
 export const VAR_HOSTNAME = 'hostname';
+export const VAR_FULL_PATH: string = 'fullpath';
+export const VAR_RELATIVE_PATH: string = 'relativepath';
 
 
 /**
