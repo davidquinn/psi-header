@@ -423,7 +423,7 @@
 		"fullname": "^4.0.1",
 		"minimatch": "^3.0.4",
 		"moment": "^2.24.0",
-		"spdx-license-list": "^3.0.1",
+		"spdx-license-list": "^6.6.0",
 		"username": "^3.0.0",
 		"wordwrap": "^1.0.0"
 	}
