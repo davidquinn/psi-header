@@ -3,7 +3,7 @@
 	"displayName": "psioniq File Header",
 	"description": "Configurable file header and changes tracking.",
 	"icon": "img/psi-logo.png",
-	"version": "1.19.1",
+	"version": "1.20.0",
 	"publisher": "psioniq",
 	"license": "SEE LICENSE IN LICENSE.txt",
 	"bugs": {
@@ -413,18 +413,18 @@
 		"test": "node ./node_modules/vscode/bin/test"
 	},
 	"devDependencies": {
-		"@types/mocha": "^5.2.6",
-		"@types/node": "^6.0.40",
-		"mocha": "^6.1.4",
-		"typescript": "^2.0.3",
-		"vscode": "^1.1.34"
+		"@types/mocha": "^9.1.1",
+		"@types/node": "^18.7.13",
+		"mocha": "^10.0.0",
+		"typescript": "^4.8.2",
+		"vscode": "^1.1.37"
 	},
 	"dependencies": {
 		"fullname": "^4.0.1",
-		"minimatch": "^3.0.4",
-		"moment": "^2.24.0",
-		"spdx-license-list": "^3.0.1",
-		"username": "^3.0.0",
+		"minimatch": "^5.1.0",
+		"moment": "^2.29.4",
+		"spdx-license-list": "^6.6.0",
+		"username": "^5.0.0",
 		"wordwrap": "^1.0.0"
 	}
 }

@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 Report bugs, issues, suggestions at https://github.com/davidquinn/psi-header
 
+## 1.20.0 (29 August 2022)
+*__MAINT__*: Updated dependencies for various packages. No functionality or other code changes.
+
 ## 1.19.1 (13 July 2022)
 *__NEW__*: Added new system variables `fullpath` and `relativepath` to return the (full or relative) path without filename. `relativepath` is relative to the project base (which will usually be the `project.json` file or the file name identified via the `psi-header.lang-config.rootDirFileName` configuration setting).
 
