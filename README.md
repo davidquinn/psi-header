@@ -135,6 +135,7 @@ The following system variables are available for placeholder substitution in you
 | `filenamebase` | Just the file name without the path details or extension. |
 | `projectpath` | The fully-qualified path to the root directory of the project. |
 | `projectname` | Attempts to read package.json (in the current or any parent directory) for either a `displayName` or `name` property.  If there is no package.json file _and_ the file has been saved to disk, it will return the project path's base name. |
+| `projectslug` | Provides a version of `projectname` for use in url's and links. E.g. "@davidquinn/psi-header" would return "davidquinn/psi-header" |
 | `projectversion` | Attempts to read package.json (in the current or any parent directory) for a `version` property. |
 | `company` | The name of your company.  In this release it defaults to "Your Company". |
 | `author` | Will attempt to get the name of the current user.  The options are coalesced in the following order: `psi-header.config.author` then `fullname from the OS` then `username from the OS`.  If none of these return a value, it defaults to "You". |
