@@ -4,12 +4,12 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Saturday, 15th May 2021 3:14:46 pm
- * Modified By: Andrew Schepler (aschepler@gmail.com)
+ * Last Modified: Sunday, 16th October 2022 1:22:58 am
+ * Modified By: Jonathan Stevens (jonathan@resnovas.com)
  * -----
- * MIT License
+ * MIT License 
  *
- * Copyright 2016 - 2020 David Quinn (psioniq)
+ * Copyright 2016 - 2022 David Quinn (psioniq)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -81,7 +81,6 @@ export class ChangesTrackingController {
 	private _wsConfig: WorkspaceConfiguration;
 	private _config: ITrackingConfig;
 	private _author: string = 'You';
-	private _selections: Selection[];
 
 	/**
 	 * Creates an instance of ChangesTrackingController.
@@ -91,7 +90,6 @@ export class ChangesTrackingController {
 		this._getConfig();
 		const subscriptions: Disposable[] = [];
 		workspace.onWillSaveTextDocument(this._onWillSave, this, subscriptions);
-		workspace.onDidSaveTextDocument(this._onDidSave, this, subscriptions);
 		workspace.onDidChangeConfiguration(this._onConfigChanged, this, subscriptions);
 		window.onDidChangeActiveTextEditor(this._onDidChangeActiveTextEditor, this, subscriptions);
 		this._disposable = Disposable.from(...subscriptions);
@@ -117,10 +115,6 @@ export class ChangesTrackingController {
 	private _onWillSave(e: TextDocumentWillSaveEvent): void {
 		const activeTextEditor: TextEditor = window.activeTextEditor;
 		if (this._config.isActive) {
-			if (activeTextEditor) {
-				// keep track of current window's selection
-				this._selections = activeTextEditor.selections;
-			}
 			const doc: TextDocument = e.document;
 			if (doc && doc.isDirty && this._want(doc.languageId, doc.fileName)) {
 				const langConfig: ILangConfig = getLanguageConfig(this._wsConfig, doc.languageId, doc.fileName);
@@ -248,20 +242,6 @@ export class ChangesTrackingController {
 		}
 	}
 
-	/**
-	 * Delegate method called after document is saved.
-	 * Cleans up the selections and ensures the active editor is reinstated.
-	 *
-	 * @private
-	 * @memberof ChangesTrackingController
-	 */
-	private _onDidSave(): void {
-		if (this._selections) {
-			// reinstate the selection from before the save
-			window.activeTextEditor.selections = this._selections;
-			this._selections = undefined;
-		}
-	}
 
 	/**
 	 * Re-reads the configuration settings.

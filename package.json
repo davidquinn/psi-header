@@ -417,9 +417,8 @@
 		"@types/node": "^18.7.13",
 		"mocha": "^10.0.0",
 		"typescript": "^4.8.2",
-		"vscode": "^1.1.37"
-		"@types/username": "^5.0.0",
-		"typescript": "^4.8.2"
+		"vscode": "^1.1.37",
+		"@types/username": "^5.0.0"
 	},
 	"dependencies": {
 		"fullname": "^4.0.1",
