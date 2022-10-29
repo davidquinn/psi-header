@@ -4,12 +4,12 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Wednesday, 13th July 2022 8:28:54 am
- * Modified By: David Quinn (info@psioniq.uk)
+ * Last Modified: Sunday, 16th October 2022 1:25:21 am
+ * Modified By: Jonathan Stevens (jonathan@resnovas.com)
  * -----
  * MIT License
  *
- * Copyright 2016 - 2018 David Quinn (psioniq)
+ * Copyright 2016 - 2022 David Quinn (psioniq)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -58,7 +58,6 @@ import * as path from 'path';
 import * as moment from 'moment';
 import * as username from 'username';
 import * as os from 'os';
-import { isNullOrUndefined } from 'util';
 const fullName = require("fullname");
 
 let authorFullName: string = undefined;
@@ -315,6 +314,7 @@ export function getVariables(wsConfig: WorkspaceConfiguration, document: TextDoc
 	variables.push([k_.VAR_AUTHOR, config && config.author ? config.author : getAuthorName(config && config.ignoreAuthorFullname)]);
 	variables.push([k_.VAR_AUTHOR_EMAIL, config && config.authorEmail ? config.authorEmail : 'you@you.you']);
 	variables.push([k_.VAR_PROJECT_NAME, getProjectName(currentFile, langConfig.rootDirFileName)]);
+	variables.push([k_.VAR_PROJECT_SLUG, getProjectName(currentFile, langConfig.rootDirFileName).replace("@", "")]);
 	variables.push([k_.VAR_FILE_NAME, extractFileName(currentFile)]);
 	variables.push([k_.VAR_FILE_NAME_BASE, extractFileName(currentFile, true)]);
 	// using filecreated or yeartoyear functions without arguments treat them like a variable.
@@ -496,7 +496,7 @@ function getRelativeFilePath(fullpath: string, rootDirFileName?: string): string
 
 function getRelativePathWithoutFilename(fullpath: string, rootDirFileName?: string): string {
 	const p: string = getRelativeFilePath(fullpath, rootDirFileName);
-	if (isNullOrUndefined(p)) {
+	if (p === undefined || p === null) {
 		return null;
 	}
 	const parsed = path.parse(p);

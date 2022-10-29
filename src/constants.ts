@@ -4,12 +4,12 @@
  * File Created: Friday, 6th October 2017 10:23:19 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Wednesday, 13th July 2022 8:06:48 am
- * Modified By: David Quinn (info@psioniq.uk)
+ * Last Modified: Sunday, 16th October 2022 1:22:56 am
+ * Modified By: Jonathan Stevens (jonathan@resnovas.com)
  * -----
  * MIT License
- *
- * Copyright 2016 - 2018 David Quinn (psioniq)
+ * 
+ * Copyright 2016 - 2022 David Quinn (psioniq)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -57,6 +57,7 @@ export const VAR_FILE_NAME: string = 'filename';
 export const VAR_FILE_NAME_BASE: string = 'filenamebase';
 export const VAR_PROJECT_PATH: string = 'projectpath';
 export const VAR_PROJECT_NAME: string = 'projectname';
+export const VAR_PROJECT_SLUG: string = 'projectslug';
 export const VAR_COMPANY: string = 'company';
 export const VAR_AUTHOR: string = 'author';
 export const VAR_AUTHOR_EMAIL: string = 'authoremail';
