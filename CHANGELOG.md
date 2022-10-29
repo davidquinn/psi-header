@@ -3,6 +3,10 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 Report bugs, issues, suggestions at https://github.com/davidquinn/psi-header
 
+## 1.21.0 (29 October 2022)
+* __NEW__*: New system variable <<projectslug>> that provides a version of projectname for use in url's and links.
+* __FIX__*: Removed the logic from the changesTrackingController that attempts to maintain the pre-save selections for the current text editor. This logic was causing an error because the selections have been made readonly in the VSC API. VSC appears to correctly handle this itself now.
+
 ## 1.20.0 (29 August 2022)
 *__MAINT__*: Updated dependencies for various packages. No functionality or other code changes.
 
