@@ -3,9 +3,12 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 Report bugs, issues, suggestions at https://github.com/davidquinn/psi-header
 
+## 1.21.1 (06 March 2023)
+*__FIX__*: Fixed an issue with `includeGlob` and `excludeGlob` that was introduced a few years back when Microsoft removed the concept of "root location" from VSC Workspaces. The consequence was that a glob could no longer start with a dot to indicate a relative location. It is now possible to select files in the project root with glob patterns like: `./myfile.json` or `./**/myfile.json` or `**/myfile.json`. Originally the first 2 worked but after the MS change only the 3rd one worked, now all 3 should work.
+
 ## 1.21.0 (29 October 2022)
-* __NEW__*: New system variable <<projectslug>> that provides a version of projectname for use in url's and links.
-* __FIX__*: Removed the logic from the changesTrackingController that attempts to maintain the pre-save selections for the current text editor. This logic was causing an error because the selections have been made readonly in the VSC API. VSC appears to correctly handle this itself now.
+*__NEW__*: New system variable <<projectslug>> that provides a version of projectname for use in url's and links.
+*__FIX__*: Removed the logic from the changesTrackingController that attempts to maintain the pre-save selections for the current text editor. This logic was causing an error because the selections have been made readonly in the VSC API. VSC appears to correctly handle this itself now.
 
 ## 1.20.0 (29 August 2022)
 *__MAINT__*: Updated dependencies for various packages. No functionality or other code changes.

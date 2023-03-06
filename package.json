@@ -3,7 +3,7 @@
 	"displayName": "psioniq File Header",
 	"description": "Configurable file header and changes tracking.",
 	"icon": "img/psi-logo.png",
-	"version": "1.21.0",
+	"version": "1.21.1",
 	"publisher": "psioniq",
 	"license": "SEE LICENSE IN LICENSE.txt",
 	"bugs": {
@@ -422,7 +422,7 @@
 	},
 	"dependencies": {
 		"fullname": "^4.0.1",
-		"minimatch": "^5.1.0",
+		"minimatch": "^7.4.2",
 		"moment": "^2.29.4",
 		"spdx-license-list": "^6.6.0",
 		"username": "^5.0.0",

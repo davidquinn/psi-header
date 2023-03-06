@@ -4,8 +4,8 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Sunday, 16th October 2022 1:22:58 am
- * Modified By: Jonathan Stevens (jonathan@resnovas.com)
+ * Last Modified: Monday, 6th March 2023 4:15:20 pm
+ * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License 
  *
@@ -64,7 +64,8 @@ import {
 	getMergedVariables,
 	isCompactMode,
 	addLineSuffix,
-	trimStart
+	trimStart,
+	getRelativeFilePath
 } from './helper';
 import { log } from 'util';
 import * as mm from 'minimatch';
@@ -116,8 +117,8 @@ export class ChangesTrackingController {
 		const activeTextEditor: TextEditor = window.activeTextEditor;
 		if (this._config.isActive) {
 			const doc: TextDocument = e.document;
-			if (doc && doc.isDirty && this._want(doc.languageId, doc.fileName)) {
-				const langConfig: ILangConfig = getLanguageConfig(this._wsConfig, doc.languageId, doc.fileName);
+			const langConfig: ILangConfig = getLanguageConfig(this._wsConfig, doc.languageId, doc.fileName);
+			if (doc && doc.isDirty && this._want(doc.languageId, doc.fileName, langConfig.rootDirFileName)) {
 				const mainConfig: IConfig = getConfig(this._wsConfig, langConfig);
 				if (this._config.enforceHeader && this._docNeedsHeader(doc)) {
 					insertFileHeader();
@@ -264,7 +265,13 @@ export class ChangesTrackingController {
 	private _onDidChangeActiveTextEditor(editor: TextEditor) {
 		if (editor && editor.document) {
 			const doc = editor.document;
-			if (this._wantAutoHeader() && doc.uri.scheme === 'file' && this._want(doc.languageId, doc.fileName) && this._fileIsNew(doc.fileName) && this._docNeedsHeader(doc)) {
+			const langConfig: ILangConfig = getLanguageConfig(this._wsConfig, doc.languageId, doc.fileName);
+			if (
+				this._wantAutoHeader() 
+				&& doc.uri.scheme === 'file' 
+				&& this._want(doc.languageId, doc.fileName, langConfig.rootDirFileName) 
+				&& this._fileIsNew(doc.fileName) && this._docNeedsHeader(doc)
+			) {
 				const $this = this;
 				commands.executeCommand(k_.FILE_HEADER_COMMAND).then(() => {
 					if ($this._config.autoHeader === k_.AUTO_HEADER_AUTO_SAVE) {
@@ -336,23 +343,27 @@ export class ChangesTrackingController {
 	 * @returns {boolean}
 	 * @memberof ChangesTrackingController
 	 */
-	private _want(langId: string, filename: string): boolean {
+	private _want(langId: string, filename: string, rootDirFilename?: string): boolean {
 		// return this._config && this._config.exclude.indexOf(langId) < 0 && (this._config.include.length === 0 || this._config.include.indexOf(langId) >= 0);
+		const relativeFilename = getRelativeFilePath(filename, rootDirFilename, true);
 		if (!this._config) {
 			return false;
 		}
 		return (
 				(this._config.include.length === 0 && this._config.includeGlob.length === 0)
 				|| this._config.include.indexOf(langId) >= 0
-				|| this._filenameInGlobs(filename, this._config.includeGlob)
+				|| this._filenameInGlobs(relativeFilename, this._config.includeGlob)
 			)
 			&& this._config.exclude.indexOf(langId) < 0
-			&& !this._filenameInGlobs(filename, this._config.excludeGlob);
+			&& !this._filenameInGlobs(relativeFilename, this._config.excludeGlob);
 	}
 
 	private _filenameInGlobs(filename: string, globs: string[]) {
 		return globs.some((glob) => {
-			return mm.match([filename], glob, {}).length === 1;
+			// WORKAROUND: the next line allows both ./ or **/ to be used in 
+			// the glob to find a file(s) in the root project directory.
+			const fn = filename.startsWith('.') && glob.startsWith('**') ? filename.substring(1) : filename;
+			return mm.match([fn], glob, {}).length === 1;
 		});
 	}
 

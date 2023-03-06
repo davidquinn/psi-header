@@ -4,8 +4,8 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Sunday, 16th October 2022 1:25:21 am
- * Modified By: Jonathan Stevens (jonathan@resnovas.com)
+ * Last Modified: Monday, 6th March 2023 3:39:20 pm
+ * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
  *
@@ -485,10 +485,17 @@ function extractFileName(fullpath: string, excludePath?: boolean): string {
  * @param {string} rootDirFileName the name of a unique file that is expected to be in the root directory
  * @returns {string}
  */
-function getRelativeFilePath(fullpath: string, rootDirFileName?: string): string {
+export function getRelativeFilePath(fullpath: string, rootDirFileName?: string, addLeadingDot: boolean = false): string {
 	try {
 		const rootPath: string = getProjectRootPath(fullpath, rootDirFileName);
-		return fullpath.substring(rootPath.length);
+		if (rootPath === fullpath){
+			return fullpath;
+		}
+		var relPath = fullpath.substring(rootPath.length);
+		if (addLeadingDot) {
+			relPath = '.' + relPath;
+		}
+		return relPath;
 	} catch (error) {
 		return null;
 	}
