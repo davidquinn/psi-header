@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 Report bugs, issues, suggestions at https://github.com/davidquinn/psi-header
 
+## 1.21.3 (06 July 2023)
+*__FIX__*: Removed a debug comment that was written to the console :(.
+
 ## 1.21.2 (06 July 2023)
 *__FIX__*: Fixed issue inserting a change log entry where natural order is used and the prefix and suffix are the same.
 

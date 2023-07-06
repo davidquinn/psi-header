@@ -4,7 +4,7 @@
  * File Created: Wednesday, 11th July 2018 6:31:17 am
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Thursday, 6th July 2023 6:58:53 pm
+ * Last Modified: Thursday, 6th July 2023 7:26:46 pm
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -47,8 +47,6 @@ export function insertChangeLog() {
 	const templateConfig: ITemplateConfig = helper.getTemplateConfig(wsConfig, editor.document.languageId, editor.document.fileName);
 	const naturalOrder: boolean = templateConfig.changeLogNaturalOrder || false;
 
-	console.log(`### lang = ${templateConfig.language}\n\ntemplate:\n ${templateConfig.template?.join("\n")}\n\nchangeLogNaturalOrder: ${templateConfig.changeLogNaturalOrder}`);
-	
 	if (!templateConfig.changeLogCaption && !naturalOrder) {
 		window.showErrorMessage('psi-header: Cannot insert change log - either the caption configuration must be provided or natural order configuration must be set to true.');
 		return;
