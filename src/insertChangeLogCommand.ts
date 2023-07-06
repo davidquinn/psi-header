@@ -1,10 +1,10 @@
 /*
- * File: insertFileHeaderCommand.ts
+ * File: insertChangeLogCommand.ts
  * Project: psioniq File Header
  * File Created: Wednesday, 11th July 2018 6:31:17 am
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Saturday, 19th September 2020 10:09:08 am
+ * Last Modified: Thursday, 6th July 2023 6:58:53 pm
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -47,6 +47,8 @@ export function insertChangeLog() {
 	const templateConfig: ITemplateConfig = helper.getTemplateConfig(wsConfig, editor.document.languageId, editor.document.fileName);
 	const naturalOrder: boolean = templateConfig.changeLogNaturalOrder || false;
 
+	console.log(`### lang = ${templateConfig.language}\n\ntemplate:\n ${templateConfig.template?.join("\n")}\n\nchangeLogNaturalOrder: ${templateConfig.changeLogNaturalOrder}`);
+	
 	if (!templateConfig.changeLogCaption && !naturalOrder) {
 		window.showErrorMessage('psi-header: Cannot insert change log - either the caption configuration must be provided or natural order configuration must be set to true.');
 		return;
@@ -75,31 +77,37 @@ export function insertChangeLog() {
 	});
 }
 
+/**
+ * Determines the location (line index) for the next change log.
+ * @param doc 
+ * @param template 
+ * @param langConfig 
+ * @param naturalOrder 
+ * @param isCompact 
+ * @returns 
+ */
 function captionRowIndex(doc: TextDocument, template: ITemplateConfig, langConfig: ILangConfig, naturalOrder: boolean, isCompact: boolean): number {
 	if (doc) {
 		const caption: string = template ? template.changeLogCaption : null;
-		if (naturalOrder) {
-			if (isCompact) {
-				let inComment: boolean = false;
-				for (let i: number = 0; i < doc.lineCount; i++) {
-					const text: string = doc.lineAt(i).text;
-					if (!inComment){
-						if (text.startsWith(langConfig.prefix)) {
-							inComment = true;
+		if (naturalOrder) { // oldest to newest
+			let inComment: boolean = false;
+			for (let i: number = 0; i < doc.lineCount; i++) {
+				const text: string = doc.lineAt(i).text;
+				if (!inComment){
+					if (text.startsWith(langConfig.prefix)) {
+						inComment = true;
+					}
+				} else {
+					if (isCompact) {
+						if (!text.startsWith(langConfig.prefix)) {
+							return i - 1;
 						}
 					} else {
-						if (!text.startsWith(langConfig.prefix)) {
+						if (text === langConfig.end) {
 							return i - 1;
 						}
 					}
 				}
-			} else {
-				for (let i: number = 0; i < doc.lineCount; i++) {
-					if (doc.lineAt(i).text === langConfig.end) {
-						return i - 1;
-					}
-				};
-
 			}
 		} else if (caption) {
 			for (let i: number = 0; i < doc.lineCount; i++) {
@@ -108,7 +116,6 @@ function captionRowIndex(doc: TextDocument, template: ITemplateConfig, langConfi
 				}
 			};
 		}
-
 	}
 	return -1;
 }

@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 Report bugs, issues, suggestions at https://github.com/davidquinn/psi-header
 
+## 1.21.2 (06 July 2023)
+*__FIX__*: Fixed issue inserting a change log entry where natural order is used and the prefix and suffix are the same.
+
 ## 1.21.1 (06 March 2023)
 *__FIX__*: Fixed an issue with `includeGlob` and `excludeGlob` that was introduced a few years back when Microsoft removed the concept of "root location" from VSC Workspaces. The consequence was that a glob could no longer start with a dot to indicate a relative location. It is now possible to select files in the project root with glob patterns like: `./myfile.json` or `./**/myfile.json` or `**/myfile.json`. Originally the first 2 worked but after the MS change only the 3rd one worked, now all 3 should work.
 
