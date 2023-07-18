@@ -628,7 +628,7 @@ NOTE: What is important in the above is that there is no text beyond the label i
 ## Option 2 Template Substitution
 If there are any characters in the template on either of the comment lines after the `label` then the extension will preserve it during the update.  You can include text as well as any of the system variables and functions.
 
-You can also use this method to update other lines from the template via the `psi-header.changes-tracking.replace` array.  The array holds strings that represent the beginning of the line from the template (excluding the line prefix) - you just need to include enough characters from the beginning of the line to ensure uniqueness.
+You can also use this method to update other lines from the template via the `psi-header.changes-tracking.replace` array to configure it globally or via the `psi-header.lang-config[].replace` settings to override for a specific language.  The array holds strings that represent the beginning of the line from the template (excluding the line prefix) - you just need to include enough characters from the beginning of the line to ensure uniqueness.
 
 Note that the `psi-header.changes-tracking.modDateFormat` configuration setting is ignored when using this option.
 
@@ -648,9 +648,42 @@ So, modifying the `"Last Modified:"`, `"Modified By:"`, and `"Copyright"` lines 
 			"Modified By: the developer formerly known as <<author>> at <<<authoremail>>>",
 			"-----",
 			"Copyright (c) <<yeartoyear(fc!P,now)>> <<company>>"
-		],
-		"replace": [ "Copyright" ]
-	},
+		]
+	}
+],
+"psi-header.changes-tracking": {
+	...
+	"replace": [ "Copyright" ],
+	...
+}
+```
+
+*__or__*...
+
+```json
+"psi-header.templates": [
+	{
+		"language": "*",
+		"template": [
+			"File: <<filepath>>",
+			"Project: <<projectpath>>",
+			"Created Date: <<filecreated('dddd MMMM Do YYYY')>>",
+			"Author: <<author>>",
+			"-----",
+			"Last Modified: <<filecreated('dddd MMMM Do YYYY h:mm:ss a')>>",
+			"Modified By: the developer formerly known as <<author>> at <<<authoremail>>>",
+			"-----",
+			"Copyright (c) <<yeartoyear(fc!P,now)>> <<company>>"
+		]
+	}
+],
+"psi-header.lang-config": [
+	{
+		"language": "*",
+		...
+		"replace": [ "Copyright" ],
+		...
+	}
 ]
 ```
 

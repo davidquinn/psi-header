@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 Report bugs, issues, suggestions at https://github.com/davidquinn/psi-header
 
+## 1.21.4 (18 July 2023) - Documentation change only.
+*__DOCUMENTATION__*: Fixed an erroneous code sample in the *Changes Tracking - Option 2 Template Substitution* section. It erroneously had the `replace` array in the `templates` section when it should have been in either the `changes-tracking` or `lang-config` sections. The rest of the text in that section was however correct.
+
 ## 1.21.3 (06 July 2023)
 *__FIX__*: Removed a debug comment that was written to the console :(.
 
