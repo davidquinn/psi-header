@@ -4,8 +4,8 @@
  * File Created: Friday, 6th October 2017 10:23:19 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Sunday, 16th October 2022 1:22:56 am
- * Modified By: Jonathan Stevens (jonathan@resnovas.com)
+ * Last Modified: Friday, 18th August 2023 7:39:56 am
+ * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
  * 
@@ -105,6 +105,11 @@ export const VAR_ARG_LOWER: string = '!L';
  * The key text for a default language config or template.
  */
 export const DEFAULT: string = '*';
+
+/**
+ * The key for a set of default values for a language configuration.
+ */
+export const DEFAULT_PROPERTIES: string = '*DEFAULTS*';
 
 
 /**

@@ -4,7 +4,7 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Monday, 6th March 2023 3:39:20 pm
+ * Last Modified: Friday, 18th August 2023 9:05:20 am
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -162,15 +162,39 @@ function getMappableRecord<T extends IMappableLanguage>(list: Array<T>, langId: 
  */
 export function getTemplateConfig(wsConfig: WorkspaceConfiguration, langId: string, filename: string): ITemplateConfig {
 	const templates: ITemplateConfigList = getMergedTemplates(wsConfig);
-	let def: ITemplateConfig = getMappableRecord<ITemplateConfig>(templates, langId, filename);
-	if (!def || !def.template) {
-		def = templates.find(item => item.language === k_.DEFAULT);
-		if (!def || !def.template) {
-			def = { language: k_.DEFAULT, template: k_.DEFAULT_TEMPLATE, changeLogHeaderLineCount: 0 };
-		}
+	let base: ITemplateConfig = getMappableRecord<ITemplateConfig>(templates, k_.DEFAULT_PROPERTIES, undefined);
+	if (!base) {
+		base = { language: k_.DEFAULT, template: k_.DEFAULT_TEMPLATE, changeLogHeaderLineCount: 0 };
 	}
-	return def;
+	let cfg: ITemplateConfig = getMappableRecord<ITemplateConfig>(templates, langId, filename);
+	if (!cfg || !cfg.template) {
+		cfg = templates.find(item => item.language === k_.DEFAULT);
+	}
+	mapTemplateConfig(cfg, base);
+	return base;
 }
+
+/**
+ * Maps the values for template configuration properties from source to target.
+ * Will not modify target for any property not found in source.
+ *
+ * @param {Object} source
+ * @param {ITemplateConfig} target
+ */
+function mapTemplateConfig(source: Object, target: ITemplateConfig): void {
+	if (source) {
+		mapProperty(source, target, 'language');
+		mapProperty(source, target, 'mapTo');
+		mapProperty(source, target, 'template');
+		mapProperty(source, target, 'changeLogCaption');
+		mapProperty(source, target, 'changeLogHeaderLineCount');
+		mapProperty(source, target, 'changeLogFooterLineCount');
+		mapProperty(source, target, 'changeLogEntryTemplate');
+		mapProperty(source, target, 'changeLogNaturalOrder');
+	}
+
+}
+
 
 /**
  * Retrieve the desired language configuration comment block delineators.  Uses the following logic.
@@ -190,8 +214,9 @@ export function getTemplateConfig(wsConfig: WorkspaceConfiguration, langId: stri
  * @returns {ILangConfig}
  */
 export function getLanguageConfig(wsConfig: WorkspaceConfiguration, langId: string, filename: string): ILangConfig {
-	let base: ILangConfig = baseLangConfig(langId);
 	let configs: ILangConfigList = getMergedLangConfig(wsConfig);
+	let def: ILangConfig = getMappableRecord<ILangConfig>(configs, k_.DEFAULT_PROPERTIES, undefined);
+	let base: ILangConfig = baseLangConfig(langId, def);
 	let cfg: ILangConfig = getMappableRecord<ILangConfig>(configs, langId, filename);
 	mapLangConfig(cfg, base);
 	return base;
@@ -200,14 +225,19 @@ export function getLanguageConfig(wsConfig: WorkspaceConfiguration, langId: stri
 /**
  * Generate the base language configuration object.
  *
- * @param {string} langId
- * @returns
+ * @param {string} langId The language id of the target file
+ * @param {ILangConfig | undefined} defaultLangConfig The default language configuration. will hard-code default if this is undefined.
+ * @returns The defaultLangConfig or a javascript-style base default modified for some specific languages.
  */
-function baseLangConfig(langId: string) {
-	let config: ILangConfig = { language: '*', begin: '/*', prefix: ' * ', end: ' */' };
+function baseLangConfig(langId: string, defaultLangConfig: ILangConfig|undefined) {
+	let config: ILangConfig = defaultLangConfig ?? { language: '*', begin: '/*', prefix: ' * ', end: ' */' };
 	switch(langId) {
+		case "javascript":
+		case "typescript":
+			mapLangConfig({ begin: '/*', prefix: ' * ', end: ' */'}, config);
+			break;
 		case "swift":
-			mapLangConfig({ begin: '/**'}, config);
+			mapLangConfig({ begin: '/**', prefix: ' * ', end: ' */'}, config);
 			break;
 		case "lua":
 			mapLangConfig({ begin: '--[[', prefix: '--', end: '--]]'}, config);

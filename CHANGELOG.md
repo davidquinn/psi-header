@@ -3,6 +3,19 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 Report bugs, issues, suggestions at https://github.com/davidquinn/psi-header
 
+## 1.22.0 (17 August 2023)
+*__NEW__*: New feature to set "system" default values for the properties of each `lang-config` and `templates` configuration. 
+
+Prior to this release, the default values for a `lang-config` were hard coded as: `{"begin": "/*", "prefix": " *", "end": " */"}` with everything else being left undefined. This feature allows you to add a new `lang-config` entry `"language": "*DEFAULTS*"` which will enable you to define your own "system" default values for any of the config settings (not just the ones above). Any property not provided here (or provided as `null`) will fallback to its hard-coded system default.
+
+Similarly, the extension previously defined defaults for a `templates` entry that result in a basic template without a changes log. This feature allows you to add a new `templates` entry `"language": "*DEFAULTS*"` which will enable you to define your own "system" default values. You can define default values for any of the`templates` properties. Any property not provided here (or provided as `null`) will fallback to its hard-coded system default.
+
+Obviously, any language-specific (or `"language": "*"`) entry you have added will use the values you provide to override the above default values. 
+
+There should not be any change to pre-1.22.0 behaviour if you do not specifically add this new defaults configuration to your existing VSCode setup.
+
+So, *__BE CAREFUL!__* The `"*DEFAULTS*"` entry overrides the previous system default values. So it may affect headers for languages you currently use if you add this to an existing VSCode setup. Unless you have a burning desire to change the system defaults, you probably do not need this new feature.
+
 ## 1.21.4 (18 July 2023) - Documentation change only.
 *__DOCUMENTATION__*: Fixed an erroneous code sample in the *Changes Tracking - Option 2 Template Substitution* section. It erroneously had the `replace` array in the `templates` section when it should have been in either the `changes-tracking` or `lang-config` sections. The rest of the text in that section was however correct.
 

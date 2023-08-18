@@ -2,46 +2,48 @@
 <!-- TOC -->
 
 - [Overview](#overview)
-	- [Summary of Features](#summary-of-features)
+    - [Summary of Features](#summary-of-features)
 - [Commands](#commands)
 - [System Variables](#system-variables)
 - [System Functions](#system-functions)
-	- [Date Formats in System Functions](#date-formats-in-system-functions)
-	- [yeartoyear](#yeartoyear)
+    - [Date Formats in System Functions](#date-formats-in-system-functions)
+    - [yeartoyear](#yeartoyear)
 - [Configuration](#configuration)
-	- [Global Options](#global-options)
-	- [Changes Tracking Configuration](#changes-tracking-configuration)
-	- [Variable Values](#variable-values)
-	- [Language Configuration](#language-configuration)
-	- [Templates](#templates)
-	- [License Text](#license-text)
-	- [License Reference](#license-reference)
+    - [Global Options](#global-options)
+    - [Changes Tracking Configuration](#changes-tracking-configuration)
+    - [Variable Values](#variable-values)
+    - [Language Configuration](#language-configuration)
+        - [Default Language Configurations](#default-language-configurations)
+    - [Templates](#templates)
+        - [Default Template Configurations](#default-template-configurations)
+    - [License Text](#license-text)
+    - [License Reference](#license-reference)
 - [Compact Mode](#compact-mode)
 - [Block-Style Comment Headers](#block-style-comment-headers)
 - [A Note about Project Paths](#a-note-about-project-paths)
 - [License Information](#license-information)
-	- ["Custom"](#custom)
-	- ["CustomUri"](#customuri)
-	- [SPDX](#spdx)
-	- [Refreshing the License Text System Variable](#refreshing-the-license-text-system-variable)
+    - ["Custom"](#custom)
+    - ["CustomUri"](#customuri)
+    - [SPDX](#spdx)
+    - [Refreshing the License Text System Variable](#refreshing-the-license-text-system-variable)
 - [Changes Tracking](#changes-tracking)
-	- [Option 1 Simple Replacement](#option-1-simple-replacement)
-	- [Option 2 Template Substitution](#option-2-template-substitution)
+    - [Option 1 Simple Replacement](#option-1-simple-replacement)
+    - [Option 2 Template Substitution](#option-2-template-substitution)
 - [Auto Header](#auto-header)
 - [Enforce Header](#enforce-header)
 - [Change Log](#change-log)
-	- [Configuring Change Logging](#configuring-change-logging)
-	- [Questions about Change Logs](#questions-about-change-logs)
-		- [7.2.1. Can this be configured to not have a caption line?](#721-can-this-be-configured-to-not-have-a-caption-line)
-		- [7.2.2. Can it be configured to automatically add a log entry?](#722-can-it-be-configured-to-automatically-add-a-log-entry)
-		- [7.2.3. Can I have comments on a separate line?](#723-can-i-have-comments-on-a-separate-line)
-		- [7.2.4. Why do I have to manually add the comment?](#724-why-do-i-have-to-manually-add-the-comment)
-		- [7.2.5. What if I need longer comments?](#725-what-if-i-need-longer-comments)
+    - [Configuring Change Logging](#configuring-change-logging)
+    - [Questions about Change Logs](#questions-about-change-logs)
+        - [Can this be configured to not have a caption line?](#can-this-be-configured-to-not-have-a-caption-line)
+        - [Can it be configured to automatically add a log entry?](#can-it-be-configured-to-automatically-add-a-log-entry)
+        - [Can I have comments on a separate line?](#can-i-have-comments-on-a-separate-line)
+        - [Why do I have to manually add the comment?](#why-do-i-have-to-manually-add-the-comment)
+        - [What if I need longer comments?](#what-if-i-need-longer-comments)
 - [An Example Custom Configuration](#an-example-custom-configuration)
 - [Creating a Custom Template](#creating-a-custom-template)
 - [Known Issues](#known-issues)
-	- [Cleaning up SPDX License Text](#cleaning-up-spdx-license-text)
-	- [Determining File Creation Time on Linux](#determining-file-creation-time-on-linux)
+    - [Cleaning up SPDX License Text](#cleaning-up-spdx-license-text)
+    - [Determining File Creation Time on Linux](#determining-file-creation-time-on-linux)
 - [Credits](#credits)
 
 <!-- /TOC -->
@@ -355,10 +357,10 @@ Following is an example settings file with every conceivable psi-header option (
 
 There are some specific settings that you must setup if you want to use the [Change Log](#change-log) feature.
 
-Settings can be added as User and/or Workspace and/or WorkspaceFolder settings - VSCode handles the majik of merging them together.  Workspace Folder settings take precedence over Workspace settings which take precedence over User settings (which in turn take precendce over Default values).
+Settings can be added as User and/or Workspace and/or WorkspaceFolder settings - VSCode handles the majik of merging them together.  Workspace Folder settings take precedence over Workspace settings which take precedence over User settings (which in turn take precedence over Default values).
 
 When generating a header, the extension will do the following for the language-specific settings (`psi-header.lang-config` and `psi-header.templates`):
-1. Start with the built in defaults.
+1. Start with either the configured or the built in defaults.
 2. If there is a configuration setting that matches the document language, options set there will overwrite those from the default; else
 3. If there is a global configuration (`language = "*"`), options set there will overwrite those from the default.
 
@@ -382,7 +384,7 @@ Options that affect the whole extension.  In some cases these defaults can be ov
 | Option | Description |
 |---|---|
 | `forceToTop` | If true, it will ignore the current cursor position and insert the header at the top of the document. If false (the default), the header will be inserted at the current cursor position. Can be overridden for specific languages (via *_psi-header.lang-config_*). |
-| `blankLinesAfter` | Specify how many blank lines to insert after the header comment block.  Default is 0 (zero). |
+| `blankLinesAfter` | Specify how many blank lines to insert after the header comment block.  Default is 0 (zero). Can be overridden for specific languages (via *_psi-header.lang-config_*). |
 | `spacesBetweenYears` | If true, include spaces between years ("YYYY - YYYY"), otherwise omit them ("YYYY-YYYY").  Default is true. |
 | `license` | The SPDX License ID of the license to insert into the header (or `"Custom"` or `"CustomUri"` if providing your own license text). Refer to [License Information](#license-information) for details. |
 | `author` | Your name - used by the `author` system variable.  Optional with no default. |
@@ -429,7 +431,7 @@ An array of objects that allow language-specific adjustments to be made to the c
 
 | Option | Description |
 |---|---|
-| `language` | Mandatory. Either a file extension including the leading period; the VSCode Language ID; or '*' for global settings. |
+| `language` | Mandatory. Either a file extension including the leading period; the VSCode Language ID; or `"*"` or `"*DEFAULTS*"` for [default language configurations](#default-language-configurations). |
 | `mapTo` | Optional.  If provided, this language will use the specified language's configuration (and the settings below will be ignored).  The value is a VSCode language ID.  You can not `mapTo` a language that itself has the `mapTo` value set.  Ignored if language = "*". |
 | `begin` | Optional - defaults to `"/*"`. Determines the comment block opening text.  This will be inserted as a line before the first line of the template.  Refer to [Compact Mode](#-compact-mode) for information on headings with no begin and end lines. |
 | `prefix` | Optional - defaults to `" * "`. Determines a prefix for each body line of the header. |
@@ -447,6 +449,13 @@ An array of objects that allow language-specific adjustments to be made to the c
 | `replace` | Optional. Overrides the [changes-tracking.replace](##-changes-tracking-configuration) setting for this language.  An array of template line prefixes that define additional header lines to replace during a file save.  If defined, the value here replaces the `replace` settings in `changes-tracking` for this language. |
 | `ignoreLines` | Optional array of strings.  Used by the logic that determines if a header needs to be auto-inserted to exclude any lines that start with the specified string(s) that may appear before the header.  Useful where VSCode or another extension may try to insert lines above your header.  Refer to the [Auto Header](#auto-header) section for more information. |
 
+### Default Language Configurations
+The extension includes 2 optional special `lang-config` entries:
+-  `"language": "*"`: the configuration to use when there is no *__specific__* `lang-config` entry for the source file; and
+- `"language": "*DEFAULTS*"`: default optional property values to use for any property that is not specifically set in the chosen `lang-config` (which might be `"*"`). This option was introduced in v1.22.0, and the extension will default to the previous behaviour of `{"begin": "/*", "prefix": " *", "end": " */"}` if this entry is not present.
+
+*__BE CAREFUL!__*: The `"*DEFAULTS*"` entry overrides the previous system default values. So it may affect headers for languages you currently use if you add this to an existing VSCode setup. Unless you have a burning desire to change the system defaults, you probably do not need this configuration.
+
 ## Templates
 An array of template definitions.  Each definition must include either *_mapTo_* or *_template_*.  Includes the following options.
 
@@ -454,9 +463,9 @@ An array of template definitions.  Each definition must include either *_mapTo_*
 
 | Option | Description |
 |---|---|
-| `language` | Mandatory. Either a file extension including the leading period; the VSCode Language ID; or '*' for global settings. |
+| `language` | Mandatory. Either a file extension including the leading period; the VSCode Language ID; or `"*"` or `"*DEFAULTS*"` for [default template configurations](#default-template-configurations). |
 | `mapTo` | Optional.  If provided, this language will use the specified language's template (and will ignore the following *_template_* value).  The value is a VSCode language ID.  You can not `mapTo` a language that itself has the `mapTo` value set.  Ignored if *_language = "*"_*. |
-| `template` | This must be provided if *_mapTo_* is not declared.  Includes an array of strings that represent the body of the header.  No need to include the comment block syntax. |
+| `template` | This must be provided if *_mapTo_* is not declared of if `"language": "*DEFAULTS*"`.  Includes an array of strings that represent the body of the header.  No need to include the comment block syntax. |
 | `changeLogCaption` | Used by the [Change Log](#change-log) feature.  Defines the caption for the change log that must also appear in the main header template.  The extension uses this caption to work out where to place a new change log entry. Ignored if `changeLogNaturalOrder` is `true`. |
 | `changeLogHeaderLineCount` | Used in the [Change Log](#change-log) feature to define the number of lines in the main template between the above _changeLogCaption_ and the log entries.  This can be used to configure the main template to include column headings for the change log.  Defaults to 0 if not provided.  Ignored if `changeLogNaturalOrder` is `true`. |
 | `changeLogItemTemplate` | The template for a change log entry.  Allows overriding of the default item template. |
@@ -464,6 +473,13 @@ An array of template definitions.  Each definition must include either *_mapTo_*
 | `changeLogFooterLineCount` | Used in the [Change Log](#change-log) feature to define the number of lines in the main template between the bottom of the footer and the log entries.  Defaults to 0 if not provided.  Ignored if `changeLogNaturalOrder` is `false`. |
 
 *_NOTE:_*   Also, `mapTo` is ignored if the language value is set to "*".
+
+### Default Template Configurations
+The extension includes 2 optional special `templates` entries:
+-  `"language": "*"`: the template configuration to use when there is no *__specific__* `templates` entry for the source file; and
+- `"language": "*DEFAULTS*"`: the default optional property values to use for any property that is not specifically set in the chosen `templates` (which might be `"*"`). This option was introduced in v1.22.0, and the extension will default to the previous behaviour which defines a basic template if this entry is not present.
+
+*__BE CAREFUL!__*: The `"*DEFAULTS*"` entry overrides the previous system default values. So it may affect headers for languages you currently use if you add this to an existing VSCode setup. Unless you have a burning desire to change the system defaults, you probably do not need this configuration.
 
 ## License Text
 An optional array of strings for defining custom license text.  Used where *_psi-header.config.license = "Custom"_*.
@@ -840,13 +856,13 @@ would give output similar to the following:
 
 ## Questions about Change Logs
 
-### 7.2.1. Can this be configured to not have a caption line?
+### Can this be configured to not have a caption line?
 No.  The caption line is how the extension works out where to add the log entries.  You may have edited the header manually, so there is no easy way for the extension to map the raw template back to the edited header.
 
-### 7.2.2. Can it be configured to automatically add a log entry?
+### Can it be configured to automatically add a log entry?
 No, because this would be extremely annoying if an entry was added every time the file was saved (which would then expect you to add a comment which would necessitate another save which would add another entry which would require you to add a comment which would...).
 
-### 7.2.3. Can I have comments on a separate line?
+### Can I have comments on a separate line?
 Yes.  Just provide your own `psi-header.templates[].changeLogEntryTemplate` which allows you to define a multi line template.  You could add a log entry template something like:
 
 ```json
@@ -861,14 +877,14 @@ Yes.  Just provide your own `psi-header.templates[].changeLogEntryTemplate` whic
 ]
 ```
 
-### 7.2.4. Why do I have to manually add the comment?
+### Why do I have to manually add the comment?
 The most likely cause is that your Visual Studio Brain Implant(TM) module is not correctly configured for your instance of VSCode.  Try facing your computer and moving your head in a figure of eight pattern to establish a connection.  If this fails, move your fingers frantically up and down near the keyboard.
 
 OR
 
 I am not very good at working out what your comment should contain.
 
-### 7.2.5. What if I need longer comments?
+### What if I need longer comments?
 No problem.  Just add additional lines to your comment/entry.  New log entries are always added to the top of the log, so it doesn't care if you have changed the layout of earlier entries.
 
 # An Example Custom Configuration
