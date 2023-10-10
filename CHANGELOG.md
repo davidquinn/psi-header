@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 Report bugs, issues, suggestions at https://github.com/davidquinn/psi-header
 
+## 1.22.1 (10 October 2023)
+*__DOCUMENTATION__*: Fixed erroneous reference to `changeLogItemTemplate` in README.md - should be `changeLogEntryTemplate`. Also, fixed example code that did not add quotes around the format string parameter for the `dateformat()` system function. There are no code changes to the extension.
+
 ## 1.22.0 (17 August 2023)
 *__NEW__*: New feature to set "system" default values for the properties of each `lang-config` and `templates` configuration. 
 

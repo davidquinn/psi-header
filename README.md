@@ -334,7 +334,7 @@ Following is an example settings file with every conceivable psi-header option (
 			"changeLogHeaderLineCount": 2,
 			"changeLogEntryTemplate": [
 				"",
-				"<<dateformat(DD-MM-YYYY)>>\t<<initials>>\t"
+				"<<dateformat('DD-MM-YYYY')>>\t<<initials>>\t"
 			],
 			"changeLogNaturalOrder": false,
 			"changeLogFooterLineCount": 0
@@ -468,7 +468,7 @@ An array of template definitions.  Each definition must include either *_mapTo_*
 | `template` | This must be provided if *_mapTo_* is not declared of if `"language": "*DEFAULTS*"`.  Includes an array of strings that represent the body of the header.  No need to include the comment block syntax. |
 | `changeLogCaption` | Used by the [Change Log](#change-log) feature.  Defines the caption for the change log that must also appear in the main header template.  The extension uses this caption to work out where to place a new change log entry. Ignored if `changeLogNaturalOrder` is `true`. |
 | `changeLogHeaderLineCount` | Used in the [Change Log](#change-log) feature to define the number of lines in the main template between the above _changeLogCaption_ and the log entries.  This can be used to configure the main template to include column headings for the change log.  Defaults to 0 if not provided.  Ignored if `changeLogNaturalOrder` is `true`. |
-| `changeLogItemTemplate` | The template for a change log entry.  Allows overriding of the default item template. |
+| `changeLogEntryTemplate` | The template for a change log entry.  Allows overriding of the default change log entry template. |
 | `changeLogNaturalOrder` | If true, change log entries will be shown in chronological order (latest entry last) at the end of the header.  The default is false. |
 | `changeLogFooterLineCount` | Used in the [Change Log](#change-log) feature to define the number of lines in the main template between the bottom of the footer and the log entries.  Defaults to 0 if not provided.  Ignored if `changeLogNaturalOrder` is `false`. |
 
@@ -826,7 +826,7 @@ Or for an example with a heading and custom template that uses a different date 
 		"changeLogHeaderLineCount": 2,
 		"changeLogEntryTemplate": [
 			"",
-			"<<dateformat(DD-MM-YYYY)>>\t<<initials>>\t"
+			"<<dateformat('DD-MM-YYYY')>>\t<<initials>>\t"
 		]
 	},
 ]
@@ -870,7 +870,7 @@ Yes.  Just provide your own `psi-header.templates[].changeLogEntryTemplate` whic
 	{
 		...other settings...
 		"changeLogEntryTemplate": [
-			"<<dateformat(YYYY-MM-DD)>>  (<<author>>)",
+			"<<dateformat('YYYY-MM-DD')>>  (<<author>>)",
 			""
 		]
 	},
