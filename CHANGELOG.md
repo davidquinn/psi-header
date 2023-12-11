@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 Report bugs, issues, suggestions at https://github.com/davidquinn/psi-header
 
+## 1.22.2 (11 December 2023)
+*__DOCUMENTATION__*: Fixed an erroneous code sample in the *Configuration* section that incorrectly represented how custom variables are added to the `psi-header.variables` configuration.
+
 ## 1.22.1 (10 October 2023)
 *__DOCUMENTATION__*: Fixed erroneous reference to `changeLogItemTemplate` in README.md - should be `changeLogEntryTemplate`. Also, fixed example code that did not add quotes around the format string parameter for the `dateformat()` system function. There are no code changes to the extension.
 

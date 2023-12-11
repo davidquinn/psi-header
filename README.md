@@ -282,8 +282,8 @@ Following is an example settings file with every conceivable psi-header option (
 		"updateLicenseVariables": false
 	},
 	"psi-header.variables": [
-		"manager": "Old Mother Bodkin",
-		"projectCreationYear": "2019"
+		["manager", "Old Mother Bodkin"],
+		["projectCreationYear", "2019"]
 	],
 	"psi-header.lang-config": [
 		{
