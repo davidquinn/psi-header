@@ -4,7 +4,7 @@
  * File Created: Friday, 6th October 2017 10:23:19 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Friday, 18th August 2023 7:39:56 am
+ * Last Modified: Thursday, 9th May 2024 12:29:35 pm
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -79,6 +79,7 @@ export const VAR_RELATIVE_PATH: string = 'relativepath';
 export const FUNC_DATE_FMT: string = 'dateformat';
 export const FUNC_FILE_CREATED: string = 'filecreated';
 export const FUNC_YEAR_TO_YEAR: string = 'yeartoyear';
+export const FUNC_PAD_LINE: string = 'padline';
 
 
 /**

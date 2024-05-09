@@ -185,6 +185,7 @@ The following _case-sensitive_ `system functions` are available for configurable
 | `dateformat(format)` | The current date or date part using format strings.  This function takes a single string argument which represents the moment.js compatible format string. |
 | `filecreated(format)` | The file created date and time using format strings.  This function takes a single string argument which represents the moment.js compatible format string (surrounded in single or double quotes).  It can also be called without arguments to use the current locale date format. If the file created date cannot be determined it will return the current date and time (usually because the file has not yet been saved to disk, or the operating system failed to return the creation date and time). Refer to [this known issue](#determining-file-creation-time-on-linux) for potential issues with some Linux setups. |
 | `yeartoyear(from, to)` | Generates a string in the form `"YYYY - YYYY"` or just `"YYYY"` of both dates evaluate to the same year. Useful for copyright messages. Refer to [year to year](#yeartoyear) for details. |
+| `padline(char, maxLength)` | Pads the end of the line with the `char` up to the `maxLength` characters. Refer to [padline](#padline) for details. |
 
 As with `system variables` the functions can appear in the `beforeHeader` and `afterHeader` properties of your language configuration, with the same constraints around updating.
 
@@ -240,6 +241,18 @@ Valid examples:
 <<yeartoyear('fc!P','9999!P')>>
 <<yeartoyear(fc!P,now)>>
 <<yeartoyear(i am a rabbit, 2020)>>
+```
+
+## padline
+This function pads the end of a single line with the `char` up to the `maxLength` characters. Only the first character in `char` will be used - any subsequent characters will be ignored. If `maxLength` is not defined, the line will be padded up to the length of `psi-header.lang-config.lineLength` (which itself defaults to 80). Regardless, this function will never cause the line to have more characters than defined by `lineLength`.
+
+
+Padding will always be applied to the end of the line, regardless of where in the line the function is declared.
+
+Valid examples:
+```javascript
+<<padline('-')>> // this will add the dash character up to the line length defined for the language.
+<<padline('+', 5)>> // this will add up to 5 plus characters toi the end of the line.
 ```
 
 # Configuration

@@ -4,7 +4,7 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Friday, 18th August 2023 9:05:20 am
+ * Last Modified: Thursday, 9th May 2024 12:29:35 pm
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -704,7 +704,8 @@ export function merge(template: Array<string>, langConfig: ILangConfig, variable
 
 	var body: string = replaceTemplateVariables(template, langConfig.prefix, variables, config.creationDateZero);
 
-	if (langConfig.suffix.length > 0) {
+	const funcNeedle: string = `${k_.VAR_PREFIX}${k_.FUNC_PAD_LINE}(`;
+	if (body.includes(funcNeedle) || langConfig.suffix.length > 0) {
 		const lines = body.split('\n');
 		for (let idx = 0; idx < lines.length; idx++) {
 			lines[idx] = addLineSuffix(lines[idx], langConfig.suffix, langConfig.lineLength, <number> editor.options.tabSize);
@@ -776,12 +777,23 @@ export function replacePlaceholders(source: string, variables: IVariableList, pr
  */
 export function addLineSuffix(line: string, suffix: string, wrapCol: number, tabSize: number): string {
 	wrapCol = wrapCol && wrapCol > 0 ? wrapCol : 80;
-	if (!suffix || suffix.length == 0) {
+
+	// look for the `padwith` function and get the padding character
+	let padding = getPaddingValues(line);
+	let padChar: string = padding[0] ? padding[1] : '';
+	const padMaxLength: number = padding[0] && (padding[2] > 0) ? padding[2] : wrapCol;
+
+	if (padChar.length == 0 && (!suffix || suffix.length == 0)) {
 		return line;
+	}
+	if (padChar.length > 0) {
+		line = removeFunctionCall(k_.FUNC_PAD_LINE, line);
+	} else { // there is no padChar defined
+		padChar = ' ';
 	}
 	line = line || '';
 	const fullLineLength: number = wrapCol - suffix.length;
-	var padLength: number = fullLineLength - line.length;
+
 	let spacedContentLength: number = line.length;
 	if (line.indexOf('\t') >= 0) {
 		spacedContentLength = 0;
@@ -793,12 +805,46 @@ export function addLineSuffix(line: string, suffix: string, wrapCol: number, tab
 				}
 			}
 		}
-	}
-	while (spacedContentLength < fullLineLength) {
+	}	
+
+	let padAdded: number = 0;
+	while (spacedContentLength < fullLineLength && padAdded < padMaxLength) {
 		spacedContentLength++;
-		line += ' ';
+		padAdded++;
+		line += padChar;
 	}
 	return line + suffix;
+}
+
+function removeFunctionCall(functionName: string, fromLine: string): string {
+	const funcPrefix: string = `${k_.VAR_PREFIX}${functionName}(`;
+	let idxStart: number = fromLine.indexOf(funcPrefix);
+	if (idxStart < 0) {
+		return null;
+	}
+	let idxEnd: number = fromLine.indexOf(k_.VAR_SUFFIX, idxStart);
+	return `${fromLine.substring(0, idxStart)}${fromLine.substring(idxEnd + k_.VAR_SUFFIX.length)}`;
+}
+
+function getPaddingValues(fromLine: string): [boolean, string, number] {
+		// look for the `padwith` function and get the padding character and optional length
+		let replacements: IVariableList = [];
+		constructFunctionReferences(replacements, fromLine, k_.FUNC_PAD_LINE, (args: string): string => {
+			let cleanedArgs: string =
+				args && args.length > 0
+				? args.split(',').map(arg => arg.trim().replace(/('|")/g, '')).join()
+				: '';
+			return cleanedArgs;
+		});
+		const split: string[] = (replacements.length > 0 ? replacements[0][1] : '').split(',');
+		const padChar: string = split.length > 0 ? split[0] : '';
+		const padLen: number = split.length > 1 ? safeParseInt(split[1], 0) : 0;
+		return [padChar.length === 1, padChar, padLen];
+}
+
+function safeParseInt(s: string, fallback: number): number {
+	const intValue: number = parseInt(s);
+	return Number.isNaN(intValue) ? fallback : intValue;
 }
 
 /**
@@ -926,11 +972,10 @@ function y2y(fromArg: string, toArg: string, prevText: string | null, zeroDate: 
 
 /**
  * Construct a placeholder variable list for a specified function based on the template text content.
- *
+ * @param {IVariableList} references an existing list to add the output variable/values pairs to.
  * @param {string} source the template text
  * @param {string} functionName the name of the template function
  * @param {IPlaceholderFunction} cb the method to run to retrieve the value based on the function arguments
- * @returns {IVariableList}
  */
 function constructFunctionReferences(references: IVariableList, source: string, functionName: string, cb: IPlaceholderFunction) {
 	const funcNeedle: string = `${k_.VAR_PREFIX}${functionName}(`;
@@ -953,11 +998,11 @@ function constructFunctionReferences(references: IVariableList, source: string, 
  * The second argument to @a cb will be the part of @a prevLine from the matched position to the end,
  * or an empty string if not replacing text or the replaced text could not be determined.
  * 
+ * @param {IVariableList} references an existing list to add the output variable/values pairs to.
  * @param {string} source the template text
  * @param {string} functionName the name of the template function
  * @param {string} prevLine the existing line being replaced, or null if creating a new header
  * @param {IPlaceholderFunction} cb the method to run to retrieve the value based on the function arguments and previous file text
- * @returns {IVariableList}
  */
 function constructFunctionReferencesWithPrev(references: IVariableList, source: string, functionName: string, prevLine: string | null, cb: IPlaceholderFromPrevFunction) {
 	const funcNeedle: string = `${k_.VAR_PREFIX}${functionName}(`;
