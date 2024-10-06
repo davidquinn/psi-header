@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 Report bugs, issues, suggestions at https://github.com/davidquinn/psi-header
 
+## 1.23.1 (06 October 2024)
+*__FIX__*: New system function `padline` to pad the end of a single line with a specified character.
+
 ## 1.23.0 (10 May 2024)
 *__NEW__*: New system function `padline` to pad the end of a single line with a specified character.
 

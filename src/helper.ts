@@ -4,7 +4,7 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Thursday, 9th May 2024 12:29:35 pm
+ * Last Modified: Sunday, 6th October 2024 10:38:14 am
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -755,10 +755,12 @@ export function replacePlaceholders(source: string, variables: IVariableList, pr
 		if (v[1]) {
 			let regex = new RegExp(k_.VAR_PREFIX + v[0] + k_.VAR_SUFFIX, 'gi');
 			replaced = replaced.replace(regex, v[1]);
-			regex = new RegExp(k_.VAR_PREFIX + v[0] + k_.VAR_ARG_UPPER + k_.VAR_SUFFIX, 'gi');
-			replaced = replaced.replace(regex, v[1].toLocaleUpperCase());
-			regex = new RegExp(k_.VAR_PREFIX + v[0] + k_.VAR_ARG_LOWER + k_.VAR_SUFFIX, 'gi');
-			replaced = replaced.replace(regex, v[1].toLocaleLowerCase());
+			if (typeof v[1] === 'string') {
+				regex = new RegExp(k_.VAR_PREFIX + v[0] + k_.VAR_ARG_UPPER + k_.VAR_SUFFIX, 'gi');
+				replaced = replaced.replace(regex, v[1].toLocaleUpperCase());
+				regex = new RegExp(k_.VAR_PREFIX + v[0] + k_.VAR_ARG_LOWER + k_.VAR_SUFFIX, 'gi');
+				replaced = replaced.replace(regex, v[1].toLocaleLowerCase());
+			}
 		}
 	}
 	replaced = replaceFunctions(replaced, prevLine, zeroDate);
