@@ -16,7 +16,7 @@
 		"url": "https://github.com/davidquinn/psi-header"
 	},
 	"engines": {
-		"vscode": "^1.6.0"
+		"vscode": "^1.18.0"
 	},
 	"categories": [
 		"Other"
