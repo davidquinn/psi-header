@@ -398,22 +398,32 @@ export function getVariables(wsConfig: WorkspaceConfiguration, document: TextDoc
  * @returns {string} The directory within the path that contains a rootDirFileName, else fully qualified directory of the passed in filename.
  */
 function getProjectRootPath(filename: string, rootDirFileName?: string): string {
-	let found: boolean = false;
 	const parsed = path.parse(filename);
 	const dir: string = parsed ? parsed.dir : '';
 	let result: string = dir;
-	rootDirFileName = rootDirFileName || 'package.json';
-	while(result.includes(path.sep)) {
-		if (fs.existsSync(path.join(result, rootDirFileName)) || fs.existsSync(path.join(result, 'package.json'))) {
-			found = true;
-			break;
-		} else {
-			result = result.substring(0, result.lastIndexOf(path.sep));
+	if (rootDirFileName === '' && workspace.workspaceFolders) {
+		for (var folder of workspace.workspaceFolders) {
+			if (filename.startsWith(folder.uri.fsPath)) {
+				result = folder.uri.fsPath;
+				break;
+			}
+		}
+	} else {
+		let found: boolean = false;
+		rootDirFileName = rootDirFileName || 'package.json';
+		while(result.includes(path.sep)) {
+			if (fs.existsSync(path.join(result, rootDirFileName)) || fs.existsSync(path.join(result, 'package.json'))) {
+				found = true;
+				break;
+			} else {
+				result = result.substring(0, result.lastIndexOf(path.sep));
+			}
+		}
+		if (!found) {
+			result = dir;
 		}
 	}
-	if (!found) {
-		result = dir;
-	}
+
 	return result;
 }
 

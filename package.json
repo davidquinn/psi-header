@@ -313,7 +313,7 @@
 							"rootDirFileName": {
 								"type": "string",
 								"default": "package.json",
-								"description": "Optional name of a file to help identify the project root directory.  This file should only be expected in the root directory."
+								"description": "Optional name of a file to help identify the project root directory.  This file should only be expected in the root directory. An empty string will use the workspace root folder instead"
 							},
 							"modAuthor": {
 								"type": "string",
