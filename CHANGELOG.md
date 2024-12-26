@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 Report bugs, issues, suggestions at https://github.com/davidquinn/psi-header
 
+## 1.24.0 (26 December 2024)
+*__CHANGE__*: Restored ability to determine the root Folder via the workspace by setting `psi-header.lang-config.rootDirFileName` to an empty string. This behaviour had been removed in v1.3.1 due to changes Microsoft made to allow multi-workspaces which caused the original logic to no longer work. Thanks to [thirstyice](https://github.com/thirstyice) for the solution.
+
 ## 1.23.1 (06 October 2024)
 *__FIX__*: New system function `padline` to pad the end of a single line with a specified character.
 
