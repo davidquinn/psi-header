@@ -129,13 +129,13 @@ The following system variables are available for placeholder substitution in you
 | `date` | The current date using the current locale (also see the `dateformat()` [system function](#system-function) below for a formattable date string version). |
 | `time` | The current time using the current locale. |
 | `year` | The current year. |
-| `filepath` | The fully-qualified name of the file. |
-| `fullpath` | The fully-qualified path to the file (excludes the filename). |
-| `filerelativepath` | The file name including the relative path within the project. |
-| `relativepath` | The relative path to the file within the project (excludes the filename). |
+| `filepath` | The fully-qualified name of the file. Refer to `psi-header.config.overridePathSeparator` if you need to override the path separator. |
+| `fullpath` | The fully-qualified path to the file (excludes the filename). Refer to `psi-header.config.overridePathSeparator` if you need to override the path separator. |
+| `filerelativepath` | The file name including the relative path within the project. Refer to `psi-header.config.overridePathSeparator` if you need to override the path separator. |
+| `relativepath` | The relative path to the file within the project (excludes the filename). Refer to `psi-header.config.overridePathSeparator` if you need to override the path separator. |
 | `filename` | Just the file name without the path details. |
 | `filenamebase` | Just the file name without the path details or extension. |
-| `projectpath` | The fully-qualified path to the root directory of the project. |
+| `projectpath` | The fully-qualified path to the root directory of the project. Refer to `psi-header.config.overridePathSeparator` if you need to override the path separator. |
 | `projectname` | Attempts to read package.json (in the current or any parent directory) for either a `displayName` or `name` property.  If there is no package.json file _and_ the file has been saved to disk, it will return the project path's base name. |
 | `projectslug` | Provides a version of `projectname` for use in url's and links. E.g. "@davidquinn/psi-header" would return "davidquinn/psi-header" |
 | `projectversion` | Attempts to read package.json (in the current or any parent directory) for a `version` property. |
@@ -275,7 +275,8 @@ Following is an example settings file with every conceivable psi-header option (
 		"company": "Bodkin World Domination Enterprises",
 		"copyrightHolder": "Bodkin & Bodkin Ltd",
 		"creationDateZero": "asIs",
-		"hostname": "myhostname"
+		"hostname": "myhostname",
+		"overridePathSeparator": "/"
 	},
 	"psi-header.changes-tracking": {
 		"isActive": true,
@@ -408,6 +409,7 @@ Options that affect the whole extension.  In some cases these defaults can be ov
 | `creationDateZero` | What to do when the operating system returns Epoch Zero (1 Jan 1970) for the file creation time (e.g. when the source file is an NTFS-mounted file in Linux). Valid options are:<br>  - `'asIs'`: (default) just write the date provided by the OS;<br>  - `'blank'`: do not write a creation date;<br>  - `'now'`: write creation date as now. |
 | `hostname` | Overrides the local machine hostname returned by the OS with a custom value when using the `hostname` system variable. |
 | `ignoreAuthorFullName` | On some systems it can be expensive to attempt to get fullname from the OS, so this option ignores this when determining the `author` variable value |
+| `overridePathSeparator` | Allows the replacement of path separators in path-related variables with the specified string. It affects the following variables: `<<filepath>>`, `<<fullpath>>`, `<<filerelativepath>>`, `<<relativepath>>` and `<<projectpath>>`. May be useful in a team with a mix of MacOS, Windows and Linux developers. Default is null (no change). Obviously, if you want to replace the separator with a backslash, you will need to escape it (e.g. `"\\"`).|
 
 
 ## Changes Tracking Configuration

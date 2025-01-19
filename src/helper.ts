@@ -4,7 +4,7 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Sunday, 6th October 2024 10:38:14 am
+ * Last Modified: Sunday, 19th January 2025 4:11:07 pm
  * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
@@ -109,6 +109,8 @@ export function getConfig(wsConfig: WorkspaceConfiguration, langConfig: ILangCon
 	def.creationDateZero = cfg && cfg.creationDateZero ? cfg.creationDateZero : "asIs";
 
 	def.hostname = cfg && cfg.hostname ? cfg.hostname : os.hostname();
+
+	def.overridePathSeparator = cfg && cfg.overridePathSeparator ? cfg.overridePathSeparator : null;
 
 	return def;
 }
@@ -335,11 +337,11 @@ export function getVariables(wsConfig: WorkspaceConfiguration, document: TextDoc
 	variables.push([k_.VAR_DATE, now.toDateString()]);
 	variables.push([k_.VAR_TIME, now.toLocaleTimeString()]);
 	variables.push([k_.VAR_YEAR, now.getFullYear().toString()]);
-	variables.push([k_.VAR_FILE_PATH, currentFile]);
-	variables.push([k_.VAR_FULL_PATH, getFullPathWithoutFilename(currentFile)]);
-	variables.push([k_.VAR_RELATIVE_PATH, getRelativePathWithoutFilename(currentFile, langConfig.rootDirFileName)]);
-	variables.push([k_.VAR_FILE_RELATIVE_PATH, getRelativeFilePath(currentFile, langConfig.rootDirFileName)]);
-	variables.push([k_.VAR_PROJECT_PATH, getProjectRootPath(currentFile, langConfig.rootDirFileName)]);
+	variables.push([k_.VAR_FILE_PATH, overrideSeparator(currentFile, config.overridePathSeparator)]);
+	variables.push([k_.VAR_FULL_PATH, overrideSeparator(getFullPathWithoutFilename(currentFile), config.overridePathSeparator)]);
+	variables.push([k_.VAR_RELATIVE_PATH, overrideSeparator(getRelativePathWithoutFilename(currentFile, langConfig.rootDirFileName), config.overridePathSeparator)]);
+	variables.push([k_.VAR_FILE_RELATIVE_PATH, overrideSeparator(getRelativeFilePath(currentFile, langConfig.rootDirFileName), overrideSeparator(config.overridePathSeparator))]);
+	variables.push([k_.VAR_PROJECT_PATH, overrideSeparator(getProjectRootPath(currentFile, langConfig.rootDirFileName), config.overridePathSeparator)]);
 	variables.push([k_.VAR_COMPANY, config && config.company ? config.company : 'Your Company']);
 	variables.push([k_.VAR_AUTHOR, config && config.author ? config.author : getAuthorName(config && config.ignoreAuthorFullname)]);
 	variables.push([k_.VAR_AUTHOR_EMAIL, config && config.authorEmail ? config.authorEmail : 'you@you.you']);
@@ -1286,6 +1288,10 @@ function mergeVariableLists(...lists: IVariableList[]): IVariableList {
 export function trimStart(s: string) {
 	const r = /^\s+/;
 	return s.replace(r, '');
+}
+
+function overrideSeparator(path: string, separator?: string): string {
+	return separator ? path.replace(/\//g, separator) : path;
 }
 
 export {BASE_SETTINGS} from './constants';

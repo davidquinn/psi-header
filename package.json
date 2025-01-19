@@ -3,7 +3,7 @@
 	"displayName": "psioniq File Header",
 	"description": "Configurable file header and changes tracking.",
 	"icon": "img/psi-logo.png",
-	"version": "1.24.0",
+	"version": "1.25.0",
 	"publisher": "psioniq",
 	"license": "SEE LICENSE IN LICENSE.txt",
 	"bugs": {
@@ -120,6 +120,10 @@
 						"hostname": {
 							"type": "string",
 							"description": "Override the local machine's hostname for the <<hostname>> variable."
+						},
+						"overridePathSeparator": {
+							"type": "string",
+							"description": "Override the separator character used in path variables."
 						}
 					}
 				},

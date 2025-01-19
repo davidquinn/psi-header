@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 Report bugs, issues, suggestions at https://github.com/davidquinn/psi-header
 
+## 1.25.0 (19 January 2025)
+*__NEW__*: New configuration option `overridePathSeparator` which allows the optional replacement of path separators in path-related variables. Useful in a team with a mix of OSs.
+
 ## 1.24.0 (26 December 2024)
 *__CHANGE__*: Restored ability to determine the root Folder via the workspace by setting `psi-header.lang-config.rootDirFileName` to an empty string. This behaviour had been removed in v1.3.1 due to changes Microsoft made to allow multi-workspaces which caused the original logic to no longer work. Thanks to [thirstyice](https://github.com/thirstyice) for the solution.
 

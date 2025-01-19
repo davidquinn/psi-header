@@ -4,8 +4,8 @@
  * File Created: Tuesday, 25th December 2018 1:55:15 pm
  * Author: David Quinn (info@psioniq.uk)
  * -----
- * Last Modified: Saturday, 15th May 2021 1:38:19 pm
- * Modified By: Andrew Schepler (aschepler@gmail.com)
+ * Last Modified: Sunday, 19th January 2025 4:11:13 pm
+ * Modified By: David Quinn (info@psioniq.uk)
  * -----
  * MIT License
  *
@@ -82,6 +82,7 @@ export interface IConfig {
 	ignoreAuthorFullname?: boolean;
 	creationDateZero?: ZeroDate;
 	hostname?: string;
+	overridePathSeparator?: string;
 }
 
 /**
