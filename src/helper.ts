@@ -1290,9 +1290,14 @@ export function trimStart(s: string) {
 	return s.replace(r, '');
 }
 
-function overrideSeparator(path, separator) {
+function overrideSeparator(path: string, separator?: string): string {
+	if (!separator) {
+		return path;
+	}
+	// if isWin32, then the system separator is '\', otherwise it is '/'.
     const isWin32 = process.platform === "win32";
     const systemSeparator = isWin32 ? '\\' : '/';
+
     if (separator === systemSeparator) {
         return path;
     }
