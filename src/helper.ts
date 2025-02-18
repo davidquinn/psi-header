@@ -1290,8 +1290,13 @@ export function trimStart(s: string) {
 	return s.replace(r, '');
 }
 
-function overrideSeparator(path: string, separator?: string): string {
-	return separator ? path.replace(/\//g, separator) : path;
+function overrideSeparator(path, separator) {
+    const isWin32 = process.platform === "win32";
+    const systemSeparator = isWin32 ? '\\' : '/';
+    if (separator === systemSeparator) {
+        return path;
+    }
+    return path.replace(new RegExp(escapeRegExp(systemSeparator), 'g'), separator);
 }
 
 export {BASE_SETTINGS} from './constants';
