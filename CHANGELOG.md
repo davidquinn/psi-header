@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 Report bugs, issues, suggestions at https://github.com/davidquinn/psi-header
 
+## 1.25.1 (20 February 2025)
+*__FIX__*: Fix to `overridePathSeparator` for Windows paths. See [this PR](https://github.com/davidquinn/psi-header/pull/85). Thanks [Chongyi](https://github.com/johnnyxcy).
+
 ## 1.25.0 (19 January 2025)
 *__NEW__*: New configuration option `overridePathSeparator` which allows the optional replacement of path separators in path-related variables. Useful in a team with a mix of OSs.
 
