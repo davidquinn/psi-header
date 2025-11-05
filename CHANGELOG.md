@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 Report bugs, issues, suggestions at https://github.com/davidquinn/psi-header
 
+## 1.25.2 (05 November 2025)
+*__DOC__*: Fix missing commas in documentation example configs.to `overridePathSeparator`. See [this PR](https://github.com/davidquinn/psi-header/pull/95#top). Thanks [s1acr](https://github.com/s1acr).
+
 ## 1.25.1 (20 February 2025)
 *__FIX__*: Fix to `overridePathSeparator` for Windows paths. See [this PR](https://github.com/davidquinn/psi-header/pull/85). Thanks [Chongyi](https://github.com/johnnyxcy).
 
