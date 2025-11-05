@@ -989,10 +989,10 @@ In the following example:
 				"Last Modified: ",
 				"Modified By: ",
 				"-----",
-				"Copyright (c) <<year>> <<company>>"
+				"Copyright (c) <<year>> <<company>>",
 				"",
 				"<<licensetext>>",
-				"-----"
+				"-----",
 				"HISTORY:",
 				"Date      \tBy\tComments",
 				"----------\t---\t----------------------------------------------------------"
