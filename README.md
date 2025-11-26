@@ -8,6 +8,7 @@
 - [System Functions](#system-functions)
     - [Date Formats in System Functions](#date-formats-in-system-functions)
     - [yeartoyear](#yeartoyear)
+    - [padline](#padline)
 - [Configuration](#configuration)
     - [Global Options](#global-options)
     - [Changes Tracking Configuration](#changes-tracking-configuration)
@@ -423,9 +424,9 @@ Options that affect changes tracking.
 | `modAuthor` | Identifies the label used on the comment line where the _modified by_ value is shown.  Default value is "Modified By:". |
 | `modDate` | Identifies the label used on the comment line where the _date modified_ value is shown.  Default value is "Last Modified:". |
 | `modDateFormat` | The format string for the modified date value.  Valid values are either "date" (system date - same as the `date` system variable) or a [Moment.js format string](http://momentjs.com/docs/#/displaying/format/).  The default value is "date".  Note that this setting is ignored if `modDate` line is based on a custom string. |
-| `include` | Defines an array of VSC language IDs for the file types to include in changes tracking.  The default is an empty array which indicates any file type. |
+| `include` | Defines an array of [VSCode language codes](https://code.visualstudio.com/docs/languages/identifiers) for the file types to include in changes tracking.  The default is an empty array which indicates any file type. |
 | `includeGlob` | Defines an array of file globs for the files to include in changes tracking.  The default is an empty array which indicates any file. |
-| `exclude` | Defines an array of VSC language IDs for the file types to exclude from changes tracking.  The default is an empty array which indicates no exclusions. |
+| `exclude` | Defines an array of [VSCode language codes](https://code.visualstudio.com/docs/languages/identifiers) for the file types to exclude from changes tracking.  The default is an empty array which indicates no exclusions. |
 | `excludeGlob` | Defines an array of file globs for the files to exclude from changes tracking.  The default is an empty array which indicates no exclusions. |
 | `autoHeader` | Determines whether the header should be added automatically to *_new_* files.  Refer to the [Auto Header](#auto-header) section for details. |
 | `enforceHeader` | Determines if the extension should automatically check the file and add a header whenever the file is saved if an existing header is not found.  This setting is independent of `autoHeader` and works best with `psi-header.config.forceToTop` set to `true`.  Refer to the [Enforce Header](#enforce-header) section for details and usage recommendations.  |
@@ -446,7 +447,7 @@ An array of objects that allow language-specific adjustments to be made to the c
 
 | Option | Description |
 |---|---|
-| `language` | Mandatory. Either a file extension including the leading period; the VSCode Language ID; or `"*"` or `"*DEFAULTS*"` for [default language configurations](#default-language-configurations). |
+| `language` | Mandatory. Either a file extension including the leading period; the [VSCode language code](https://code.visualstudio.com/docs/languages/identifiers); or `"*"` or `"*DEFAULTS*"` for [default language configurations](#default-language-configurations). |
 | `mapTo` | Optional.  If provided, this language will use the specified language's configuration (and the settings below will be ignored).  The value is a VSCode language ID.  You can not `mapTo` a language that itself has the `mapTo` value set.  Ignored if language = "*". |
 | `begin` | Optional - defaults to `"/*"`. Determines the comment block opening text.  This will be inserted as a line before the first line of the template.  Refer to [Compact Mode](#-compact-mode) for information on headings with no begin and end lines. |
 | `prefix` | Optional - defaults to `" * "`. Determines a prefix for each body line of the header. |
@@ -478,7 +479,7 @@ An array of template definitions.  Each definition must include either *_mapTo_*
 
 | Option | Description |
 |---|---|
-| `language` | Mandatory. Either a file extension including the leading period; the VSCode Language ID; or `"*"` or `"*DEFAULTS*"` for [default template configurations](#default-template-configurations). |
+| `language` | Mandatory. Either a file extension including the leading period; the [VSCode language code](https://code.visualstudio.com/docs/languages/identifiers); or `"*"` or `"*DEFAULTS*"` for [default template configurations](#default-template-configurations). |
 | `mapTo` | Optional.  If provided, this language will use the specified language's template (and will ignore the following *_template_* value).  The value is a VSCode language ID.  You can not `mapTo` a language that itself has the `mapTo` value set.  Ignored if *_language = "*"_*. |
 | `template` | This must be provided if *_mapTo_* is not declared of if `"language": "*DEFAULTS*"`.  Includes an array of strings that represent the body of the header.  No need to include the comment block syntax. |
 | `changeLogCaption` | Used by the [Change Log](#change-log) feature.  Defines the caption for the change log that must also appear in the main header template.  The extension uses this caption to work out where to place a new change log entry. Ignored if `changeLogNaturalOrder` is `true`. |
@@ -752,7 +753,7 @@ Where the header is supposed to be at the top of the file, you may want to use t
 # Enforce Header
 The Auto Header setting will only create headers for *_new_* files added directly via VSCode.  To insert a header in *_any_* file during save, set `psi-header.changes-tracking.enforceHeader` option to true.  `enforceHeader` will scan the file during save to check if there is a header - it works best with `psi-header.config.forceToTop` set to true, otherwise any comment block in the file could be interpreted as a header.
 
-If you are using this setting, I would recommend that you also add `"**/settings.json"` to `psi-header.changes-tracking.excludeGlob` to ensure that headers do not get added to VSCode's settings file.  I also suggest you add `["jsonc","json"]` to the `psi-header.changes-tracking.exclude` setting to ensure headers are not added to json files (`jsonc` is VSCode's language id for json files that are enabled for comments).
+If you are using this setting, I would recommend that you also add `"**/settings.json"` to `psi-header.changes-tracking.excludeGlob` to ensure that headers do not get added to VSCode's settings file.  I also suggest you add `["jsonc","json"]` to the `psi-header.changes-tracking.exclude` setting to ensure headers are not added to json files (`jsonc` is [VSCode language code](https://code.visualstudio.com/docs/languages/identifiers) for json files that are enabled for comments).
 
 The `psi-header.lang-config.ignoreLines` discussion in the [Auto Header](#auto-header) section is particularly important to help ensure this setting sdoes not result in duplicate headers.
 
@@ -1072,7 +1073,6 @@ On investigation, it would appear that it is a problem with lack of support for 
 Most annoyingly, affected Linux versions return a wrong date rather than nothing at all. So there is not a practical way to __fix__ the creation date returned by the OS. However, in v1.9.0 we added a new configuration option `creationDateZero` that allows you to define what to do if the OS returns Epoch Zero. Refer to [Global Options](#global-options) for details.
 
 [This link](https://joshuatz.com/posts/2019/unix-linux-file-creation-stamps-aka-birthtime-and-nodejs/) provides a good explanation of the problem.
-
 
 
 # Credits

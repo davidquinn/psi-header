@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 Report bugs, issues, suggestions at https://github.com/davidquinn/psi-header
 
+## 1.25.3 (26 November 2025)
+*__DOC__*: Added link to VSCode's default language codes. Thanks [benjamin](https://github.com/benjaminabruzzo).
+
 ## 1.25.2 (05 November 2025)
 *__DOC__*: Fix missing commas in documentation example configs.to `overridePathSeparator`. See [this PR](https://github.com/davidquinn/psi-header/pull/95#top). Thanks [s1acr](https://github.com/s1acr).
 
