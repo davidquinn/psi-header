@@ -3,6 +3,9 @@ All notable changes to the "psi-header" extension will be documented in this fil
 
 Report bugs, issues, suggestions at https://github.com/davidquinn/psi-header
 
+## 1.25.4 (11 February 2026)
+*__DOC__*: Fix error in documentation around use of static variables in the `yeartoyear` function.
+
 ## 1.25.3 (26 November 2025)
 *__DOC__*: Added link to VSCode's default language codes. Thanks [benjamin](https://github.com/benjaminabruzzo).
 

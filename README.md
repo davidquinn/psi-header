@@ -12,7 +12,7 @@
 - [Configuration](#configuration)
     - [Global Options](#global-options)
     - [Changes Tracking Configuration](#changes-tracking-configuration)
-    - [Variable Values](#variable-values)
+    - [Static Variable Values](#static-variable-values)
     - [Language Configuration](#language-configuration)
         - [Default Language Configurations](#default-language-configurations)
     - [Templates](#templates)
@@ -108,7 +108,7 @@ Refer to [Configuration](#configuration) for the various extension settings deta
 * Map custom template and syntax settings across languages so you can easily reuse them.
 * Provides case-insensitive [System Variables](#system-variables) for placeholder value substitution.
 * Provides _case-sensitive_ [System Functions](#system-functions) for configurable placeholder value substitution.
-* Allows the overriding of system variable values with static global values within the configuration.
+* Allows the overriding of system variable values with [static global values](#static-variable-values) within the configuration.
 * Create an unlimited number of custom static variables for use throughout your custom templates.
 * Header insertion can be run manually via the key shortcut `ctrl+alt+H` then `ctrl+alt+H`.
 * Can automatically insert license text based on SPDX license IDs or from a local text file.
@@ -220,7 +220,7 @@ This function takes 2 arguments: `from` determines the first date and `to` deter
 | --- | --- |
 | `fc` | The file creation date. This is the default for the `from` date. Not case-sensitive. |
 | `now` | The current year. This is the default for the `to` date. Not case sensitive. |
-| `var:name` | Use a [static variable](#variable-values) where `name` is the name of the static variable. |
+| `<<name>>` | Use a [static variable](#static-variable-values) where `name` is the name of the static variable. |
 | any other string | String written as is. Useful for setting a static year. Do not include any commas in the string. |
 
 Additionally, the flag `"!P"` can be appended to an argument above to request reuse of the previous year value in an existing header. When `"!P"` is specified and [Changes Tracking](#changes-tracking) is updating an existing header, the function will attempt to reuse the existing `from` or `to` year. The function looks at the position of the `yeartoyear` call in the line being replaced for format `YYYY - YYYY` (spaces optional) or else `YYYY`. When writing a new header, or when the required year format is not matched, the `"!P"` flag is ignored. A particularly useful case is `yeartoyear(fc!P, now)` to use file creation date for a new header, and then always keep the same `from` date no matter how the file migrates filesystems, version control systems, etc.
@@ -434,11 +434,12 @@ Options that affect changes tracking.
 | `updateLicenseVariables` | This option determines if license variables will be updated during a changes tracking save.  Set this to `true` if your configuration would cause updates to header lines that include any license variables.  Otherwise leave if off because it is a fairly expensive operation to process the SPDX license data every time a file is saved. |
 
 
-## Variable Values
+## Static Variable Values
 An array of name/value pairs that provide value substitution within templates.  This can be used to override the system variables as well as add new items for your own custom templates.
 
 *_Configuration Section:_* `psi-header.variables`.
 
+Within your template, you reference these variables like `<<name>>` where `name` is the name of the variable.
 
 ## Language Configuration
 An array of objects that allow language-specific adjustments to be made to the configuration.  You can provide a subset of values if you only want to override some of the settings. Each object can include the following options.
